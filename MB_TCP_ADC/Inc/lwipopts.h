@@ -84,28 +84,14 @@
 #define MEMP_NUM_TCP_PCB_LISTEN 10
 /*----- Default Value for MEMP_NUM_TCP_SEG: 16 ---*/
 #define MEMP_NUM_TCP_SEG 17
-/*----- Default Value for MEMP_NUM_SYS_TIMEOUT: 5 ---*/
-#define MEMP_NUM_SYS_TIMEOUT 3
 /*----- Value in opt.h for LWIP_ETHERNET: LWIP_ARP || PPPOE_SUPPORT -*/
 #define LWIP_ETHERNET 1
-/*----- Default Value for DHCP_DOES_ARP_CHECK: 1 ---*/
-#define DHCP_DOES_ARP_CHECK 0
 /*----- Value in opt.h for LWIP_DNS_SECURE: (LWIP_DNS_SECURE_RAND_XID | LWIP_DNS_SECURE_NO_MULTIPLE_OUTSTANDING | LWIP_DNS_SECURE_RAND_SRC_PORT) -*/
 #define LWIP_DNS_SECURE 7
-/*----- Default Value for TCP_WND: 2144 ---*/
-#define TCP_WND 5840
 /*----- Default Value for TCP_MSS: 536 ---*/
 #define TCP_MSS 1460
-/*----- Default Value for TCP_SND_BUF: 1072 ---*/
+/*----- Default Value for TCP_SND_BUF: 2920 ---*/
 #define TCP_SND_BUF 5840
-/*----- Default Value for TCP_SND_QUEUELEN: 9 ---*/
-#define TCP_SND_QUEUELEN 17
-/*----- Default Value for TCP_SNDLOWAT: 1071 ---*/
-#define TCP_SNDLOWAT 2921
-/*----- Default Value for TCP_SNDQUEUELOWAT: 5 ---*/
-#define TCP_SNDQUEUELOWAT 9
-/*----- Default Value for TCP_WND_UPDATE_THRESHOLD: 536 ---*/
-#define TCP_WND_UPDATE_THRESHOLD 1460
 /*----- Value in opt.h for TCPIP_THREAD_STACKSIZE: 0 -----*/
 #define TCPIP_THREAD_STACKSIZE 1024
 /*----- Value in opt.h for TCPIP_THREAD_PRIO: 1 -----*/

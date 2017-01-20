@@ -87,6 +87,8 @@
 #define RMII_TXD0_GPIO_Port GPIOG
 #define SW0_Pin GPIO_PIN_3
 #define SW0_GPIO_Port GPIOB
+#define SIG_SYNC_TIM_Pin GPIO_PIN_9
+#define SIG_SYNC_TIM_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 

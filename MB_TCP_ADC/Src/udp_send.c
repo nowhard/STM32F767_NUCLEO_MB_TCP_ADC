@@ -12,6 +12,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "semphr.h"
+#include "data_converter.h"
 //#include "cfg_info.h"
 
 
@@ -31,7 +32,11 @@ ip_addr_t DestIPaddr;
 
 //extern uint16_t *ADC_buf_pnt;
 
+extern __IO uint32_t uwTick;
+uint32_t Tick1,Tick2,Tick3;
+
 extern uint8_t *ADC_buf_pnt;
+extern __IO uint8_t DCMIAdcRxBuff[ADC_BUF_LEN];
 
 uint16_t adc_buf_offset=0;
 
@@ -53,8 +58,13 @@ stPacket UDPPacket;
 
 //extern sConfigInfo configInfo;
 
+#define ADC_RESULT_BUF_LEN (ADC_BUF_LEN/4)
+
+uint16_t ADC_resultBuf[ADC_RESULT_BUF_LEN];
+
 void udp_client_init(void)
 {
+	ADC_buf_pnt=DCMIAdcRxBuff;
   client_pcb = udp_new();
   //IP4_ADDR( &DestIPaddr, configInfo.IPAdress_Server.ip_addr_0, configInfo.IPAdress_Server.ip_addr_1, configInfo.IPAdress_Server.ip_addr_2, configInfo.IPAdress_Server.ip_addr_3 );
 
@@ -84,7 +94,7 @@ void udp_client_send_buf(void)
   {
 	while(adc_buf_offset!=(ADC_BUF_LEN>>1))
 	{
-		memcpy(&UDPPacket.data,((uint8_t*)ADC_buf_pnt+adc_buf_offset),UDP_ADC_PACKET_SIZE);
+		memcpy(&UDPPacket.data,((uint8_t*)ADC_resultBuf+adc_buf_offset),UDP_ADC_PACKET_SIZE);
 		//err=udp_sendto(client_pcb, pb,&DestIPaddr,configInfo.IPAdress_Server.port);
 		err=udp_sendto(client_pcb, pb,&DestIPaddr,SERVER_PORT);
 		adc_buf_offset+=UDP_ADC_PACKET_SIZE;
@@ -94,13 +104,19 @@ void udp_client_send_buf(void)
   }
 }
 
+
 void UDP_Send_Task( void *pvParameters )
 {
 	while(1)
 	{
 		//xSemaphoreTake( xAdcBuf_Send_Semaphore, portMAX_DELAY );
-		vTaskDelay(10);
+		vTaskDelay(1);
+		Tick1=uwTick;
+		ADC_ConvertBuf(ADC_buf_pnt,(ADC_BUF_LEN>>1),ADC_resultBuf);
+		Tick2=uwTick-Tick1;
+		Tick1=uwTick;
 		udp_client_send_buf();
+		Tick3=uwTick-Tick1;
 //		ADC_GetLastVal();
 	}
 }

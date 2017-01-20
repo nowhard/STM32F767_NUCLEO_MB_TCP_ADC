@@ -111,6 +111,7 @@
 "mb_tcp_adc\mbfunc.o"
 "mb_tcp_adc\mbinit.o"
 "mb_tcp_adc\udp_send.o"
+"mb_tcp_adc\data_converter.o"
 "mb_tcp_adc\mb.o"
 "mb_tcp_adc\mbtcp.o"
 "mb_tcp_adc\portevent.o"
