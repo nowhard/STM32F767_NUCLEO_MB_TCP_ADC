@@ -3,7 +3,8 @@
 
 #include "stm32f7xx_hal.h"
 
-void ADC_ConvertBuf(uint8_t *dcmiBuf,uint16_t dcmiBufLen, uint16_t *resultBuf);
-void ADC_CalibrateBuf(uint16_t *resultBuf, float *calibrateBuf);
+//void ADC_ConvertBuf(uint8_t *dcmiBuf,uint16_t dcmiBufLen, uint16_t *resultBuf);
+void ADC_ConvertBuf(uint8_t *dcmiBuf,uint16_t dcmiBufLen, float *resultBuf);
+//void ADC_CalibrateBuf(uint16_t *resultBuf, float *calibrateBuf);
 
 #endif

@@ -60,7 +60,7 @@ stPacket UDPPacket;
 
 #define ADC_RESULT_BUF_LEN (ADC_BUF_LEN/4)
 
-uint16_t ADC_resultBuf[ADC_RESULT_BUF_LEN];
+/*uint16_t*/float ADC_resultBuf[ADC_RESULT_BUF_LEN];
 
 void udp_client_init(void)
 {
