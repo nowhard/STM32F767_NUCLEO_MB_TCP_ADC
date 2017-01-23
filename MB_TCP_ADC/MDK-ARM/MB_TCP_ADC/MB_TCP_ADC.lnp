@@ -101,6 +101,7 @@
 "mb_tcp_adc\stm32f7xx_hal_dcmi_ex.o"
 "mb_tcp_adc\stm32f7xx_hal_uart.o"
 "mb_tcp_adc\stm32f7xx_hal_dcmi.o"
+"mb_tcp_adc\stm32f7xx_hal_spi.o"
 "mb_tcp_adc\system_stm32f7xx.o"
 "mb_tcp_adc\freertos.o"
 "mb_tcp_adc\ethernetif.o"

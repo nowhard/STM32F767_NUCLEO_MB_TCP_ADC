@@ -373,7 +373,7 @@
               <MiscControls>--C99</MiscControls>
               <Define>USE_HAL_DRIVER,STM32F767xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;        ../Middlewares/Third_Party/LwIP/src/include;        ../Middlewares/Third_Party/LwIP/system;        ../Drivers/STM32F7xx_HAL_Driver/Inc;        ../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy;        ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM7/r0p1;        ../Drivers/CMSIS/Device/ST/STM32F7xx/Include;        ../Middlewares/Third_Party/FreeRTOS/Source/include;        ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;        ../Middlewares/Third_Party/LwIP/src/include/lwip;        ../Middlewares/Third_Party/LwIP/src/include/lwip/apps;        ../Middlewares/Third_Party/LwIP/src/include/lwip/priv;        ../Middlewares/Third_Party/LwIP/src/include/netif;        ../Middlewares/Third_Party/LwIP/src/include/netif/ppp;        ../Middlewares/Third_Party/LwIP/src/include/netif/ppp/polarssl;        ../Middlewares/Third_Party/LwIP/src/include/posix;        ../Middlewares/Third_Party/LwIP/src/include/posix/sys;        ../Middlewares/Third_Party/LwIP/system/arch;        ../Drivers/CMSIS/Include;        ..\Middlewares\Third_Party\Modbus\include;        ..\Middlewares\Third_Party\Modbus\functions;        ..\Middlewares\Third_Party\Modbus\tcp;        ..\Middlewares\Third_Party\Modbus\port;        ..\Middlewares\Third_Party\Modbus</IncludePath>
+              <IncludePath>../Inc;          ../Middlewares/Third_Party/LwIP/src/include;          ../Middlewares/Third_Party/LwIP/system;          ../Drivers/STM32F7xx_HAL_Driver/Inc;          ../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy;          ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM7/r0p1;          ../Drivers/CMSIS/Device/ST/STM32F7xx/Include;          ../Middlewares/Third_Party/FreeRTOS/Source/include;          ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;          ../Middlewares/Third_Party/LwIP/src/include/lwip;          ../Middlewares/Third_Party/LwIP/src/include/lwip/apps;          ../Middlewares/Third_Party/LwIP/src/include/lwip/priv;          ../Middlewares/Third_Party/LwIP/src/include/netif;          ../Middlewares/Third_Party/LwIP/src/include/netif/ppp;          ../Middlewares/Third_Party/LwIP/src/include/netif/ppp/polarssl;          ../Middlewares/Third_Party/LwIP/src/include/posix;          ../Middlewares/Third_Party/LwIP/src/include/posix/sys;          ../Middlewares/Third_Party/LwIP/system/arch;          ../Drivers/CMSIS/Include;          ..\Middlewares\Third_Party\Modbus\include;          ..\Middlewares\Third_Party\Modbus\functions;          ..\Middlewares\Third_Party\Modbus\tcp;          ..\Middlewares\Third_Party\Modbus\port;          ..\Middlewares\Third_Party\Modbus</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -940,6 +940,11 @@
               <FileName>stm32f7xx_hal_dcmi.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_dcmi.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f7xx_hal_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_spi.c</FilePath>
             </File>
           </Files>
         </Group>
