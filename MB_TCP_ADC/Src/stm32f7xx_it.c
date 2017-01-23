@@ -37,7 +37,14 @@
 #include "cmsis_os.h"
 
 /* USER CODE BEGIN 0 */
+extern SPI_HandleTypeDef hspi3;
+extern SPI_HandleTypeDef hspi6;
 
+uint8_t spi3_buf[3];
+uint8_t spi6_buf[3];
+
+extern osMessageQId ADC_SPI3_QueueHandle;
+extern osMessageQId ADC_SPI6_QueueHandle;
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
@@ -83,7 +90,7 @@ void DMA1_Stream0_IRQHandler(void)
   /* USER CODE END DMA1_Stream0_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_spi3_rx);
   /* USER CODE BEGIN DMA1_Stream0_IRQn 1 */
-
+	osMessagePut( ADC_SPI3_QueueHandle, (uint32_t)&spi3_buf[1], osWaitForever );
   /* USER CODE END DMA1_Stream0_IRQn 1 */
 }
 
@@ -97,6 +104,8 @@ void TIM1_BRK_TIM9_IRQHandler(void)
   /* USER CODE END TIM1_BRK_TIM9_IRQn 0 */
   HAL_TIM_IRQHandler(&htim9);
   /* USER CODE BEGIN TIM1_BRK_TIM9_IRQn 1 */
+	HAL_SPI_Receive_DMA(&hspi3, spi3_buf, 3);
+	HAL_SPI_Receive_DMA(&hspi3, spi6_buf, 3);
 
   /* USER CODE END TIM1_BRK_TIM9_IRQn 1 */
 }
@@ -139,7 +148,7 @@ void DMA2_Stream6_IRQHandler(void)
   /* USER CODE END DMA2_Stream6_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_spi6_rx);
   /* USER CODE BEGIN DMA2_Stream6_IRQn 1 */
-
+	osMessagePut( ADC_SPI6_QueueHandle, (uint32_t)&spi6_buf[1], osWaitForever );
   /* USER CODE END DMA2_Stream6_IRQn 1 */
 }
 

@@ -70,6 +70,8 @@ TIM_HandleTypeDef htim9;
 UART_HandleTypeDef huart1;
 
 osThreadId defaultTaskHandle;
+osMessageQId ADC_SPI3_QueueHandle;
+osMessageQId ADC_SPI6_QueueHandle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -165,6 +167,15 @@ int main(void)
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
+
+  /* Create the queue(s) */
+  /* definition and creation of ADC_SPI3_Queue */
+  osMessageQDef(ADC_SPI3_Queue, 32, uint16_t);
+  ADC_SPI3_QueueHandle = osMessageCreate(osMessageQ(ADC_SPI3_Queue), NULL);
+
+  /* definition and creation of ADC_SPI6_Queue */
+  osMessageQDef(ADC_SPI6_Queue, 32, uint16_t);
+  ADC_SPI6_QueueHandle = osMessageCreate(osMessageQ(ADC_SPI6_Queue), NULL);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
