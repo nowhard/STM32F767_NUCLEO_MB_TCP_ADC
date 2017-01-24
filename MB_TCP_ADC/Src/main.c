@@ -70,6 +70,7 @@ TIM_HandleTypeDef htim9;
 UART_HandleTypeDef huart1;
 
 osThreadId defaultTaskHandle;
+osThreadId SPI_ADC_TaskHandle;
 osMessageQId ADC_SPI3_QueueHandle;
 osMessageQId ADC_SPI6_QueueHandle;
 
@@ -96,6 +97,7 @@ static void MX_SPI3_Init(void);
 static void MX_SPI6_Init(void);
 static void MX_TIM9_Init(void);
 void StartDefaultTask(void const * argument);
+void StartSPI_ADC_Task(void const * argument);
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
                                 
@@ -138,14 +140,7 @@ int main(void)
   MX_SPI6_Init();
   MX_TIM9_Init();
 
-  /* USER CODE BEGIN 2 */
-	
-	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
-	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_2);
-	HAL_TIM_Base_Start_IT(&htim9);
-	HAL_DCMI_Start_DMA(&hdcmi,DCMI_MODE_CONTINUOUS,(uint32_t)DCMIAdcRxBuff,ADC_BUF_LEN);
- 
-  /* USER CODE END 2 */
+
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
@@ -164,6 +159,10 @@ int main(void)
   osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
+  /* definition and creation of SPI_ADC_Task */
+  osThreadDef(SPI_ADC_Task, StartSPI_ADC_Task, osPriorityNormal, 0, 256);
+  SPI_ADC_TaskHandle = osThreadCreate(osThread(SPI_ADC_Task), NULL);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -181,7 +180,15 @@ int main(void)
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
  
-
+  /* USER CODE BEGIN 2 */
+	
+	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_2);
+	HAL_TIM_Base_Start_IT(&htim9);
+	HAL_DCMI_Start_DMA(&hdcmi,DCMI_MODE_CONTINUOUS,(uint32_t)DCMIAdcRxBuff,ADC_BUF_LEN);
+ 
+  /* USER CODE END 2 */
+	
   /* Start scheduler */
   osKernelStart();
   
@@ -302,7 +309,7 @@ static void MX_SPI3_Init(void)
 
   hspi3.Instance = SPI3;
   hspi3.Init.Mode = SPI_MODE_MASTER;
-  hspi3.Init.Direction = SPI_DIRECTION_2LINES;
+  hspi3.Init.Direction = SPI_DIRECTION_2LINES_RXONLY;
   hspi3.Init.DataSize = SPI_DATASIZE_8BIT;
   hspi3.Init.CLKPolarity = SPI_POLARITY_HIGH;
   hspi3.Init.CLKPhase = SPI_PHASE_1EDGE;
@@ -313,7 +320,7 @@ static void MX_SPI3_Init(void)
   hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
   hspi3.Init.CRCPolynomial = 7;
   hspi3.Init.CRCLength = SPI_CRC_LENGTH_DATASIZE;
-  hspi3.Init.NSSPMode = SPI_NSS_PULSE_ENABLE;
+  hspi3.Init.NSSPMode = SPI_NSS_PULSE_DISABLE;
   if (HAL_SPI_Init(&hspi3) != HAL_OK)
   {
     Error_Handler();
@@ -327,7 +334,7 @@ static void MX_SPI6_Init(void)
 
   hspi6.Instance = SPI6;
   hspi6.Init.Mode = SPI_MODE_MASTER;
-  hspi6.Init.Direction = SPI_DIRECTION_2LINES;
+  hspi6.Init.Direction = SPI_DIRECTION_2LINES_RXONLY;
   hspi6.Init.DataSize = SPI_DATASIZE_8BIT;
   hspi6.Init.CLKPolarity = SPI_POLARITY_HIGH;
   hspi6.Init.CLKPhase = SPI_PHASE_1EDGE;
@@ -338,7 +345,7 @@ static void MX_SPI6_Init(void)
   hspi6.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
   hspi6.Init.CRCPolynomial = 7;
   hspi6.Init.CRCLength = SPI_CRC_LENGTH_DATASIZE;
-  hspi6.Init.NSSPMode = SPI_NSS_PULSE_ENABLE;
+  hspi6.Init.NSSPMode = SPI_NSS_PULSE_DISABLE;
   if (HAL_SPI_Init(&hspi6) != HAL_OK)
   {
     Error_Handler();
@@ -543,7 +550,7 @@ static void MX_TIM9_Init(void)
     Error_Handler();
   }
 
-  sSlaveConfig.SlaveMode = TIM_SLAVEMODE_TRIGGER;
+  sSlaveConfig.SlaveMode = TIM_SLAVEMODE_EXTERNAL1;
   sSlaveConfig.InputTrigger = TIM_TS_ITR0;
   if (HAL_TIM_SlaveConfigSynchronization(&htim9, &sSlaveConfig) != HAL_OK)
   {
@@ -613,6 +620,7 @@ static void MX_GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOF_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
@@ -624,6 +632,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(User_Blue_Button_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : TEST_Pin */
+  GPIO_InitStruct.Pin = TEST_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(TEST_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : STLK_RX_Pin STLK_TX_Pin */
   GPIO_InitStruct.Pin = STLK_RX_Pin|STLK_TX_Pin;
@@ -661,7 +676,14 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(SIG_SYNC_TIM_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(TEST_GPIO_Port, TEST_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(USB_PowerSwitchOn_GPIO_Port, USB_PowerSwitchOn_Pin, GPIO_PIN_RESET);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 
 }
 
@@ -684,6 +706,30 @@ void StartDefaultTask(void const * argument)
     osDelay(1);
   }
   /* USER CODE END 5 */ 
+}
+
+/* StartSPI_ADC_Task function */
+void StartSPI_ADC_Task(void const * argument)
+{
+  /* USER CODE BEGIN StartSPI_ADC_Task */
+  /* Infinite loop */
+	osEvent evt;
+  for(;;)
+  {
+		evt = osMessageGet(ADC_SPI3_QueueHandle, osWaitForever);  // wait for message
+    if (evt.status == osEventMessage) 
+		{
+			
+		}
+		
+		evt = osMessageGet(ADC_SPI6_QueueHandle, osWaitForever);  // wait for message
+    if (evt.status == osEventMessage) 
+		{
+			
+		}
+    osDelay(1);
+  }
+  /* USER CODE END StartSPI_ADC_Task */
 }
 
 /**

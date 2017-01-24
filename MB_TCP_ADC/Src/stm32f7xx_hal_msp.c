@@ -219,17 +219,9 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     __HAL_RCC_SPI3_CLK_ENABLE();
   
     /**SPI3 GPIO Configuration    
-    PB2     ------> SPI3_MOSI
     PC10     ------> SPI3_SCK
     PC11     ------> SPI3_MISO 
     */
-    GPIO_InitStruct.Pin = GPIO_PIN_2;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    GPIO_InitStruct.Alternate = GPIO_AF7_SPI3;
-    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
     GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_11;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
@@ -270,8 +262,7 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
   
     /**SPI6 GPIO Configuration    
     PA5     ------> SPI6_SCK
-    PG12     ------> SPI6_MISO
-    PG14     ------> SPI6_MOSI 
+    PG12     ------> SPI6_MISO 
     */
     GPIO_InitStruct.Pin = GPIO_PIN_5;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -280,7 +271,7 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     GPIO_InitStruct.Alternate = GPIO_AF8_SPI6;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-    GPIO_InitStruct.Pin = GPIO_PIN_12|GPIO_PIN_14;
+    GPIO_InitStruct.Pin = GPIO_PIN_12;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
@@ -325,12 +316,9 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* hspi)
     __HAL_RCC_SPI3_CLK_DISABLE();
   
     /**SPI3 GPIO Configuration    
-    PB2     ------> SPI3_MOSI
     PC10     ------> SPI3_SCK
     PC11     ------> SPI3_MISO 
     */
-    HAL_GPIO_DeInit(GPIOB, GPIO_PIN_2);
-
     HAL_GPIO_DeInit(GPIOC, GPIO_PIN_10|GPIO_PIN_11);
 
     /* Peripheral DMA DeInit*/
@@ -349,12 +337,11 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* hspi)
   
     /**SPI6 GPIO Configuration    
     PA5     ------> SPI6_SCK
-    PG12     ------> SPI6_MISO
-    PG14     ------> SPI6_MOSI 
+    PG12     ------> SPI6_MISO 
     */
     HAL_GPIO_DeInit(GPIOA, GPIO_PIN_5);
 
-    HAL_GPIO_DeInit(GPIOG, GPIO_PIN_12|GPIO_PIN_14);
+    HAL_GPIO_DeInit(GPIOG, GPIO_PIN_12);
 
     /* Peripheral DMA DeInit*/
     HAL_DMA_DeInit(hspi->hdmarx);

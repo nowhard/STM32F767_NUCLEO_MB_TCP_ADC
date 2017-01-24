@@ -37,6 +37,7 @@
 #include "cmsis_os.h"
 
 /* USER CODE BEGIN 0 */
+#include "main.h"
 extern SPI_HandleTypeDef hspi3;
 extern SPI_HandleTypeDef hspi6;
 
@@ -90,8 +91,22 @@ void DMA1_Stream0_IRQHandler(void)
   /* USER CODE END DMA1_Stream0_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_spi3_rx);
   /* USER CODE BEGIN DMA1_Stream0_IRQn 1 */
-	osMessagePut( ADC_SPI3_QueueHandle, (uint32_t)&spi3_buf[1], osWaitForever );
+
   /* USER CODE END DMA1_Stream0_IRQn 1 */
+}
+
+/**
+* @brief This function handles EXTI line[9:5] interrupts.
+*/
+void EXTI9_5_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI9_5_IRQn 0 */
+
+  /* USER CODE END EXTI9_5_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_9);
+  /* USER CODE BEGIN EXTI9_5_IRQn 1 */
+
+  /* USER CODE END EXTI9_5_IRQn 1 */
 }
 
 /**
@@ -104,8 +119,7 @@ void TIM1_BRK_TIM9_IRQHandler(void)
   /* USER CODE END TIM1_BRK_TIM9_IRQn 0 */
   HAL_TIM_IRQHandler(&htim9);
   /* USER CODE BEGIN TIM1_BRK_TIM9_IRQn 1 */
-	HAL_SPI_Receive_DMA(&hspi3, spi3_buf, 3);
-	HAL_SPI_Receive_DMA(&hspi3, spi6_buf, 3);
+
 
   /* USER CODE END TIM1_BRK_TIM9_IRQn 1 */
 }
@@ -148,11 +162,36 @@ void DMA2_Stream6_IRQHandler(void)
   /* USER CODE END DMA2_Stream6_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_spi6_rx);
   /* USER CODE BEGIN DMA2_Stream6_IRQn 1 */
-	osMessagePut( ADC_SPI6_QueueHandle, (uint32_t)&spi6_buf[1], osWaitForever );
+
   /* USER CODE END DMA2_Stream6_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+	if(htim->Instance==TIM9)
+	{
+		HAL_SPI_Receive_DMA(&hspi3, spi3_buf, 3);
+		HAL_SPI_Receive_DMA(&hspi6, spi6_buf, 3);
+	
+		HAL_GPIO_TogglePin(TEST_GPIO_Port, TEST_Pin);
+	} 
+}
+
+
+void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
+{
+	if(hspi->Instance==SPI3)
+	{
+			osMessagePut( ADC_SPI3_QueueHandle, (uint32_t)&spi3_buf[1], osWaitForever );
+	}
+	else if(hspi->Instance==SPI6)
+	{
+			osMessagePut( ADC_SPI6_QueueHandle, (uint32_t)&spi6_buf[1], osWaitForever );
+	}
+}
+
 
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
