@@ -426,6 +426,17 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
   /* USER CODE END TIM9_MspInit 0 */
     /* Peripheral clock enable */
     __HAL_RCC_TIM9_CLK_ENABLE();
+  
+    /**TIM9 GPIO Configuration    
+    PA3     ------> TIM9_CH2 
+    */
+    GPIO_InitStruct.Pin = GPIO_PIN_3;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Alternate = GPIO_AF3_TIM9;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
     /* Peripheral interrupt init */
     HAL_NVIC_SetPriority(TIM1_BRK_TIM9_IRQn, 5, 0);
     HAL_NVIC_EnableIRQ(TIM1_BRK_TIM9_IRQn);
@@ -546,6 +557,11 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* htim_base)
   /* USER CODE END TIM9_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_TIM9_CLK_DISABLE();
+  
+    /**TIM9 GPIO Configuration    
+    PA3     ------> TIM9_CH2 
+    */
+    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_3);
 
     /* Peripheral interrupt DeInit*/
     HAL_NVIC_DisableIRQ(TIM1_BRK_TIM9_IRQn);

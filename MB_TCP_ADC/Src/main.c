@@ -140,7 +140,11 @@ int main(void)
   MX_SPI6_Init();
   MX_TIM9_Init();
 
+  /* USER CODE BEGIN 2 */
+	
 
+ 
+  /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
@@ -178,17 +182,13 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
-  /* USER CODE END RTOS_QUEUES */
+		HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
+		HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_2);
+		HAL_TIM_Base_Start_IT(&htim9);
+		HAL_DCMI_Start_DMA(&hdcmi,DCMI_MODE_CONTINUOUS,(uint32_t)DCMIAdcRxBuff,ADC_BUF_LEN);
+	/* USER CODE END RTOS_QUEUES */
  
-  /* USER CODE BEGIN 2 */
-	
-	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
-	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_2);
-	HAL_TIM_Base_Start_IT(&htim9);
-	HAL_DCMI_Start_DMA(&hdcmi,DCMI_MODE_CONTINUOUS,(uint32_t)DCMIAdcRxBuff,ADC_BUF_LEN);
- 
-  /* USER CODE END 2 */
-	
+
   /* Start scheduler */
   osKernelStart();
   
@@ -518,7 +518,7 @@ static void MX_TIM5_Init(void)
     Error_Handler();
   }
 
-  sSlaveConfig.SlaveMode = TIM_SLAVEMODE_TRIGGER;
+  sSlaveConfig.SlaveMode = TIM_SLAVEMODE_EXTERNAL1;
   sSlaveConfig.InputTrigger = TIM_TS_ITR2;
   if (HAL_TIM_SlaveConfigSynchronization(&htim5, &sSlaveConfig) != HAL_OK)
   {
@@ -551,7 +551,9 @@ static void MX_TIM9_Init(void)
   }
 
   sSlaveConfig.SlaveMode = TIM_SLAVEMODE_EXTERNAL1;
-  sSlaveConfig.InputTrigger = TIM_TS_ITR0;
+  sSlaveConfig.InputTrigger = TIM_TS_TI2FP2;
+  sSlaveConfig.TriggerPolarity = TIM_TRIGGERPOLARITY_RISING;
+  sSlaveConfig.TriggerFilter = 0;
   if (HAL_TIM_SlaveConfigSynchronization(&htim9, &sSlaveConfig) != HAL_OK)
   {
     Error_Handler();
