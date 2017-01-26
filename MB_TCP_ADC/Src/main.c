@@ -70,7 +70,7 @@ TIM_HandleTypeDef htim9;
 UART_HandleTypeDef huart1;
 
 osThreadId defaultTaskHandle;
-osThreadId SPI_ADC_TaskHandle;
+
 osMessageQId ADC_SPI3_QueueHandle;
 osMessageQId ADC_SPI6_QueueHandle;
 
@@ -186,7 +186,7 @@ int main(void)
 		HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_2);
 		HAL_TIM_Base_Start_IT(&htim9);
 		HAL_DCMI_Start_DMA(&hdcmi,DCMI_MODE_CONTINUOUS,(uint32_t)DCMIAdcRxBuff,ADC_BUF_LEN);
-	/* USER CODE END RTOS_QUEUES */
+  /* USER CODE END RTOS_QUEUES */
  
 
   /* Start scheduler */
@@ -710,29 +710,7 @@ void StartDefaultTask(void const * argument)
   /* USER CODE END 5 */ 
 }
 
-/* StartSPI_ADC_Task function */
-void StartSPI_ADC_Task(void const * argument)
-{
-  /* USER CODE BEGIN StartSPI_ADC_Task */
-  /* Infinite loop */
-	osEvent evt;
-  for(;;)
-  {
-		evt = osMessageGet(ADC_SPI3_QueueHandle, osWaitForever);  // wait for message
-    if (evt.status == osEventMessage) 
-		{
-			
-		}
-		
-		evt = osMessageGet(ADC_SPI6_QueueHandle, osWaitForever);  // wait for message
-    if (evt.status == osEventMessage) 
-		{
-			
-		}
-    osDelay(1);
-  }
-  /* USER CODE END StartSPI_ADC_Task */
-}
+
 
 /**
   * @brief  This function is executed in case of error occurrence.

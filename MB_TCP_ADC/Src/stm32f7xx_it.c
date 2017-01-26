@@ -37,15 +37,7 @@
 #include "cmsis_os.h"
 
 /* USER CODE BEGIN 0 */
-#include "main.h"
-extern SPI_HandleTypeDef hspi3;
-extern SPI_HandleTypeDef hspi6;
 
-uint8_t spi3_buf[3];
-uint8_t spi6_buf[3];
-
-extern osMessageQId ADC_SPI3_QueueHandle;
-extern osMessageQId ADC_SPI6_QueueHandle;
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
@@ -87,7 +79,7 @@ void SysTick_Handler(void)
 void DMA1_Stream0_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Stream0_IRQn 0 */
-
+//get timestamp!!!
   /* USER CODE END DMA1_Stream0_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_spi3_rx);
   /* USER CODE BEGIN DMA1_Stream0_IRQn 1 */
@@ -157,7 +149,7 @@ void ETH_IRQHandler(void)
 void DMA2_Stream6_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA2_Stream6_IRQn 0 */
-
+//get timestamp!!!
   /* USER CODE END DMA2_Stream6_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_spi6_rx);
   /* USER CODE BEGIN DMA2_Stream6_IRQn 1 */
@@ -167,29 +159,7 @@ void DMA2_Stream6_IRQHandler(void)
 
 /* USER CODE BEGIN 1 */
 
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-	if(htim->Instance==TIM9)
-	{
-		HAL_SPI_Receive_DMA(&hspi3, spi3_buf, 3);
-		HAL_SPI_Receive_DMA(&hspi6, spi6_buf, 3);
-	
-		HAL_GPIO_TogglePin(TEST_GPIO_Port, TEST_Pin);
-	} 
-}
 
-
-void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
-{
-	if(hspi->Instance==SPI3)
-	{
-			osMessagePut( ADC_SPI3_QueueHandle, (uint32_t)&spi3_buf[1], osWaitForever );
-	}
-	else if(hspi->Instance==SPI6)
-	{
-			osMessagePut( ADC_SPI6_QueueHandle, (uint32_t)&spi6_buf[1], osWaitForever );
-	}
-}
 
 
 /* USER CODE END 1 */
