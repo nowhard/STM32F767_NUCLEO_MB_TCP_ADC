@@ -40,7 +40,7 @@ extern __IO uint8_t DCMIAdcRxBuff[ADC_BUF_LEN];
 
 uint16_t adc_buf_offset=0;
 
-//extern SemaphoreHandle_t xAdcBuf_Send_Semaphore;
+extern SemaphoreHandle_t xAdcBuf_Send_Semaphore;
 
 void UDP_Send_Task( void *pvParameters );
 /*inline*/ void delay(uint32_t time);
@@ -89,7 +89,7 @@ void udp_client_send_buf(void)
   err_t err;
   adc_buf_offset=0;
   UDPPacket.id=0;
- // UDPPacket.timestamp=ADC_GetLastTimestamp();
+  UDPPacket.timestamp=DCMI_ADC_GetLastTimestamp();
   if (client_pcb != NULL)
   {
 	while(adc_buf_offset!=(ADC_BUF_LEN>>1))
@@ -109,8 +109,8 @@ void UDP_Send_Task( void *pvParameters )
 {
 	while(1)
 	{
-		//xSemaphoreTake( xAdcBuf_Send_Semaphore, portMAX_DELAY );
-		vTaskDelay(1);
+		xSemaphoreTake( xAdcBuf_Send_Semaphore, portMAX_DELAY );
+		//vTaskDelay(1);
 		Tick1=uwTick;
 		ADC_ConvertBuf(ADC_buf_pnt,(ADC_BUF_LEN>>1),ADC_resultBuf);
 		Tick2=uwTick-Tick1;

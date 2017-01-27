@@ -49,6 +49,7 @@
 /* USER CODE BEGIN Includes */
 #include "mbinit.h"
 #include "udp_send.h"
+#include "adc_dcmi.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -70,15 +71,15 @@ TIM_HandleTypeDef htim9;
 UART_HandleTypeDef huart1;
 
 osThreadId defaultTaskHandle;
-
+osThreadId SPI_ADC_TaskHandle;
 osMessageQId ADC_SPI3_QueueHandle;
 osMessageQId ADC_SPI6_QueueHandle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 
-__IO uint8_t DCMIAdcRxBuff[ADC_BUF_LEN];
-uint8_t *ADC_buf_pnt;
+extern __IO uint8_t DCMIAdcRxBuff[ADC_BUF_LEN];
+extern uint8_t *ADC_buf_pnt;
 
 /* USER CODE END PV */
 
@@ -142,7 +143,7 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
 	
-
+	DCMI_ADC_Init();
  
   /* USER CODE END 2 */
 
@@ -486,7 +487,10 @@ static void MX_TIM4_Init(void)
     Error_Handler();
   }
 
-  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_ETRMODE2;
+  sClockSourceConfig.ClockPolarity = TIM_CLOCKPOLARITY_NONINVERTED;
+  sClockSourceConfig.ClockPrescaler = TIM_CLOCKPRESCALER_DIV1;
+  sClockSourceConfig.ClockFilter = 0;
   if (HAL_TIM_ConfigClockSource(&htim4, &sClockSourceConfig) != HAL_OK)
   {
     Error_Handler();
@@ -710,7 +714,17 @@ void StartDefaultTask(void const * argument)
   /* USER CODE END 5 */ 
 }
 
-
+/* StartSPI_ADC_Task function */
+__weak void StartSPI_ADC_Task(void const * argument)
+{
+  /* USER CODE BEGIN StartSPI_ADC_Task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartSPI_ADC_Task */
+}
 
 /**
   * @brief  This function is executed in case of error occurrence.

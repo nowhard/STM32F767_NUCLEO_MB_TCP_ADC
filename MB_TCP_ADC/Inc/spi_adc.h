@@ -1,16 +1,13 @@
 #ifndef SPI_ADC_H
 #define SPI_ADC_H
 
+
+#define SPI_ADC_BUF_LEN	500
 typedef struct 
 {
-	uint64_t 	timestamp;
-	union
-	{
-		float 		value_calibr;
-		uint16_t  value
-	}
-		
-}stSPI_ADC;
+	uint16_t buf[SPI_ADC_BUF_LEN];
+	uint16_t  index;
+}stSPI_ADC_Buf;
 
 
 
