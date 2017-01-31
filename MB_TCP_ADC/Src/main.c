@@ -49,6 +49,7 @@
 /* USER CODE BEGIN Includes */
 #include "mbinit.h"
 #include "udp_send.h"
+//#include "tcp_send.h"
 #include "adc_dcmi.h"
 /* USER CODE END Includes */
 
@@ -119,6 +120,12 @@ int main(void)
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
+
+  /* Enable I-Cache-------------------------------------------------------------*/
+  SCB_EnableICache();
+
+  /* Enable D-Cache-------------------------------------------------------------*/
+  SCB_EnableDCache();
 
   /* MCU Configuration----------------------------------------------------------*/
 
@@ -706,6 +713,7 @@ void StartDefaultTask(void const * argument)
   /* USER CODE BEGIN 5 */
 	MB_TCP_Init();
 	udp_client_init();
+	//tcp_client_init();
   /* Infinite loop */
   for(;;)
   {

@@ -111,8 +111,15 @@
 #define GW_ADDR2   109
 #define GW_ADDR3   8 
 
-#define ADC_CHN_NUM 8
-#define ADC_BUF_LEN 32768
+#define SERVER_IP_ADDR0   192
+#define SERVER_IP_ADDR1   168
+#define SERVER_IP_ADDR2   109
+#define SERVER_IP_ADDR3   140
+
+#define SERVER_PORT		  1000
+
+#define ADC_CHN_NUM 6
+#define ADC_BUF_LEN 32000
 
 /* USER CODE END Private defines */
 

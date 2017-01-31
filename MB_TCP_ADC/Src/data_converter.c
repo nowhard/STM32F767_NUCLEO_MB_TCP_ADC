@@ -1,11 +1,15 @@
 #include "stm32f7xx_hal.h"
 #include "data_converter.h"
+#include "spi_adc.h"
+#include "cfg_info.h"
 
 #pragma anon_unions
 
 // for calibration testing
 float a=2.356;
 float b=34.397;
+
+//extern sConfigInfo configInfo;	
 
 union bytefield{
 	struct{
@@ -82,15 +86,15 @@ union dwordfield{
 };
 
 //void ADC_ConvertBuf(uint8_t *dcmiBuf,uint16_t dcmiBufLen, uint16_t *resultBuf)
-void ADC_ConvertBuf(uint8_t *dcmiBuf,uint16_t dcmiBufLen, float *resultBuf)
+void ADC_ConvertBuf(uint8_t *dcmiBuf,uint16_t dcmiBufLen, uint16_t *spiBuf_1, uint16_t *spiBuf_2, uint16_t spiBufLen,float *resultBuf,uint16_t *resultBufLen)
 {
 
-	uint16_t cycle_count=(dcmiBufLen/16);
+	uint16_t cycle_count;//=(dcmiBufLen/16);
 
 	union bytefield byte;
 	union wordfield out1, out2, out3, out4, out5, out6, out7, out8;
 	
-	while(cycle_count!=0)
+	for(cycle_count=0;cycle_count<(dcmiBufLen>>4);cycle_count++)
 	{
 			byte.val=dcmiBuf[0];
 			out1.b0=byte.b0;
@@ -252,18 +256,36 @@ void ADC_ConvertBuf(uint8_t *dcmiBuf,uint16_t dcmiBufLen, float *resultBuf)
 //			out7.b15=byte.b6;
 //			out8.b15=byte.b7;
 
-			*resultBuf=a*out1.val+b;
+			*(resultBuf+0)=a*out1.val+b;
 			*(resultBuf+1)=a*out2.val+b;
 			*(resultBuf+2)=a*out3.val+b;
 			*(resultBuf+3)=a*out4.val+b;
+			*(resultBuf+4)=a*(spiBuf_1[cycle_count/SPI_ADC_FREQ_DIV])+b;
+			*(resultBuf+5)=a*(spiBuf_2[cycle_count/SPI_ADC_FREQ_DIV])+b;
+			
+			configInfo.ConfigADC.calibrChannel[0].k;
+			
+			uint8_t i=0;
+			
+			for(i=0;i<ADC_CHN_NUM;i++)
+			{
+					if(configInfo.ConfigADC.channelMask&0x1)
+					{
+					}
+			}
+			
 //			*(resultBuf+4)=a*out5.val+b;
 //			*(resultBuf+5)=a*out6.val+b;
 //			*(resultBuf+6)=a*out7.val+b;
 //			*(resultBuf+7)=a*out8.val+b;
 			
-			cycle_count--;
+//			cycle_count--;
 			dcmiBuf+=16;
-			resultBuf+=8;			
+			//spiBuf_1+=(cycle_count/SPI_ADC_FREQ_DIV);
+			//spiBuf_2+=(cycle_count/SPI_ADC_FREQ_DIV);
+			resultBuf+=ADC_CHN_NUM;			
 	}
+	
+	*resultBufLen=cycle_count*6;
 }
 

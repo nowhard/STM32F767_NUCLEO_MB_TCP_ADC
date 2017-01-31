@@ -3,6 +3,6 @@
 #include "stm32f7xx_hal.h"
 
 void udp_client_init(void);
-void udp_client_send_buf(void);
+void udp_client_send_buf(float *buf, uint16_t bufSize);
 
 #endif

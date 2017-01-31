@@ -7,24 +7,22 @@
 #include "netif.h"
 #include <stdio.h>
 #include <string.h>
-//#include "adc_dcmi.h"
+
+
 
 #include "FreeRTOS.h"
 #include "task.h"
 #include "semphr.h"
 #include "data_converter.h"
-//#include "cfg_info.h"
+#include "adc_dcmi.h"
+#include "spi_adc.h"
+#include "cfg_info.h"
 
 
-#define UDP_ADC_PACKET_SIZE	1024
+#define UDP_ADC_PACKET_SIZE	1000//1024
 #define UDP_PACKET_SEND_DELAY 1000
 
-#define SERVER_IP_ADDR0   192
-#define SERVER_IP_ADDR1   168
-#define SERVER_IP_ADDR2   109
-#define SERVER_IP_ADDR3   140
 
-#define SERVER_PORT		  1000
 
 struct udp_pcb *client_pcb;
 struct pbuf *pb;
@@ -38,7 +36,10 @@ uint32_t Tick1,Tick2,Tick3;
 extern uint8_t *ADC_buf_pnt;
 extern __IO uint8_t DCMIAdcRxBuff[ADC_BUF_LEN];
 
-uint16_t adc_buf_offset=0;
+extern uint16_t *currentSPI3_ADC_Buf;
+extern uint16_t *currentSPI6_ADC_Buf;
+
+
 
 extern SemaphoreHandle_t xAdcBuf_Send_Semaphore;
 
@@ -84,38 +85,41 @@ void udp_client_init(void)
 		time--;
 }
 
-void udp_client_send_buf(void)
+void udp_client_send_buf(float *buf, uint16_t bufSize)
 {
   err_t err;
-  adc_buf_offset=0;
+  uint16_t adc_buf_offset=0;
+	
   UDPPacket.id=0;
   UDPPacket.timestamp=DCMI_ADC_GetLastTimestamp();
   if (client_pcb != NULL)
   {
-	while(adc_buf_offset!=(ADC_BUF_LEN>>1))
-	{
-		memcpy(&UDPPacket.data,((uint8_t*)ADC_resultBuf+adc_buf_offset),UDP_ADC_PACKET_SIZE);
-		//err=udp_sendto(client_pcb, pb,&DestIPaddr,configInfo.IPAdress_Server.port);
-		err=udp_sendto(client_pcb, pb,&DestIPaddr,SERVER_PORT);
-		adc_buf_offset+=UDP_ADC_PACKET_SIZE;
-		UDPPacket.id++;
-		delay(UDP_PACKET_SEND_DELAY);
-	}
+		while(adc_buf_offset<=(bufSize*sizeof(float)))
+		{
+			memcpy(&UDPPacket.data,((uint8_t*)buf+adc_buf_offset),UDP_ADC_PACKET_SIZE);
+			//err=udp_sendto(client_pcb, pb,&DestIPaddr,configInfo.IPAdress_Server.port);
+			err=udp_sendto(client_pcb, pb,&DestIPaddr,SERVER_PORT);
+			adc_buf_offset+=UDP_ADC_PACKET_SIZE;
+			UDPPacket.id++;
+			delay(UDP_PACKET_SEND_DELAY);
+			taskYIELD();
+		}
   }
 }
 
 
 void UDP_Send_Task( void *pvParameters )
 {
+	uint16_t result_buf_len=0;
 	while(1)
 	{
-		xSemaphoreTake( xAdcBuf_Send_Semaphore, portMAX_DELAY );
-		//vTaskDelay(1);
+		//xSemaphoreTake( xAdcBuf_Send_Semaphore, portMAX_DELAY );
+		vTaskDelay(10);
 		Tick1=uwTick;
-		ADC_ConvertBuf(ADC_buf_pnt,(ADC_BUF_LEN>>1),ADC_resultBuf);
+		ADC_ConvertBuf(ADC_buf_pnt,(ADC_BUF_LEN>>1),currentSPI3_ADC_Buf,currentSPI3_ADC_Buf,(SPI_ADC_BUF_LEN>>1),ADC_resultBuf, &result_buf_len);
 		Tick2=uwTick-Tick1;
 		Tick1=uwTick;
-		udp_client_send_buf();
+		udp_client_send_buf(ADC_resultBuf,result_buf_len);
 		Tick3=uwTick-Tick1;
 //		ADC_GetLastVal();
 	}

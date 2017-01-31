@@ -1,7 +1,7 @@
 #ifndef SPI_ADC_H
 #define SPI_ADC_H
 
-
+#define SPI_ADC_FREQ_DIV	4
 #define SPI_ADC_BUF_LEN	500
 typedef struct 
 {
