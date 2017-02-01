@@ -256,23 +256,71 @@ void ADC_ConvertBuf(uint8_t *dcmiBuf,uint16_t dcmiBufLen, uint16_t *spiBuf_1, ui
 //			out7.b15=byte.b6;
 //			out8.b15=byte.b7;
 
-			*(resultBuf+0)=a*out1.val+b;
-			*(resultBuf+1)=a*out2.val+b;
-			*(resultBuf+2)=a*out3.val+b;
-			*(resultBuf+3)=a*out4.val+b;
-			*(resultBuf+4)=a*(spiBuf_1[cycle_count/SPI_ADC_FREQ_DIV])+b;
-			*(resultBuf+5)=a*(spiBuf_2[cycle_count/SPI_ADC_FREQ_DIV])+b;
+		  uint8_t offset=0;
 			
-			configInfo.ConfigADC.calibrChannel[0].k;
-			
-			uint8_t i=0;
-			
-			for(i=0;i<ADC_CHN_NUM;i++)
+			if(configInfo.ConfigADC.channelMask&(0x1<<0))	
 			{
-					if(configInfo.ConfigADC.channelMask&0x1)
-					{
-					}
+				*(resultBuf+offset)=configInfo.ConfigADC.calibrChannel[0].k*out1.val+configInfo.ConfigADC.calibrChannel[0].b;
+				offset++;
 			}
+			
+			if(configInfo.ConfigADC.channelMask&(0x1<<1))	
+			{
+				*(resultBuf+offset)=configInfo.ConfigADC.calibrChannel[1].k*out2.val+configInfo.ConfigADC.calibrChannel[1].b;
+				offset++;
+			}
+			
+			if(configInfo.ConfigADC.channelMask&(0x1<<2))	
+			{
+				*(resultBuf+offset)=configInfo.ConfigADC.calibrChannel[2].k*out3.val+configInfo.ConfigADC.calibrChannel[2].b;
+				offset++;
+			}
+			
+			if(configInfo.ConfigADC.channelMask&(0x1<<3))	
+			{
+				*(resultBuf+offset)=configInfo.ConfigADC.calibrChannel[3].k*out4.val+configInfo.ConfigADC.calibrChannel[3].b;
+				offset++;
+			}
+			
+			if(configInfo.ConfigADC.channelMask&(0x1<<4))	
+			{
+				*(resultBuf+offset)=configInfo.ConfigADC.calibrChannel[4].k*(spiBuf_1[cycle_count/SPI_ADC_FREQ_DIV])+configInfo.ConfigADC.calibrChannel[4].b;
+				offset++;
+			}
+			
+			if(configInfo.ConfigADC.channelMask&(0x1<<5))	
+			{
+				*(resultBuf+offset)=configInfo.ConfigADC.calibrChannel[5].k*(spiBuf_2[cycle_count/SPI_ADC_FREQ_DIV])+configInfo.ConfigADC.calibrChannel[5].b;
+				offset++;
+			}
+		
+//			*(resultBuf+1)=a*out2.val+b;
+//			*(resultBuf+2)=a*out3.val+b;
+//			*(resultBuf+3)=a*out4.val+b;
+//			*(resultBuf+4)=a*(spiBuf_1[cycle_count/SPI_ADC_FREQ_DIV])+b;
+//			*(resultBuf+5)=a*(spiBuf_2[cycle_count/SPI_ADC_FREQ_DIV])+b;
+//			
+//			configInfo.ConfigADC.calibrChannel[0].k;
+			
+//			uint8_t chn_count=0,offset=0;
+//			
+//			for(chn_count=0;chn_count<ADC_CHN_NUM;chn_count++)
+//			{
+//					if(configInfo.ConfigADC.channelMask&(0x1<<chn_count))
+//					{
+//						if(chn_count<ADC_DCMI_CHN_NUM)
+//						{
+//							  resultBuf[offset]=
+
+//						}
+//						else
+//						{
+//								resultBuf[offset]=
+
+//						}
+//						offset++;
+//					}
+//			}
 			
 //			*(resultBuf+4)=a*out5.val+b;
 //			*(resultBuf+5)=a*out6.val+b;
@@ -286,6 +334,6 @@ void ADC_ConvertBuf(uint8_t *dcmiBuf,uint16_t dcmiBufLen, uint16_t *spiBuf_1, ui
 			resultBuf+=ADC_CHN_NUM;			
 	}
 	
-	*resultBufLen=cycle_count*6;
+	*resultBufLen=cycle_count*ADC_CHN_NUM;
 }
 

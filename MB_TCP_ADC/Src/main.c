@@ -51,6 +51,7 @@
 #include "udp_send.h"
 //#include "tcp_send.h"
 #include "adc_dcmi.h"
+#include "cfg_info.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -149,7 +150,7 @@ int main(void)
   MX_TIM9_Init();
 
   /* USER CODE BEGIN 2 */
-	
+//	ConfigInfoRead ();
 	DCMI_ADC_Init();
  
   /* USER CODE END 2 */
