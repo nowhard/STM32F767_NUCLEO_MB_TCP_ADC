@@ -11,7 +11,7 @@ LR_IROM1 (0x08000000) (0x8000)  {    ; load region size_region
 
 LR_IROM2 	(0x08000000+0x8000+0x8000+0x8000) (0x00200000-0x8000-0x8000-0x8000)  {    ; load region size_region
   ER_IROM2  (0x08000000+0x8000+0x8000+0x8000) (0x00200000-0x8000-0x8000-0x8000)  {  ; load address = execution address
-   ;*.o (RESET, +First)
+   *.o ;(RESET, +First)
    *(InRoot$$Sections)
    .ANY (+RO)
   }

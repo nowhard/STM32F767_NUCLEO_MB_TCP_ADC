@@ -47,7 +47,17 @@ static int FLASH_ErasePage (uint32_t * pageAddr)
 	// * Erase the Flash area * /
 	// * Fill EraseInit structure* /
 	EraseInitStruct.TypeErase   = FLASH_TYPEERASE_SECTORS;
-	EraseInitStruct.Sector = (uint32_t) pageAddr ;
+	
+  if((uint32_t) pageAddr==(uint32_t) &MyInfo)
+	{
+		EraseInitStruct.Sector = FLASH_SECTOR_1;
+	}
+	else
+	{
+		EraseInitStruct.Sector = FLASH_SECTOR_2;
+	}
+	
+	//EraseInitStruct.Sector = (uint32_t) pageAddr ;
 	EraseInitStruct.NbSectors     = 1;
 	if (HAL_FLASHEx_Erase(&EraseInitStruct, &PAGEError) != HAL_OK){					
 		HAL_FLASH_Lock(); 
@@ -70,7 +80,17 @@ static int FlashWrite_32(uint32_t * from, uint32_t * to, uint16_t cnt)
 	// * Erase the Flash area * /
 	// * Fill EraseInit structure* /
 	EraseInitStruct.TypeErase   = FLASH_TYPEERASE_SECTORS;
-	EraseInitStruct.Sector = (uint32_t) to ;
+	//EraseInitStruct.Sector = (uint32_t) to ;
+	
+	if((uint32_t) to ==(uint32_t) &MyInfo)
+	{
+		EraseInitStruct.Sector = FLASH_SECTOR_1;
+	}
+	else
+	{
+		EraseInitStruct.Sector = FLASH_SECTOR_2;
+	}
+	
 	EraseInitStruct.NbSectors     = 1;
 	if (HAL_FLASHEx_Erase(&EraseInitStruct, &PAGEError) != HAL_OK){					
 		HAL_FLASH_Lock(); 
