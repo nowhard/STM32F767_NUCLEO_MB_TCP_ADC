@@ -3,7 +3,7 @@
 <title>Static Call Graph - [MB_TCP_ADC\MB_TCP_ADC.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image MB_TCP_ADC\MB_TCP_ADC.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060020: Last Updated: Wed Feb 01 17:45:13 2017
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060020: Last Updated: Thu Feb 02 15:50:14 2017
 <BR><P>
 <H3>Maximum Stack Usage =        736 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -1671,7 +1671,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> mb.o(.data)
 </UL>
 <P><STRONG><a name="[1]"></a>eMBFuncReadInputRegister</STRONG> (Thumb, 140 bytes, Stack size 32 bytes, mbfuncinput.o(i.eMBFuncReadInputRegister))
-<BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = eMBFuncReadInputRegister &rArr; eMBRegInputCB
+<BR><BR>[Stack]<UL><LI>Max Depth = 52<LI>Call Chain = eMBFuncReadInputRegister &rArr; eMBRegInputCB
 </UL>
 <BR>[Calls]<UL><LI><a href="#[155]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBRegInputCB
 <LI><a href="#[152]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prveMBError2Exception
@@ -1746,7 +1746,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBFuncReadDiscreteInputs
 </UL>
 
-<P><STRONG><a name="[154]"></a>eMBRegHoldingCB</STRONG> (Thumb, 274 bytes, Stack size 32 bytes, mbfunc.o(i.eMBRegHoldingCB))
+<P><STRONG><a name="[154]"></a>eMBRegHoldingCB</STRONG> (Thumb, 578 bytes, Stack size 32 bytes, mbfunc.o(i.eMBRegHoldingCB))
 <BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = eMBRegHoldingCB &rArr; ConfigInfoWrite &rArr; FlashWrite_32 &rArr; HAL_FLASH_Program &rArr; FLASH_WaitForLastOperation
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ConfigInfoWrite
@@ -1757,8 +1757,8 @@ Global Symbols
 <LI><a href="#[2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBFuncReadHoldingRegister
 </UL>
 
-<P><STRONG><a name="[155]"></a>eMBRegInputCB</STRONG> (Thumb, 68 bytes, Stack size 16 bytes, mbfunc.o(i.eMBRegInputCB))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = eMBRegInputCB
+<P><STRONG><a name="[155]"></a>eMBRegInputCB</STRONG> (Thumb, 70 bytes, Stack size 20 bytes, mbfunc.o(i.eMBRegInputCB))
+<BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = eMBRegInputCB
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBFuncReadInputRegister
 </UL>

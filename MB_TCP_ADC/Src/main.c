@@ -151,20 +151,7 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
 	ConfigInfoRead ();
-//HAL_StatusTypeDef	flash_ok = HAL_ERROR;
-//	flash_ok = HAL_ERROR;
-//	while(flash_ok != HAL_OK){
-//		flash_ok = HAL_FLASH_Unlock();
-//	}
-//	//Стираем память
-//	FLASH_Erase_Sector(FLASH_SECTOR_1, VOLTAGE_RANGE_3);
-//	
-//	FLASH_Erase_Sector(FLASH_SECTOR_2, VOLTAGE_RANGE_3);
-// 
-//	flash_ok = HAL_ERROR;
-//	while(flash_ok != HAL_OK){
-//		flash_ok = HAL_FLASH_Lock();
-//	}
+
 
 	DCMI_ADC_Init();
  
