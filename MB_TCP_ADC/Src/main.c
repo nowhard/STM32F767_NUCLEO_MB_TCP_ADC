@@ -715,7 +715,7 @@ void StartDefaultTask(void const * argument)
 
   /* USER CODE BEGIN 5 */
 	MB_TCP_Init();
-	udp_client_init();
+	//udp_client_init();
 	//tcp_client_init();
   /* Infinite loop */
   for(;;)

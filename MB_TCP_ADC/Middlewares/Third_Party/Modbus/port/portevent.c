@@ -40,6 +40,7 @@
 /* ----------------------- Variables ----------------------------------------*/
 static QueueHandle_t xQueueHdl;
 
+BOOL xMBPortTCPPool( void );
 
 /* ----------------------- Start implementation -----------------------------*/
 BOOL
@@ -88,6 +89,10 @@ xMBPortEventGet( eMBEventType * peEvent )
     {
         xEventHappened = TRUE;
     }
+		else
+		{
+				(void)xMBPortTCPPool();
+		}
     return xEventHappened;
 }
 
