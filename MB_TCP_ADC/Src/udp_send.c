@@ -77,7 +77,7 @@ void udp_client_init(void)
   pb->payload = (uint8_t*)&UDPPacket;
 
 
-  xTaskCreate( UDP_Send_Task, "UDP Task", 2048, NULL, 2, NULL );
+  xTaskCreate( UDP_Send_Task, "UDP Task", 512, NULL, 2, NULL );
 }
 
 /*inline*/ void delay(uint32_t time)
@@ -101,7 +101,7 @@ void udp_client_send_buf(float *buf, uint16_t bufSize)
 			//err=udp_sendto(client_pcb, pb,&DestIPaddr,configInfo.IPAdress_Server.port);
 		  if( xSemaphoreTake( xNetMutex, portMAX_DELAY ) == pdTRUE )
 			{
-							err=udp_sendto(client_pcb, pb,&DestIPaddr,SERVER_PORT);
+							//err=udp_sendto(client_pcb, pb,&DestIPaddr,SERVER_PORT);
 							xSemaphoreGive( xNetMutex );
 			}
 			adc_buf_offset+=UDP_ADC_PACKET_SIZE;
@@ -120,12 +120,12 @@ void UDP_Send_Task( void *pvParameters )
 	{
 		//xSemaphoreTake( xAdcBuf_Send_Semaphore, portMAX_DELAY );
 		vTaskDelay(10);
-		Tick1=uwTick;
+		//Tick1=uwTick;
 		ADC_ConvertBuf(ADC_buf_pnt,(ADC_BUF_LEN>>1),currentSPI3_ADC_Buf,currentSPI3_ADC_Buf,(SPI_ADC_BUF_LEN>>1),ADC_resultBuf, &result_buf_len);
-		Tick2=uwTick-Tick1;
-		Tick1=uwTick;
+		//Tick2=uwTick-Tick1;
+		//Tick1=uwTick;
 		udp_client_send_buf(ADC_resultBuf,result_buf_len);
-		Tick3=uwTick-Tick1;
+		//Tick3=uwTick-Tick1;
 //		ADC_GetLastVal();
 	}
 }
