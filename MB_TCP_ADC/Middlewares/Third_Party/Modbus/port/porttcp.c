@@ -24,6 +24,9 @@
 
 #include "port.h"
 
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
 /* ----------------------- lwIP includes ------------------------------------*/
 #include "lwip/api.h"
 #include "lwip/tcp.h"
@@ -60,12 +63,17 @@ static err_t    prvxMBTCPPortReceive( void *pvArg, struct tcp_pcb *pxPCB, struct
 static void     prvvMBTCPPortError( void *pvArg, err_t xErr );
 
 /* ----------------------- Begin implementation -----------------------------*/
+
+SemaphoreHandle_t xNetMutex;
+
 BOOL
 xMBTCPPortInit( USHORT usTCPPort )
 {
     struct tcp_pcb *pxPCBListenNew, *pxPCBListenOld;
     BOOL            bOkay = FALSE;
     USHORT          usPort;
+	
+		xNetMutex= xSemaphoreCreateMutex();
 
     if( usTCPPort == 0 )
     {
@@ -310,21 +318,24 @@ xMBTCPPortSendResponse( const UCHAR * pucMBTCPFrame, USHORT usTCPLength )
     {
         /* Make sure we can send the packet. */
         assert( tcp_sndbuf( pxPCBClient ) >= usTCPLength );
-
-        if( tcp_write( pxPCBClient, pucMBTCPFrame, ( u16_t ) usTCPLength, TCP_WRITE_FLAG_COPY ) == ERR_OK )
-        {
-#ifdef MB_TCP_DEBUG
-            prvvMBTCPLogFrame( "MBTCP-SENT", &aucTCPBuf[0], usTCPLength );
-#endif
-            /* Make sure data gets sent immediately. */
-            ( void )tcp_output( pxPCBClient );
-            bFrameSent = TRUE;
-        }
-        else
-        {
-            /* Drop the connection in case of an write error. */
-            prvvMBPortReleaseClient( pxPCBClient );
-        }
+				if( xSemaphoreTake( xNetMutex, portMAX_DELAY ) == pdTRUE )
+				{
+						if( tcp_write( pxPCBClient, pucMBTCPFrame, ( u16_t ) usTCPLength, TCP_WRITE_FLAG_COPY ) == ERR_OK )
+						{
+		#ifdef MB_TCP_DEBUG
+								prvvMBTCPLogFrame( "MBTCP-SENT", &aucTCPBuf[0], usTCPLength );
+		#endif
+								/* Make sure data gets sent immediately. */
+								( void )tcp_output( pxPCBClient );
+								bFrameSent = TRUE;
+						}
+						else
+						{
+								/* Drop the connection in case of an write error. */
+								prvvMBPortReleaseClient( pxPCBClient );
+						}
+						xSemaphoreGive( xNetMutex );
+			}
     }
     return bFrameSent;
 }

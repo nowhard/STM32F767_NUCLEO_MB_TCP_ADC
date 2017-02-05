@@ -4,7 +4,7 @@
 #include "mb.h"
 #include "mbtcp.h"
 
-#define MB_TCP_TASK_STACK_SIZE	1280
+#define MB_TCP_TASK_STACK_SIZE	2048
 static uint8_t Vendor[] = "GEOS";
 
 void MB_TCP_Task(void *pvParameters);

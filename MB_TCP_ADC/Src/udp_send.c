@@ -42,6 +42,7 @@ extern uint16_t *currentSPI6_ADC_Buf;
 
 
 extern SemaphoreHandle_t xAdcBuf_Send_Semaphore;
+extern SemaphoreHandle_t xNetMutex;
 
 void UDP_Send_Task( void *pvParameters );
 /*inline*/ void delay(uint32_t time);
@@ -76,7 +77,7 @@ void udp_client_init(void)
   pb->payload = (uint8_t*)&UDPPacket;
 
 
-  xTaskCreate( UDP_Send_Task, "UDP Task", 768, NULL, 2, NULL );
+  xTaskCreate( UDP_Send_Task, "UDP Task", 2048, NULL, 2, NULL );
 }
 
 /*inline*/ void delay(uint32_t time)
@@ -98,7 +99,11 @@ void udp_client_send_buf(float *buf, uint16_t bufSize)
 		{
 			memcpy(&UDPPacket.data,((uint8_t*)buf+adc_buf_offset),UDP_ADC_PACKET_SIZE);
 			//err=udp_sendto(client_pcb, pb,&DestIPaddr,configInfo.IPAdress_Server.port);
-			err=udp_sendto(client_pcb, pb,&DestIPaddr,SERVER_PORT);
+		  if( xSemaphoreTake( xNetMutex, portMAX_DELAY ) == pdTRUE )
+			{
+							err=udp_sendto(client_pcb, pb,&DestIPaddr,SERVER_PORT);
+							xSemaphoreGive( xNetMutex );
+			}
 			adc_buf_offset+=UDP_ADC_PACKET_SIZE;
 			UDPPacket.id++;
 			delay(UDP_PACKET_SEND_DELAY);
