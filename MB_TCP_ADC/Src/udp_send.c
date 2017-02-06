@@ -60,7 +60,7 @@ stPacket UDPPacket;
 
 //extern sConfigInfo configInfo;
 
-#define ADC_RESULT_BUF_LEN (ADC_BUF_LEN/4)
+//#define ADC_RESULT_BUF_LEN (ADC_BUF_LEN/4)
 
 /*uint16_t*/float ADC_resultBuf[ADC_RESULT_BUF_LEN];
 
@@ -98,12 +98,12 @@ void udp_client_send_buf(float *buf, uint16_t bufSize)
 		while(adc_buf_offset<=(bufSize*sizeof(float)))
 		{
 			memcpy(&UDPPacket.data,((uint8_t*)buf+adc_buf_offset),UDP_ADC_PACKET_SIZE);
-			//err=udp_sendto(client_pcb, pb,&DestIPaddr,configInfo.IPAdress_Server.port);
-		  if( xSemaphoreTake( xNetMutex, portMAX_DELAY ) == pdTRUE )
-			{
-							//err=udp_sendto(client_pcb, pb,&DestIPaddr,SERVER_PORT);
-							xSemaphoreGive( xNetMutex );
-			}
+			err=udp_sendto(client_pcb, pb,&DestIPaddr,configInfo.IPAdress_Server.port);
+//		  if( xSemaphoreTake( xNetMutex, portMAX_DELAY ) == pdTRUE )
+//			{
+//							//err=udp_sendto(client_pcb, pb,&DestIPaddr,SERVER_PORT);
+//							xSemaphoreGive( xNetMutex );
+//			}
 			adc_buf_offset+=UDP_ADC_PACKET_SIZE;
 			UDPPacket.id++;
 			delay(UDP_PACKET_SEND_DELAY);

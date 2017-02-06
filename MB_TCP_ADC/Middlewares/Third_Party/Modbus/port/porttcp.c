@@ -318,7 +318,7 @@ xMBTCPPortSendResponse( const UCHAR * pucMBTCPFrame, USHORT usTCPLength )
     {
         /* Make sure we can send the packet. */
         assert( tcp_sndbuf( pxPCBClient ) >= usTCPLength );
-				if( xSemaphoreTake( xNetMutex, portMAX_DELAY ) == pdTRUE )
+//				if( xSemaphoreTake( xNetMutex, portMAX_DELAY ) == pdTRUE )
 				{
 						if( tcp_write( pxPCBClient, pucMBTCPFrame, ( u16_t ) usTCPLength, TCP_WRITE_FLAG_COPY ) == ERR_OK )
 						{
@@ -334,7 +334,7 @@ xMBTCPPortSendResponse( const UCHAR * pucMBTCPFrame, USHORT usTCPLength )
 								/* Drop the connection in case of an write error. */
 								prvvMBPortReleaseClient( pxPCBClient );
 						}
-						xSemaphoreGive( xNetMutex );
+//						xSemaphoreGive( xNetMutex );
 			}
     }
     return bFrameSent;

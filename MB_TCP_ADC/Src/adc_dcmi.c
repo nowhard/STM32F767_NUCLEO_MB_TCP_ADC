@@ -43,6 +43,13 @@ uint64_t DCMI_ADC_GetLastTimestamp(void)
 	return timestamp;
 }
 
+void DCMI_ADC_ResetTimestamp(void)
+{
+		TIM5->CNT=0;
+		TIM4->CNT=0;
+		timestamp=0;
+}
+
 void DCMI_DMA_HalfTransferCallback(void)
 {
 		timestamp=((((uint64_t)(TIM5->CNT))<<16)|TIM4->CNT);

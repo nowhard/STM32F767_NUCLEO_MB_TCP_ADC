@@ -2,6 +2,8 @@
 #include "mb.h"
 #include "mbtcp.h"
 #include "cfg_info.h"
+#include "adc_dcmi.h"
+#include "udp_send.h"
 //#include "main.h"
 
 
@@ -32,6 +34,8 @@ static USHORT   usRegInputBuf[REG_INPUT_NREGS];
 static USHORT   usRegHoldingStart = REG_HOLDING_START;
 static USHORT   usRegHoldingBuf[REG_HOLDING_NREGS];
 
+extern float ADC_resultBuf[ADC_RESULT_BUF_LEN];
+
 eMBErrorCode
 eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 {
@@ -49,13 +53,13 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
     {
         iRegIndex = ( int )( usAddress - usRegInputStart );
 			
-//			*((float*)&usRegInputBuf[ADC_CHANNEL_0_RESULT])=;
-//			*((float*)&usRegInputBuf[ADC_CHANNEL_1_RESULT])=;
-//			*((float*)&usRegInputBuf[ADC_CHANNEL_2_RESULT])=;
-//			*((float*)&usRegInputBuf[ADC_CHANNEL_3_RESULT])=;
-//			*((float*)&usRegInputBuf[ADC_CHANNEL_4_RESULT])=;
-//			*((float*)&usRegInputBuf[ADC_CHANNEL_5_RESULT])=;
-//			*((uint64_t*)&usRegInputBuf[TIMESTAMP_CURRENT])=;
+			*((float*)&usRegInputBuf[ADC_CHANNEL_0_RESULT])=ADC_resultBuf[0];
+			*((float*)&usRegInputBuf[ADC_CHANNEL_1_RESULT])=ADC_resultBuf[1];
+			*((float*)&usRegInputBuf[ADC_CHANNEL_2_RESULT])=ADC_resultBuf[2];
+			*((float*)&usRegInputBuf[ADC_CHANNEL_3_RESULT])=ADC_resultBuf[3];
+			*((float*)&usRegInputBuf[ADC_CHANNEL_4_RESULT])=ADC_resultBuf[4];
+			*((float*)&usRegInputBuf[ADC_CHANNEL_5_RESULT])=ADC_resultBuf[5];
+			*((uint64_t*)&usRegInputBuf[TIMESTAMP_CURRENT])=DCMI_ADC_GetLastTimestamp();
 			
         while( usNRegs > 0 )
         {
@@ -204,6 +208,12 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 					
 					configInfo.ConfigADC.calibrChannel[5].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_K]);
 					configInfo.ConfigADC.calibrChannel[5].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_B]);
+					
+					if(usRegHoldingBuf[DEV_RESET_TIMESTAMP])//reset timestamp
+					{
+							DCMI_ADC_ResetTimestamp();
+							usRegHoldingBuf[DEV_RESET_TIMESTAMP]=0;
+					}
 
             ConfigInfoWrite();
 
