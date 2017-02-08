@@ -8,5 +8,6 @@
 void DCMI_ADC_Init(void);
 uint64_t DCMI_ADC_GetLastTimestamp(void);
 void DCMI_ADC_ResetTimestamp(void);
+void DCMI_ADC_SetSamplerate(uint32_t sampleRate);
 
 #endif

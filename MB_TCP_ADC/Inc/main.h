@@ -124,6 +124,8 @@
 #define ADC_CHN_NUM 6
 #define ADC_BUF_LEN 32000
 
+#define ADC_DCMI_MAX_SAMPLERATE		100000
+
 /* USER CODE END Private defines */
 
 /**

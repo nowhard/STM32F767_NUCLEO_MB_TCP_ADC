@@ -37,6 +37,32 @@ void DCMI_ADC_Init(void)
 	HAL_DMA_RegisterCallback(&hdma_dcmi,HAL_DMA_XFER_CPLT_CB_ID,DCMI_DMA_TransferCallback);
 }
 
+void DCMI_ADC_SetSamplerate(uint32_t sampleRate)
+{
+  TIM_ClockConfigTypeDef sClockSourceConfig;
+  TIM_MasterConfigTypeDef sMasterConfig;
+  TIM_OC_InitTypeDef sConfigOC;
+	if(sampleRate>ADC_DCMI_MAX_SAMPLERATE)
+	{
+			return;
+	}
+		
+	configInfo.ConfigADC.sampleRate=sampleRate;
+	
+	uint16_t period=(uint16_t)((108000000/sampleRate)-1);
+	
+  htim2.Instance = TIM2;
+  htim2.Init.Prescaler = 0;
+  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim2.Init.Period = period;
+  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  HAL_TIM_Base_Init(&htim2);
+}
+
+uint32_t DCMI_ADC_GetSamplerate(void)
+{
+		return configInfo.ConfigADC.sampleRate;
+}
 
 uint64_t DCMI_ADC_GetLastTimestamp(void)
 {

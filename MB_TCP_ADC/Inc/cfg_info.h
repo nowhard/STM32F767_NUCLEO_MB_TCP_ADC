@@ -48,6 +48,7 @@ typedef struct
 typedef struct
 {
 	uint8_t channelMask;
+	uint32_t sampleRate;
 	stCalibrChannel calibrChannel[ADC_CHN_NUM];
 } sConfigADC;
 

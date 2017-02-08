@@ -104,8 +104,14 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 #define ADC_CHANNEL_4_B				28
 #define ADC_CHANNEL_5_K				30
 #define ADC_CHANNEL_5_B				32
+
+#define ADC_SAMPLERATE				34 //0-100000
+#drfine ADC_START							36
+
+//--------BITFIELDS------------------------
+#define DEV_SET_OUTPUTS				37
 //--------SYNC DEV REGS--------------------
-#define DEV_RESET_TIMESTAMP		34
+#define DEV_RESET_TIMESTAMP		41
 
 
 eMBErrorCode
