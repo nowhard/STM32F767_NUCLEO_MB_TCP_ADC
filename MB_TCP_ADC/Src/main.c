@@ -697,8 +697,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : ENABLE_OUT_1_Pin GPIO0_ADC_Pin */
-  GPIO_InitStruct.Pin = ENABLE_OUT_1_Pin|GPIO0_ADC_Pin;
+  /*Configure GPIO pins : ENABLE_OUT_1_Pin GPIO0_ADC_Pin BUSE_SIG_Pin */
+  GPIO_InitStruct.Pin = ENABLE_OUT_1_Pin|GPIO0_ADC_Pin|BUSE_SIG_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -713,10 +713,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : FAULT_250A_Pin EN_VCC_7_5_Pin EN_VCC_250_Pin EN_VCC_75_Pin 
-                           EN_VCC_150_Pin */
-  GPIO_InitStruct.Pin = FAULT_250A_Pin|EN_VCC_7_5_Pin|EN_VCC_250_Pin|EN_VCC_75_Pin 
-                          |EN_VCC_150_Pin;
+  /*Configure GPIO pins : TEST_75_Pin FAULT_250A_Pin TEST_7_5_Pin EN_VCC_7_5_Pin 
+                           EN_VCC_250_Pin EN_VCC_75_Pin EN_VCC_150_Pin */
+  GPIO_InitStruct.Pin = TEST_75_Pin|FAULT_250A_Pin|TEST_7_5_Pin|EN_VCC_7_5_Pin 
+                          |EN_VCC_250_Pin|EN_VCC_75_Pin|EN_VCC_150_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -773,15 +773,15 @@ static void MX_GPIO_Init(void)
                           |STROB_Pin|TEST_250_Pin|TEST_150_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, ENABLE_OUT_1_Pin|GPIO0_ADC_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, ENABLE_OUT_1_Pin|GPIO0_ADC_Pin|BUSE_SIG_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOG, ADR6_Pin|ENABLE_AIR_Pin|AIR_CS_Pin|USB_PowerSwitchOn_Pin 
                           |ADR7_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOE, FAULT_250A_Pin|EN_VCC_7_5_Pin|EN_VCC_250_Pin|EN_VCC_75_Pin 
-                          |EN_VCC_150_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOE, TEST_75_Pin|FAULT_250A_Pin|TEST_7_5_Pin|EN_VCC_7_5_Pin 
+                          |EN_VCC_250_Pin|EN_VCC_75_Pin|EN_VCC_150_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOD, FAULT_150A_Pin|FAULT_75A_Pin|FAULT_7_5A_Pin|ADR5_Pin 

@@ -101,8 +101,12 @@
 #define TEST_150_GPIO_Port GPIOF
 #define ADR6_Pin GPIO_PIN_0
 #define ADR6_GPIO_Port GPIOG
+#define TEST_75_Pin GPIO_PIN_9
+#define TEST_75_GPIO_Port GPIOE
 #define FAULT_250A_Pin GPIO_PIN_10
 #define FAULT_250A_GPIO_Port GPIOE
+#define TEST_7_5_Pin GPIO_PIN_11
+#define TEST_7_5_GPIO_Port GPIOE
 #define EN_VCC_7_5_Pin GPIO_PIN_12
 #define EN_VCC_7_5_GPIO_Port GPIOE
 #define EN_VCC_250_Pin GPIO_PIN_13
@@ -113,6 +117,10 @@
 #define EN_VCC_150_GPIO_Port GPIOE
 #define RMII_TXD1_Pin GPIO_PIN_13
 #define RMII_TXD1_GPIO_Port GPIOB
+#define USART_TX_Pin GPIO_PIN_14
+#define USART_TX_GPIO_Port GPIOB
+#define USART_RX_Pin GPIO_PIN_15
+#define USART_RX_GPIO_Port GPIOB
 #define STLK_RX_Pin GPIO_PIN_8
 #define STLK_RX_GPIO_Port GPIOD
 #define STLK_TX_Pin GPIO_PIN_9
@@ -149,6 +157,8 @@
 #define AIR_SCLK_GPIO_Port GPIOC
 #define AIR_MISO_Pin GPIO_PIN_11
 #define AIR_MISO_GPIO_Port GPIOC
+#define BUSE_SIG_Pin GPIO_PIN_12
+#define BUSE_SIG_GPIO_Port GPIOC
 #define ADR5_Pin GPIO_PIN_0
 #define ADR5_GPIO_Port GPIOD
 #define ADR4_Pin GPIO_PIN_1
