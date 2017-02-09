@@ -1078,6 +1078,11 @@
               <FileType>1</FileType>
               <FilePath>..\Src\cfg_info.c</FilePath>
             </File>
+            <File>
+              <FileName>discret_out.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\discret_out.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
