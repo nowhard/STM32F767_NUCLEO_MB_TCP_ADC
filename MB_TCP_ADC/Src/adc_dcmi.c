@@ -9,9 +9,10 @@
 #include "task.h"
 #include "semphr.h"
 #include "queue.h"
+#include "cfg_info.h"
 
 extern DMA_HandleTypeDef hdma_dcmi;
-
+extern TIM_HandleTypeDef htim2;
 
 
 #define RX_BUFF_SIZE	ADC_BUF_LEN
@@ -24,6 +25,8 @@ uint64_t timestamp=0;
 
 SemaphoreHandle_t xAdcBuf_Send_Semaphore=NULL;
 QueueHandle_t xADC_MB_Queue;
+
+extern sConfigInfo configInfo;
 
 void Timestamp_Init(void);
 void DCMI_DMA_HalfTransferCallback(void);

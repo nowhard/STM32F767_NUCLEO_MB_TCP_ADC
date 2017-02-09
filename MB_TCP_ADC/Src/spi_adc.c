@@ -26,8 +26,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	{
 		HAL_SPI_Receive_DMA(&hspi3, spi3_buf, 3);
 		HAL_SPI_Receive_DMA(&hspi6, spi6_buf, 3);
-	
-		HAL_GPIO_TogglePin(TEST_GPIO_Port, TEST_Pin);
 	} 
 }
 

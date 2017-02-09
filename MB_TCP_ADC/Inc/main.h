@@ -71,8 +71,12 @@
 #define STROB_GPIO_Port GPIOF
 #define CLK_Pin GPIO_PIN_7
 #define CLK_GPIO_Port GPIOF
+#define FAULT_OUT_1_Pin GPIO_PIN_8
+#define FAULT_OUT_1_GPIO_Port GPIOF
 #define DATALED_Pin GPIO_PIN_9
 #define DATALED_GPIO_Port GPIOF
+#define FAULT_OUT_7_Pin GPIO_PIN_10
+#define FAULT_OUT_7_GPIO_Port GPIOF
 #define MCO_Pin GPIO_PIN_0
 #define MCO_GPIO_Port GPIOH
 #define ENABLE_OUT_1_Pin GPIO_PIN_0
@@ -101,6 +105,8 @@
 #define TEST_150_GPIO_Port GPIOF
 #define ADR6_Pin GPIO_PIN_0
 #define ADR6_GPIO_Port GPIOG
+#define OE_Pin GPIO_PIN_7
+#define OE_GPIO_Port GPIOE
 #define TEST_75_Pin GPIO_PIN_9
 #define TEST_75_GPIO_Port GPIOE
 #define FAULT_250A_Pin GPIO_PIN_10
@@ -175,6 +181,8 @@
 #define GPIO4_ADC_GPIO_Port GPIOD
 #define ADR7_Pin GPIO_PIN_9
 #define ADR7_GPIO_Port GPIOG
+#define U_CS_Pin GPIO_PIN_10
+#define U_CS_GPIO_Port GPIOG
 #define RMII_TX_EN_Pin GPIO_PIN_11
 #define RMII_TX_EN_GPIO_Port GPIOG
 #define U_MISO_Pin GPIO_PIN_12

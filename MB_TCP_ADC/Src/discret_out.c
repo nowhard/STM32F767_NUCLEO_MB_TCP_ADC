@@ -1,4 +1,8 @@
 #include "discret_out.h"
+#include "main.h"
+
+#include "stm32f7xx_hal.h"
+#include "stm32f7xx.h"
 
 typedef enum
 {
@@ -6,34 +10,37 @@ typedef enum
   DISCR_OUT_ENABLE
 }enDiscrOutState;
 
+extern SPI_HandleTypeDef hspi5;
+extern DMA_HandleTypeDef hdma_spi5_tx;
+
+void SPI5_DMA_TransferCallback(void);
+
+void DiscretOutputs_Init(void)
+{
+		HAL_GPIO_WritePin(STROB_GPIO_Port, STROB_Pin, GPIO_PIN_RESET);
+		HAL_DMA_RegisterCallback(&hdma_spi5_tx,HAL_DMA_XFER_CPLT_CB_ID,(void*)SPI5_DMA_TransferCallback);
+}
+
 void DiscretOutputs_Enable(enDiscrOutState DiscrOutState)
 {
 	if(DiscrOutState==DISCR_OUT_ENABLE)	
 	{
-		HAL_GPIO_WritePin(OE_PORT, OE_PIN, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(OE_GPIO_Port, OE_Pin, GPIO_PIN_SET);
 	}
 	else
 	{
-		HAL_GPIO_WritePin(OE_PORT, OE_PIN, GPIO_PIN_RESET);	
+		HAL_GPIO_WritePin(OE_GPIO_Port, OE_Pin, GPIO_PIN_RESET);	
 	}
 }
 
 void DiscretOutputs_Set(uint64_t discrOut)
 {
-	uint8_t dsc_out_cnt=0;
-	HAL_GPIO_WritePin(DATALED_PORT, DATALED_PIN, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(CLK_PORT, CLK_PIN, GPIO_PIN_RESET);
-	
-	for(dsc_out_cnt=0;dsc_out_cnt<DISCRET_OUT_NUM;dsc_out_cnt++)
-	{
-			HAL_GPIO_WritePin(DATALED_PORT, DATALED_PIN, discrOut&0x1);
-			HAL_GPIO_WritePin(CLK_PORT, CLK_PIN, GPIO_PIN_SET);
-			//delay
-			HAL_GPIO_WritePin(CLK_PORT, CLK_PIN, GPIO_PIN_RESET);
-			discrOut>>1;
-	}
-	
-	HAL_GPIO_WritePin(STROB_PORT, STROB_PIN, GPIO_PIN_SET);
-			//delay
-	HAL_GPIO_WritePin(STROB_PORT, STROB_PIN, GPIO_PIN_RESET);
+	HAL_SPI_Transmit_DMA(&hspi5, (uint8_t*)&discrOut, 6);
+}
+
+void SPI5_DMA_TransferCallback(void)
+{
+	HAL_GPIO_WritePin(STROB_GPIO_Port, STROB_Pin, GPIO_PIN_SET);
+	//dly??
+	HAL_GPIO_WritePin(STROB_GPIO_Port, STROB_Pin, GPIO_PIN_RESET);	
 }
