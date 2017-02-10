@@ -30,8 +30,8 @@ ip_addr_t DestIPaddr;
 
 //extern uint16_t *ADC_buf_pnt;
 
-extern __IO uint32_t uwTick;
-uint32_t Tick1,Tick2,Tick3;
+//extern __IO uint32_t uwTick;
+//uint32_t Tick1,Tick2,Tick3;
 
 extern uint8_t *ADC_buf_pnt;
 extern __IO uint8_t DCMIAdcRxBuff[ADC_BUF_LEN];
@@ -119,13 +119,9 @@ void UDP_Send_Task( void *pvParameters )
 	while(1)
 	{
 		//xSemaphoreTake( xAdcBuf_Send_Semaphore, portMAX_DELAY );
-		vTaskDelay(10);
-		//Tick1=uwTick;
+		vTaskDelay(10);//тестирование системы
 		ADC_ConvertBuf(ADC_buf_pnt,(ADC_BUF_LEN>>1),currentSPI3_ADC_Buf,currentSPI3_ADC_Buf,(SPI_ADC_BUF_LEN>>1),ADC_resultBuf, &result_buf_len);
-		//Tick2=uwTick-Tick1;
-		//Tick1=uwTick;
 		udp_client_send_buf(ADC_resultBuf,result_buf_len);
-		//Tick3=uwTick-Tick1;
 //		ADC_GetLastVal();
 	}
 }

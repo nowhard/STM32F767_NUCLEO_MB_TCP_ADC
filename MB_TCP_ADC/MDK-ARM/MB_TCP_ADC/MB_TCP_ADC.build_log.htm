@@ -22,44 +22,12 @@ Dialog DLL:      TCM.DLL V1.14.5.0
  
 <h2>Project:</h2>
 D:\PROJECTS\GIT_REPOSITORY\STM32\STM32F767_NUCLEO_MB_TCP_ADC\MB_TCP_ADC\MDK-ARM\MB_TCP_ADC.uvprojx
-Project File Date:  02/06/2017
+Project File Date:  02/10/2017
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 (build 20)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'MB_TCP_ADC'
-compiling main.c...
-compiling mbfunc.c...
-../Inc/mbfunc.h(50): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\Src\mbfunc.c(44): warning:  #177-D: variable "i" was declared but never referenced
-      uint8_t i=0;
-..\Src\mbfunc.c(192): warning:  #1441-D: nonstandard cast on lvalue
-                                         (uint16_t)configInfo.ConfigADC.channelMask=usRegHoldingBuf[
-DC_CHANNEL_MASK_REG];
-..\Src\mbfunc.c: 3 warnings, 0 errors
-compiling udp_send.c...
-../Inc/spi_adc.h(16): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\Src\udp_send.c(69): warning:  #513-D: a value of type "volatile uint8_t *" cannot be assigned to an entity of type "uint8_t *"
-        ADC_buf_pnt=DCMIAdcRxBuff;
-..\Src\udp_send.c(91): warning:  #550-D: variable "err" was set but never used
-    err_t err;
-..\Src\udp_send.c: 3 warnings, 0 errors
-compiling adc_dcmi.c...
-..\Src\adc_dcmi.c(36): warning:  #167-D: argument of type "void (*)(void)" is incompatible with parameter of type "void (*)(DMA_HandleTypeDef *)"
-        HAL_DMA_RegisterCallback(&hdma_dcmi,HAL_DMA_XFER_HALFCPLT_CB_ID,DCMI_DMA_HalfTransferCallback);
-..\Src\adc_dcmi.c(37): warning:  #167-D: argument of type "void (*)(void)" is incompatible with parameter of type "void (*)(DMA_HandleTypeDef *)"
-        HAL_DMA_RegisterCallback(&hdma_dcmi,HAL_DMA_XFER_CPLT_CB_ID,DCMI_DMA_TransferCallback);
-..\Src\adc_dcmi.c(56): warning:  #513-D: a value of type "volatile uint8_t *" cannot be assigned to an entity of type "uint8_t *"
-                ADC_buf_pnt=&DCMIAdcRxBuff[0];
-..\Src\adc_dcmi.c(63): warning:  #513-D: a value of type "volatile uint8_t *" cannot be assigned to an entity of type "uint8_t *"
-          ADC_buf_pnt=&DCMIAdcRxBuff[
-DC_BUF_LEN>>1];
-..\Src\adc_dcmi.c: 4 warnings, 0 errors
-linking...
-Program Size: Code=65108 RO-data=1168 RW-data=864 ZI-data=161112  
-FromELF: creating hex file...
-"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 10 Warning(s).
+"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 0 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -77,7 +45,7 @@ Package Vendor: ARM
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:4.1.0
-Build Time Elapsed:  00:01:41
+Build Time Elapsed:  00:00:05
 </pre>
 </body>
 </html>

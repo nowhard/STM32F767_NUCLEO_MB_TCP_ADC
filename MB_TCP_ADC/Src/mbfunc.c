@@ -4,6 +4,7 @@
 #include "cfg_info.h"
 #include "adc_dcmi.h"
 #include "udp_send.h"
+#include "discrete_out.h"
 //#include "main.h"
 
 
@@ -106,7 +107,7 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 #define ADC_CHANNEL_5_B				32
 
 #define ADC_SAMPLERATE				34 //0-100000
-#drfine ADC_START							36
+#define ADC_STARTED						36
 
 //--------BITFIELDS------------------------
 #define DEV_SET_OUTPUTS				37
@@ -214,6 +215,17 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 					
 					configInfo.ConfigADC.calibrChannel[5].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_K]);
 					configInfo.ConfigADC.calibrChannel[5].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_B]);
+					
+					
+					
+					if(usRegHoldingBuf[ADC_STARTED])
+					{
+							DCMI_ADC_Clock_Start();
+					}
+					else
+					{
+							DCMI_ADC_Clock_Stop();
+					}
 					
 					if(usRegHoldingBuf[DEV_RESET_TIMESTAMP])//reset timestamp
 					{

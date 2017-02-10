@@ -116,6 +116,7 @@
 "mb_tcp_adc\spi_adc.o"
 "mb_tcp_adc\adc_dcmi.o"
 "mb_tcp_adc\cfg_info.o"
+"mb_tcp_adc\discret_out.o"
 "mb_tcp_adc\mb.o"
 "mb_tcp_adc\mbtcp.o"
 "mb_tcp_adc\portevent.o"

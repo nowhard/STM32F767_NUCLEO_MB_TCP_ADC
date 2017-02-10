@@ -79,6 +79,16 @@ void DCMI_ADC_ResetTimestamp(void)
 		timestamp=0;
 }
 
+void DCMI_ADC_Clock_Start(void)
+{
+		HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
+}
+
+void DCMI_ADC_Clock_Stop(void)
+{
+		HAL_TIM_PWM_Stop(&htim2,TIM_CHANNEL_1);
+}
+
 void DCMI_DMA_HalfTransferCallback(void)
 {
 		timestamp=((((uint64_t)(TIM5->CNT))<<16)|TIM4->CNT);

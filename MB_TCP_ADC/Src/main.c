@@ -155,7 +155,7 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
 	ConfigInfoRead ();
-
+	DiscretOutputs_Init();
 
 	DCMI_ADC_Init();
  
@@ -197,7 +197,7 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
-		HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
+		//HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
 		HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_2);
 		HAL_TIM_Base_Start_IT(&htim9);
 		HAL_DCMI_Start_DMA(&hdcmi,DCMI_MODE_CONTINUOUS,(uint32_t)DCMIAdcRxBuff,ADC_BUF_LEN);
@@ -675,28 +675,6 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOF, ADR0_Pin|ADR1_Pin|ADR2_Pin|ADR3_Pin 
-                          |STROB_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, ENABLE_OUT_1_Pin|GPIO0_ADC_Pin|BUSE_SIG_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOG, ADR6_Pin|ENABLE_AIR_Pin|AIR_CS_Pin|USB_PowerSwitchOn_Pin 
-                          |ADR7_Pin|U_CS_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOE, OE_Pin|EN_VCC_7_5_Pin|EN_VCC_250_Pin|EN_VCC_75_Pin 
-                          |EN_VCC_150_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(BUSE_SYNC_GPIO_Port, BUSE_SYNC_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, ADR5_Pin|ADR4_Pin|ENABLE_OUT_7_Pin|GPIO1_ADC_Pin 
-                          |GPIO2_ADC_Pin|GPIO3_ADC_Pin|GPIO4_ADC_Pin, GPIO_PIN_RESET);
-
   /*Configure GPIO pin : User_Blue_Button_Pin */
   GPIO_InitStruct.Pin = User_Blue_Button_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
@@ -803,6 +781,28 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(SIG_SYNC_TIM_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOF, ADR0_Pin|ADR1_Pin|ADR2_Pin|ADR3_Pin 
+                          |STROB_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOC, ENABLE_OUT_1_Pin|GPIO0_ADC_Pin|BUSE_SIG_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOG, ADR6_Pin|ENABLE_AIR_Pin|AIR_CS_Pin|USB_PowerSwitchOn_Pin 
+                          |ADR7_Pin|U_CS_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOE, OE_Pin|EN_VCC_7_5_Pin|EN_VCC_250_Pin|EN_VCC_75_Pin 
+                          |EN_VCC_150_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(BUSE_SYNC_GPIO_Port, BUSE_SYNC_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOD, ADR5_Pin|ADR4_Pin|ENABLE_OUT_7_Pin|GPIO1_ADC_Pin 
+                          |GPIO2_ADC_Pin|GPIO3_ADC_Pin|GPIO4_ADC_Pin, GPIO_PIN_RESET);
 
   /* EXTI interrupt init*/
   HAL_NVIC_SetPriority(EXTI9_5_IRQn, 5, 0);
