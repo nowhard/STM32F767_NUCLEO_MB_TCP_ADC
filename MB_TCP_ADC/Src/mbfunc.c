@@ -4,7 +4,7 @@
 #include "cfg_info.h"
 #include "adc_dcmi.h"
 #include "udp_send.h"
-#include "discrete_out.h"
+#include "discret_out.h"
 //#include "main.h"
 
 
@@ -180,61 +180,184 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
             {
                 usRegHoldingBuf[iRegIndex] = *pucRegBuffer++ << 8;
                 usRegHoldingBuf[iRegIndex] |= *pucRegBuffer++;
-                iRegIndex++;
-                usNRegs--;
+                
+								switch(iRegIndex)
+								{
+									case SERVER_IP_REG_0:
+									{
+											configInfo.IPAdress_Server.ip_addr_0=usRegHoldingBuf[SERVER_IP_REG_0];
+									}
+									break;
+									
+									case SERVER_IP_REG_1:
+									{
+										  configInfo.IPAdress_Server.ip_addr_1=usRegHoldingBuf[SERVER_IP_REG_1];
+									}
+									break;
+									
+									case SERVER_IP_REG_2:
+									{
+											configInfo.IPAdress_Server.ip_addr_2=usRegHoldingBuf[SERVER_IP_REG_2];
+									}
+									break;	
+
+									case SERVER_IP_REG_3:
+									{
+											configInfo.IPAdress_Server.ip_addr_3=usRegHoldingBuf[SERVER_IP_REG_3];
+									}
+									break;
+
+									case SERVER_PORT_REG_0:
+									{
+											configInfo.IPAdress_Server.port=usRegHoldingBuf[SERVER_PORT_REG_0];
+									}
+									break;
+
+									case CLIENT_IP_REG_0:
+									{
+											configInfo.IPAdress_Client.ip_addr_0=usRegHoldingBuf[CLIENT_IP_REG_0];
+									}
+									break;	
+
+									case CLIENT_IP_REG_1:
+									{
+											configInfo.IPAdress_Client.ip_addr_1=usRegHoldingBuf[CLIENT_IP_REG_1];
+									}
+									break;		
+									
+									case CLIENT_IP_REG_2:
+									{
+											configInfo.IPAdress_Client.ip_addr_2=usRegHoldingBuf[CLIENT_IP_REG_2];
+									}
+									break;	
+
+									case CLIENT_IP_REG_3:
+									{
+											configInfo.IPAdress_Client.ip_addr_3=usRegHoldingBuf[CLIENT_IP_REG_3];
+									}
+									break;	
+
+									case ADC_CHANNEL_MASK_REG:
+									{
+											(uint16_t)configInfo.ConfigADC.channelMask=usRegHoldingBuf[ADC_CHANNEL_MASK_REG];
+									}
+									break;	
+
+									case ADC_CHANNEL_0_K+(1):
+									{
+											configInfo.ConfigADC.calibrChannel[0].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_0_K]);
+									}
+									break;
+
+									case ADC_CHANNEL_0_B+(1):
+									{
+											configInfo.ConfigADC.calibrChannel[0].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_0_B]);	
+									}
+									break;
+
+									case ADC_CHANNEL_1_K+(1):
+									{
+											configInfo.ConfigADC.calibrChannel[1].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_1_K]);
+									}
+									break;
+
+									case ADC_CHANNEL_1_B+(1):
+									{
+											configInfo.ConfigADC.calibrChannel[1].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_1_B]);	
+									}
+									break;	
+
+									case ADC_CHANNEL_2_K+(1):
+									{
+											configInfo.ConfigADC.calibrChannel[2].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_2_K]);
+									}
+									break;
+
+									case ADC_CHANNEL_2_B+(1):
+									{
+											configInfo.ConfigADC.calibrChannel[2].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_2_B]);
+									}
+									break;	
+
+									case ADC_CHANNEL_3_K+(1):
+									{
+											configInfo.ConfigADC.calibrChannel[3].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_3_K]);
+									}
+									break;
+
+									case ADC_CHANNEL_3_B+(1):
+									{
+											configInfo.ConfigADC.calibrChannel[3].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_3_B]);	
+									}
+									break;	
+
+									case ADC_CHANNEL_4_K+(1):
+									{
+											configInfo.ConfigADC.calibrChannel[4].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_4_K]);
+									}
+									break;
+
+									case ADC_CHANNEL_4_B+(1):
+									{
+											configInfo.ConfigADC.calibrChannel[4].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_4_B]);
+									}
+									break;	
+
+									case ADC_CHANNEL_5_K+(1):
+									{
+											configInfo.ConfigADC.calibrChannel[5].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_K]);
+									}
+									break;
+
+									case ADC_CHANNEL_5_B+(1):
+									{
+											configInfo.ConfigADC.calibrChannel[5].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_B]);	
+									}
+									break;
+
+									case ADC_SAMPLERATE+(1):
+									{
+											DCMI_ADC_SetSamplerate(*((uint32_t*)&usRegHoldingBuf[ADC_SAMPLERATE]));
+									}
+									break;	
+									
+									case ADC_STARTED:
+									{
+											if(usRegHoldingBuf[ADC_STARTED])
+											{
+													DCMI_ADC_Clock_Start();
+											}
+											else
+											{
+													DCMI_ADC_Clock_Stop();
+											}
+											usRegHoldingBuf[ADC_STARTED]=0;
+									}
+									break;	
+									
+									case DEV_SET_OUTPUTS+3:
+									{
+											DiscretOutputs_Set(*(uint64_t*)&usRegHoldingBuf[DEV_SET_OUTPUTS]);
+									}
+									break;								
+
+									case DEV_RESET_TIMESTAMP:
+									{
+											if(usRegHoldingBuf[DEV_RESET_TIMESTAMP])//reset timestamp
+											{
+													DCMI_ADC_ResetTimestamp();
+													usRegHoldingBuf[DEV_RESET_TIMESTAMP]=0;
+											}	
+									}
+									break;										
+								
+								}
+														
+								iRegIndex++;
+                usNRegs--;							
             }
 
-            configInfo.IPAdress_Server.ip_addr_0=usRegHoldingBuf[SERVER_IP_REG_0];
-            configInfo.IPAdress_Server.ip_addr_1=usRegHoldingBuf[SERVER_IP_REG_1];
-            configInfo.IPAdress_Server.ip_addr_2=usRegHoldingBuf[SERVER_IP_REG_2];
-            configInfo.IPAdress_Server.ip_addr_3=usRegHoldingBuf[SERVER_IP_REG_3];
-
-            configInfo.IPAdress_Server.port=usRegHoldingBuf[SERVER_PORT_REG_0];
-
-            configInfo.IPAdress_Client.ip_addr_0=usRegHoldingBuf[CLIENT_IP_REG_0];
-            configInfo.IPAdress_Client.ip_addr_1=usRegHoldingBuf[CLIENT_IP_REG_1];
-            configInfo.IPAdress_Client.ip_addr_2=usRegHoldingBuf[CLIENT_IP_REG_2];
-            configInfo.IPAdress_Client.ip_addr_3=usRegHoldingBuf[CLIENT_IP_REG_3];
-						
-					 (uint16_t)configInfo.ConfigADC.channelMask=usRegHoldingBuf[ADC_CHANNEL_MASK_REG];
-					
-					configInfo.ConfigADC.calibrChannel[0].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_0_K]);
-					configInfo.ConfigADC.calibrChannel[0].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_0_B]);
-					
-					configInfo.ConfigADC.calibrChannel[1].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_1_K]);
-					configInfo.ConfigADC.calibrChannel[1].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_1_B]);
-					
-					configInfo.ConfigADC.calibrChannel[2].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_2_K]);
-					configInfo.ConfigADC.calibrChannel[2].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_2_B]);
-					
-					configInfo.ConfigADC.calibrChannel[3].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_3_K]);
-					configInfo.ConfigADC.calibrChannel[3].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_3_B]);
-					
-					configInfo.ConfigADC.calibrChannel[4].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_4_K]);
-					configInfo.ConfigADC.calibrChannel[4].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_4_B]);
-					
-					configInfo.ConfigADC.calibrChannel[5].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_K]);
-					configInfo.ConfigADC.calibrChannel[5].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_B]);
-					
-					
-					
-					if(usRegHoldingBuf[ADC_STARTED])
-					{
-							DCMI_ADC_Clock_Start();
-					}
-					else
-					{
-							DCMI_ADC_Clock_Stop();
-					}
-					
-					if(usRegHoldingBuf[DEV_RESET_TIMESTAMP])//reset timestamp
-					{
-							DCMI_ADC_ResetTimestamp();
-							usRegHoldingBuf[DEV_RESET_TIMESTAMP]=0;
-					}
-
             ConfigInfoWrite();
-
         }
       }
     }

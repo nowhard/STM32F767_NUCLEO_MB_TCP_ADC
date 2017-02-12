@@ -3,49 +3,63 @@
 <pre>
 <h1>µVision Build Log</h1>
 <h2>Tool Versions:</h2>
-IDE-Version: µVision V5.16a
+IDE-Version: µVision V5.17.0.0
 Copyright (C) 2015 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: now now, geo, LIC=DSNPC-7J741-347ST-RF136-ZVPY0-3K1N8
+License Information: noW noW, geo, LIC=NHY9U-SL21I-KTI3H-W80HX-ENB0V-57A1N
  
 Tool Versions:
-Toolchain:       MDK-ARM Professional  Version: 5.16a
-Toolchain Path:  C:\Keil_v5\ARM\ARMCC\Bin
-C Compiler:      Armcc.exe V5.06 (build 20)
-Assembler:       Armasm.exe V5.06 (build 20)
-Linker/Locator:  ArmLink.exe V5.06 (build 20)
-Library Manager: ArmAr.exe V5.06 (build 20)
-Hex Converter:   FromElf.exe V5.06 (build 20)
-CPU DLL:         SARMCM3.DLL V5.16a
-Dialog DLL:      DCM.DLL V1.13.2.0
-Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V2.0.17.0
-Dialog DLL:      TCM.DLL V1.14.5.0
+Toolchain:       MDK-ARM Professional  Version: 5.17
+Toolchain Path:  D:\Programs\Keil\ARM\ARMCC\Bin
+C Compiler:      Armcc.exe V5.06 update 1 (build 61)
+Assembler:       Armasm.exe V5.06 update 1 (build 61)
+Linker/Locator:  ArmLink.exe V5.06 update 1 (build 61)
+Library Manager: ArmAr.exe V5.06 update 1 (build 61)
+Hex Converter:   FromElf.exe V5.06 update 1 (build 61)
+CPU DLL:         SARMCM3.DLL V5.17
+Dialog DLL:      DCM.DLL V1.13.4.0
+Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V2.0.18.0
+Dialog DLL:      TCM.DLL V1.14.6.0
  
 <h2>Project:</h2>
-D:\PROJECTS\GIT_REPOSITORY\STM32\STM32F767_NUCLEO_MB_TCP_ADC\MB_TCP_ADC\MDK-ARM\MB_TCP_ADC.uvprojx
-Project File Date:  02/10/2017
+D:\PROJECTS\STM32F767_NUCLEO_MB_TCP_ADC\STM32F767_NUCLEO_MB_TCP_ADC\MB_TCP_ADC\MDK-ARM\MB_TCP_ADC.uvprojx
+Project File Date:  02/12/2017
 
 <h2>Output:</h2>
-*** Using Compiler 'V5.06 (build 20)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
+*** Using Compiler 'V5.06 update 1 (build 61)', folder: 'D:\Programs\Keil\ARM\ARMCC\Bin'
 Build target 'MB_TCP_ADC'
-"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 0 Warning(s).
+compiling mbfunc.c...
+../Inc/mbfunc.h(50): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Inc/discret_out.h(11): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\Src\mbfunc.c(45): warning:  #177-D: variable "i" was declared but never referenced
+      uint8_t i=0;
+..\Src\mbfunc.c(242): warning:  #1441-D: nonstandard cast on lvalue
+  											(uint16_t)configInfo.ConfigADC.channelMask=usRegHoldingBuf[
+DC_CHANNEL_MASK_REG];
+..\Src\mbfunc.c: 4 warnings, 0 errors
+linking...
+Program Size: Code=66496 RO-data=1172 RW-data=856 ZI-data=161312  
+FromELF: creating hex file...
+"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 4 Warning(s).
 
 <h2>Software Packages used:</h2>
 
 Package Vendor: ARM
-                http://www.keil.com/pack/ARM.CMSIS.4.3.0.pack
-                ARM::CMSIS:CORE:4.1.0
+                http://www.keil.com/pack/ARM.CMSIS.4.5.0.pack
+                ARM::CMSIS:CORE:4.3.0
                 CMSIS (Cortex Microcontroller Software Interface Standard)
-   * Component: CORE Version: 4.1.0
+   * Component: CORE Version: 4.3.0
 
 <h2>Collection of Component include folders:</h2>
-  D:\PROJECTS\GIT_REPOSITORY\STM32\STM32F767_NUCLEO_MB_TCP_ADC\MB_TCP_ADC\MDK-ARM\RTE
-  C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.3.0\CMSIS\Include
-  C:\Keil_v5\ARM\PACK\Keil\STM32F7xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F7xx\Include
+  D:\PROJECTS\STM32F767_NUCLEO_MB_TCP_ADC\STM32F767_NUCLEO_MB_TCP_ADC\MB_TCP_ADC\MDK-ARM\RTE
+  D:\Programs\Keil\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include
+  D:\Programs\Keil\ARM\PACK\Keil\STM32F7xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F7xx\Include
 
 <h2>Collection of Component Files used:</h2>
 
-   * Component: ARM::CMSIS:CORE:4.1.0
-Build Time Elapsed:  00:00:05
+   * Component: ARM::CMSIS:CORE:4.3.0
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>

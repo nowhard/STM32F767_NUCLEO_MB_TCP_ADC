@@ -52,6 +52,8 @@
 //#include "tcp_send.h"
 #include "adc_dcmi.h"
 #include "cfg_info.h"
+#include "discret_out.h"
+#include "jumpers.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -155,6 +157,7 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
 	ConfigInfoRead ();
+	Jumpers_ReadSettings();
 	DiscretOutputs_Init();
 
 	DCMI_ADC_Init();
