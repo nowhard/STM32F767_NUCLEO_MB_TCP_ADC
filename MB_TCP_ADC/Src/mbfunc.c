@@ -193,6 +193,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
              * protocol stack. */
         case MB_REG_WRITE:
         {
+						uint8_t settings_need_write=0;
             while( usNRegs > 0 )
             {
                 usRegHoldingBuf[iRegIndex] = *pucRegBuffer++ << 8;
@@ -203,138 +204,161 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 									case SERVER_IP_REG_0:
 									{
 											configInfo.IPAdress_Server.ip_addr_0=usRegHoldingBuf[SERVER_IP_REG_0];
+											settings_need_write=1;
 									}
 									break;
 									
 									case SERVER_IP_REG_1:
 									{
 										  configInfo.IPAdress_Server.ip_addr_1=usRegHoldingBuf[SERVER_IP_REG_1];
+											settings_need_write=1;
 									}
 									break;
 									
 									case SERVER_IP_REG_2:
 									{
 											configInfo.IPAdress_Server.ip_addr_2=usRegHoldingBuf[SERVER_IP_REG_2];
+											settings_need_write=1;
 									}
 									break;	
 
 									case SERVER_IP_REG_3:
 									{
 											configInfo.IPAdress_Server.ip_addr_3=usRegHoldingBuf[SERVER_IP_REG_3];
+											settings_need_write=1;
 									}
 									break;
 
 									case SERVER_PORT_REG_0:
 									{
 											configInfo.IPAdress_Server.port=usRegHoldingBuf[SERVER_PORT_REG_0];
+											settings_need_write=1;
 									}
 									break;
 
 									case CLIENT_IP_REG_0:
 									{
 											configInfo.IPAdress_Client.ip_addr_0=usRegHoldingBuf[CLIENT_IP_REG_0];
+											settings_need_write=1;
 									}
 									break;	
 
 									case CLIENT_IP_REG_1:
 									{
 											configInfo.IPAdress_Client.ip_addr_1=usRegHoldingBuf[CLIENT_IP_REG_1];
+											settings_need_write=1;
 									}
 									break;		
 									
 									case CLIENT_IP_REG_2:
 									{
 											configInfo.IPAdress_Client.ip_addr_2=usRegHoldingBuf[CLIENT_IP_REG_2];
+											settings_need_write=1;
 									}
 									break;	
 
 									case CLIENT_IP_REG_3:
 									{
 											configInfo.IPAdress_Client.ip_addr_3=usRegHoldingBuf[CLIENT_IP_REG_3];
+											settings_need_write=1;
 									}
 									break;	
 
 									case ADC_CHANNEL_MASK_REG:
 									{
 											(uint16_t)configInfo.ConfigADC.channelMask=usRegHoldingBuf[ADC_CHANNEL_MASK_REG];
+											settings_need_write=1;
 									}
 									break;	
 
 									case ADC_CHANNEL_0_K+(1):
 									{
 											configInfo.ConfigADC.calibrChannel[0].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_0_K]);
+											settings_need_write=1;
 									}
 									break;
 
 									case ADC_CHANNEL_0_B+(1):
 									{
 											configInfo.ConfigADC.calibrChannel[0].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_0_B]);	
+											settings_need_write=1;
 									}
 									break;
 
 									case ADC_CHANNEL_1_K+(1):
 									{
 											configInfo.ConfigADC.calibrChannel[1].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_1_K]);
+											settings_need_write=1;										
 									}
 									break;
 
 									case ADC_CHANNEL_1_B+(1):
 									{
 											configInfo.ConfigADC.calibrChannel[1].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_1_B]);	
+											settings_need_write=1;										
 									}
 									break;	
 
 									case ADC_CHANNEL_2_K+(1):
 									{
 											configInfo.ConfigADC.calibrChannel[2].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_2_K]);
+											settings_need_write=1;										
 									}
 									break;
 
 									case ADC_CHANNEL_2_B+(1):
 									{
 											configInfo.ConfigADC.calibrChannel[2].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_2_B]);
+											settings_need_write=1;										
 									}
 									break;	
 
 									case ADC_CHANNEL_3_K+(1):
 									{
 											configInfo.ConfigADC.calibrChannel[3].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_3_K]);
+											settings_need_write=1;										
 									}
 									break;
 
 									case ADC_CHANNEL_3_B+(1):
 									{
 											configInfo.ConfigADC.calibrChannel[3].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_3_B]);	
+											settings_need_write=1;										
 									}
 									break;	
 
 									case ADC_CHANNEL_4_K+(1):
 									{
 											configInfo.ConfigADC.calibrChannel[4].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_4_K]);
+											settings_need_write=1;										
 									}
 									break;
 
 									case ADC_CHANNEL_4_B+(1):
 									{
 											configInfo.ConfigADC.calibrChannel[4].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_4_B]);
+											settings_need_write=1;										
 									}
 									break;	
 
 									case ADC_CHANNEL_5_K+(1):
 									{
 											configInfo.ConfigADC.calibrChannel[5].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_K]);
+											settings_need_write=1;										
 									}
 									break;
 
 									case ADC_CHANNEL_5_B+(1):
 									{
-											configInfo.ConfigADC.calibrChannel[5].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_B]);	
+											configInfo.ConfigADC.calibrChannel[5].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_B]);
+											settings_need_write=1;
 									}
 									break;
 
 									case ADC_SAMPLERATE+(1):
 									{
 											DCMI_ADC_SetSamplerate(*((uint32_t*)&usRegHoldingBuf[ADC_SAMPLERATE]));
+											settings_need_write=1;										
 									}
 									break;	
 									
@@ -401,7 +425,10 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
                 usNRegs--;							
             }
 
-						StartConfigInfoWrite();
+						if(settings_need_write)
+						{
+								StartConfigInfoWrite();
+						}
         }
       }
     }
