@@ -36,6 +36,7 @@ static USHORT   usRegHoldingStart = REG_HOLDING_START;
 static USHORT   usRegHoldingBuf[REG_HOLDING_NREGS];
 
 extern float ADC_resultBuf[ADC_RESULT_BUF_LEN];
+extern SemaphoreHandle_t	xMBSaveSettingsSemaphore;
 
 eMBErrorCode
 eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
@@ -110,10 +111,19 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 #define ADC_STARTED						36
 
 //--------BITFIELDS------------------------
-#define DEV_SET_OUTPUTS				37
-//--------SYNC DEV REGS--------------------
-#define DEV_RESET_TIMESTAMP		41
+//#define DEV_SET_OUTPUTS				37
 
+#define DEV_SET_OUTPUTS_0			37
+#define DEV_SET_OUTPUTS_1			38
+#define DEV_SET_OUTPUTS_2			39
+//--------SYNC DEV REGS--------------------
+#define DEV_RESET_TIMESTAMP		40
+
+static uint16_t outputs_temp_reg_0=0;
+static uint16_t outputs_temp_reg_1=0;
+static uint16_t outputs_temp_reg_2=0;
+
+static uint16_t adc_started_flag=0;
 
 eMBErrorCode
 eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegisterMode eMode )
@@ -161,6 +171,13 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 					
 					*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_K])=configInfo.ConfigADC.calibrChannel[5].k;
 					*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_B])=configInfo.ConfigADC.calibrChannel[5].b;
+					
+					*((uint32_t*)&usRegHoldingBuf[ADC_SAMPLERATE])=configInfo.ConfigADC.sampleRate;
+					
+					usRegHoldingBuf[ADC_STARTED]=adc_started_flag;
+					usRegHoldingBuf[DEV_SET_OUTPUTS_0] = outputs_temp_reg_0;
+					usRegHoldingBuf[DEV_SET_OUTPUTS_1] = outputs_temp_reg_1;
+					usRegHoldingBuf[DEV_SET_OUTPUTS_2] = outputs_temp_reg_2;
 
 
             while( usNRegs > 0 )
@@ -326,20 +343,47 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 											if(usRegHoldingBuf[ADC_STARTED])
 											{
 													DCMI_ADC_Clock_Start();
+													adc_started_flag=1;
 											}
 											else
 											{
 													DCMI_ADC_Clock_Stop();
+													adc_started_flag=0;
 											}
 											usRegHoldingBuf[ADC_STARTED]=0;
 									}
 									break;	
 									
-									case DEV_SET_OUTPUTS+3:
-									{
-											DiscretOutputs_Set(*(uint64_t*)&usRegHoldingBuf[DEV_SET_OUTPUTS]);
+//									case DEV_SET_OUTPUTS+3:
+//									{
+//											DiscretOutputs_Set(*(uint64_t*)&usRegHoldingBuf[DEV_SET_OUTPUTS]);
+//									}
+//									break;		
+
+										
+									case DEV_SET_OUTPUTS_0:
+									{											
+											outputs_temp_reg_0=0x0;
+											outputs_temp_reg_0|=usRegHoldingBuf[DEV_SET_OUTPUTS_0];
+											DiscretOutputs_Set((((uint64_t)outputs_temp_reg_0))|(((uint64_t)outputs_temp_reg_1)<<16)|(((uint64_t)outputs_temp_reg_2)<<32));
 									}
-									break;								
+									break;
+
+									case DEV_SET_OUTPUTS_1:
+									{											
+											outputs_temp_reg_1=0x0;
+											outputs_temp_reg_1|=usRegHoldingBuf[DEV_SET_OUTPUTS_1];
+											DiscretOutputs_Set((((uint64_t)outputs_temp_reg_0))|(((uint64_t)outputs_temp_reg_1)<<16)|(((uint64_t)outputs_temp_reg_2)<<32));
+									}
+									break;	
+
+									case DEV_SET_OUTPUTS_2:
+									{											
+											outputs_temp_reg_2=0x0;
+											outputs_temp_reg_2|=usRegHoldingBuf[DEV_SET_OUTPUTS_2];
+											DiscretOutputs_Set((((uint64_t)outputs_temp_reg_0))|(((uint64_t)outputs_temp_reg_1)<<16)|(((uint64_t)outputs_temp_reg_2)<<32));
+									}
+									break;										
 
 									case DEV_RESET_TIMESTAMP:
 									{
@@ -357,7 +401,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
                 usNRegs--;							
             }
 
-            ConfigInfoWrite();
+						StartConfigInfoWrite();
         }
       }
     }

@@ -8,6 +8,9 @@
 #include "stm32f7xx_hal.h"
 #include "cfg_info.h"
 
+#include "FreeRTOS.h"
+#include "task.h"
+
 //****************************************************************************
 // именованные константы
 
@@ -35,6 +38,8 @@ static sConfigInfo *pMyInfoActive;
 static sConfigInfo MyInfo __attribute__((section(".flash_cfg1")));
 static sConfigInfo MyInfo1 __attribute__((section(".flash_cfg2")));
 
+void Flash_Write_Task( void *pvParameters );
+
 //****************************************************************************
 
 static int FLASH_ErasePage (uint32_t * pageAddr)
@@ -42,11 +47,11 @@ static int FLASH_ErasePage (uint32_t * pageAddr)
 	FLASH_EraseInitTypeDef EraseInitStruct;
 	uint32_t PAGEError;
 
-	// * Unlock the Flash to enable the flash control register access ************* /
-	HAL_FLASH_Unlock();
+
 	// * Erase the Flash area * /
 	// * Fill EraseInit structure* /
 	EraseInitStruct.TypeErase   = FLASH_TYPEERASE_SECTORS;
+	EraseInitStruct.VoltageRange = FLASH_VOLTAGE_RANGE_3;
 	
   if((uint32_t) pageAddr==(uint32_t) &MyInfo)
 	{
@@ -59,6 +64,9 @@ static int FLASH_ErasePage (uint32_t * pageAddr)
 	
 	//EraseInitStruct.Sector = (uint32_t) pageAddr ;
 	EraseInitStruct.NbSectors     = 1;
+	
+		// * Unlock the Flash to enable the flash control register access ************* /
+	HAL_FLASH_Unlock();
 	if (HAL_FLASHEx_Erase(&EraseInitStruct, &PAGEError) != HAL_OK){					
 		HAL_FLASH_Lock(); 
 		return -1;
@@ -76,10 +84,11 @@ static int FlashWrite_32(uint32_t * from, uint32_t * to, uint16_t cnt)
 	uint32_t PAGEError;
 
 	// * Unlock the Flash to enable the flash control register access ************* / 
-	HAL_FLASH_Unlock();
+
 	// * Erase the Flash area * /
 	// * Fill EraseInit structure* /
 	EraseInitStruct.TypeErase   = FLASH_TYPEERASE_SECTORS;
+	EraseInitStruct.VoltageRange = FLASH_VOLTAGE_RANGE_3;
 	//EraseInitStruct.Sector = (uint32_t) to ;
 	
 	if((uint32_t) to ==(uint32_t) &MyInfo)
@@ -92,6 +101,7 @@ static int FlashWrite_32(uint32_t * from, uint32_t * to, uint16_t cnt)
 	}
 	
 	EraseInitStruct.NbSectors     = 1;
+	HAL_FLASH_Unlock();
 	if (HAL_FLASHEx_Erase(&EraseInitStruct, &PAGEError) != HAL_OK){					
 		HAL_FLASH_Lock(); 
 		return -1;
@@ -161,4 +171,15 @@ int ConfigInfoWrite(void)
   }
   pMyInfoActive = pMyInfoNoActive;
   return 0;
+}
+
+void StartConfigInfoWrite(void)
+{
+	xTaskCreate( Flash_Write_Task, "Flash Write Task", 512, NULL, tskIDLE_PRIORITY, NULL );
+}
+
+void Flash_Write_Task( void *pvParameters )
+{
+	ConfigInfoWrite();
+	vTaskDelete(NULL);
 }
