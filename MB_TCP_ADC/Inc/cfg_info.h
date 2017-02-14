@@ -31,6 +31,7 @@ LR_IROM3 0x08004000 0x00004000  {    ; load region size_region
 
 #include "data_converter.h"
 #include "main.h"
+#include "adc_dcmi.h"
 
 #define LABEL_CFG_SECTOR	"CFG_SECTOR"
 
@@ -48,7 +49,7 @@ typedef struct
 typedef struct
 {
 	uint8_t channelMask;
-	uint32_t sampleRate;
+	enADCSamplerate sampleRate;
 	stCalibrChannel calibrChannel[ADC_CHN_NUM];
 } sConfigADC;
 

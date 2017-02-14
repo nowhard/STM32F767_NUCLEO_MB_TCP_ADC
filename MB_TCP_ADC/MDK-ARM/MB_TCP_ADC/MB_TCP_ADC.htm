@@ -3,7 +3,7 @@
 <title>Static Call Graph - [MB_TCP_ADC\MB_TCP_ADC.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image MB_TCP_ADC\MB_TCP_ADC.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060020: Last Updated: Mon Feb 13 17:05:19 2017
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060020: Last Updated: Tue Feb 14 14:20:48 2017
 <BR><P>
 <H3>Maximum Stack Usage =        736 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -694,7 +694,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[b5]"></a>ConfigInfoWrite</STRONG> (Thumb, 62 bytes, Stack size 8 bytes, cfg_info.o(i.ConfigInfoWrite))
+<P><STRONG><a name="[b5]"></a>ConfigInfoWrite</STRONG> (Thumb, 64 bytes, Stack size 8 bytes, cfg_info.o(i.ConfigInfoWrite))
 <BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = ConfigInfoWrite &rArr; FlashWrite_32 &rArr; HAL_FLASH_Program &rArr; FLASH_WaitForLastOperation
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashWrite_32
@@ -724,12 +724,13 @@ Global Symbols
 <LI><a href="#[163]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBRegInputCB
 </UL>
 
-<P><STRONG><a name="[ba]"></a>DCMI_ADC_Init</STRONG> (Thumb, 58 bytes, Stack size 8 bytes, adc_dcmi.o(i.DCMI_ADC_Init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = DCMI_ADC_Init &rArr; xQueueGenericSend &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[ba]"></a>DCMI_ADC_Init</STRONG> (Thumb, 66 bytes, Stack size 8 bytes, adc_dcmi.o(i.DCMI_ADC_Init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = DCMI_ADC_Init &rArr; DCMI_ADC_SetSamplerate &rArr; HAL_TIM_Base_Init &rArr; HAL_TIM_Base_MspInit &rArr; HAL_NVIC_SetPriority &rArr; NVIC_SetPriority
 </UL>
 <BR>[Calls]<UL><LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
 <LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericCreate
-<LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DMA_RegisterCallback
+<LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DMA_RegisterCallback
+<LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DCMI_ADC_SetSamplerate
 </UL>
 <BR>[Called By]<UL><LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -738,12 +739,13 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[162]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBRegHoldingCB
 </UL>
 
-<P><STRONG><a name="[be]"></a>DCMI_ADC_SetSamplerate</STRONG> (Thumb, 56 bytes, Stack size 16 bytes, adc_dcmi.o(i.DCMI_ADC_SetSamplerate))
+<P><STRONG><a name="[bd]"></a>DCMI_ADC_SetSamplerate</STRONG> (Thumb, 110 bytes, Stack size 16 bytes, adc_dcmi.o(i.DCMI_ADC_SetSamplerate))
 <BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = DCMI_ADC_SetSamplerate &rArr; HAL_TIM_Base_Init &rArr; HAL_TIM_Base_MspInit &rArr; HAL_NVIC_SetPriority &rArr; NVIC_SetPriority
 </UL>
 <BR>[Calls]<UL><LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_Base_Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[162]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBRegHoldingCB
+<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DCMI_ADC_Init
 </UL>
 
 <P><STRONG><a name="[83]"></a>DCMI_DMA_HalfTransferCallback</STRONG> (Thumb, 44 bytes, Stack size 8 bytes, adc_dcmi.o(i.DCMI_DMA_HalfTransferCallback))
@@ -922,7 +924,7 @@ Global Symbols
 <LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DCMI_MspInit
 </UL>
 
-<P><STRONG><a name="[bd]"></a>HAL_DMA_RegisterCallback</STRONG> (Thumb, 94 bytes, Stack size 8 bytes, stm32f7xx_hal_dma.o(i.HAL_DMA_RegisterCallback))
+<P><STRONG><a name="[be]"></a>HAL_DMA_RegisterCallback</STRONG> (Thumb, 94 bytes, Stack size 8 bytes, stm32f7xx_hal_dma.o(i.HAL_DMA_RegisterCallback))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = HAL_DMA_RegisterCallback
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DCMI_ADC_Init
@@ -1391,7 +1393,7 @@ Global Symbols
 <LI><a href="#[144]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM4_Init
 <LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM3_Init
 <LI><a href="#[141]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM2_Init
-<LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DCMI_ADC_SetSamplerate
+<LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DCMI_ADC_SetSamplerate
 </UL>
 
 <P><STRONG><a name="[10d]"></a>HAL_TIM_Base_MspInit</STRONG> (Thumb, 318 bytes, Stack size 32 bytes, stm32f7xx_hal_msp.o(i.HAL_TIM_Base_MspInit))
@@ -1855,12 +1857,12 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBFuncReadDiscreteInputs
 </UL>
 
-<P><STRONG><a name="[162]"></a>eMBRegHoldingCB</STRONG> (Thumb, 1108 bytes, Stack size 40 bytes, mbfunc.o(i.eMBRegHoldingCB))
+<P><STRONG><a name="[162]"></a>eMBRegHoldingCB</STRONG> (Thumb, 1110 bytes, Stack size 40 bytes, mbfunc.o(i.eMBRegHoldingCB))
 <BR><BR>[Stack]<UL><LI>Max Depth = 208<LI>Call Chain = eMBRegHoldingCB &rArr; StartConfigInfoWrite &rArr; xTaskGenericCreate &rArr; prvAllocateTCBAndStack &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[152]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StartConfigInfoWrite
 <LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DiscretOutputs_Set
-<LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DCMI_ADC_SetSamplerate
+<LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DCMI_ADC_SetSamplerate
 <LI><a href="#[167]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DCMI_ADC_ResetTimestamp
 <LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DCMI_ADC_Clock_Stop
 <LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DCMI_ADC_Clock_Start

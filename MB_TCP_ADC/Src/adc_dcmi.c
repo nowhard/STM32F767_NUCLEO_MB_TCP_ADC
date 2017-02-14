@@ -11,6 +11,8 @@
 #include "queue.h"
 #include "cfg_info.h"
 
+
+
 extern DMA_HandleTypeDef hdma_dcmi;
 extern TIM_HandleTypeDef htim2;
 
@@ -36,23 +38,54 @@ void DCMI_DMA_TransferCallback(void);
 void DCMI_ADC_Init(void)
 {
 	vSemaphoreCreateBinary( xAdcBuf_Send_Semaphore );
+	DCMI_ADC_SetSamplerate(configInfo.ConfigADC.sampleRate);
 	HAL_DMA_RegisterCallback(&hdma_dcmi,HAL_DMA_XFER_HALFCPLT_CB_ID,DCMI_DMA_HalfTransferCallback);
 	HAL_DMA_RegisterCallback(&hdma_dcmi,HAL_DMA_XFER_CPLT_CB_ID,DCMI_DMA_TransferCallback);
 }
 
-void DCMI_ADC_SetSamplerate(uint32_t sampleRate)
+void DCMI_ADC_SetSamplerate(enADCSamplerate sampleRate)
 {
-  TIM_ClockConfigTypeDef sClockSourceConfig;
+	TIM_ClockConfigTypeDef sClockSourceConfig;
   TIM_MasterConfigTypeDef sMasterConfig;
   TIM_OC_InitTypeDef sConfigOC;
-	if(sampleRate>ADC_DCMI_MAX_SAMPLERATE)
-	{
-			return;
-	}
-		
-	configInfo.ConfigADC.sampleRate=sampleRate;
+	uint16_t period;
 	
-	uint16_t period=(uint16_t)((108000000/sampleRate)-1);
+	switch(sampleRate)
+	{
+		case ADC_SAMPLERATE_10KHz:
+		{
+				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_10KHz;
+				period=(uint16_t)((108000000/10000)-1);
+		}
+		break;
+		
+		case ADC_SAMPLERATE_20KHz:
+		{
+				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_20KHz;
+			period=(uint16_t)((108000000/20000)-1);
+		}
+		break;
+
+		case ADC_SAMPLERATE_50KHz:
+		{
+				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_50KHz;
+				period=(uint16_t)((108000000/50000)-1);
+		}
+		break;
+
+		case ADC_SAMPLERATE_100KHz:
+		{
+				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_100KHz;
+				period=(uint16_t)((108000000/100000)-1);
+		}
+		break;		
+		
+		default:
+		{
+				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_100KHz;
+				period=(uint16_t)((108000000/100000)-1);
+		}
+	}
 	
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 0;

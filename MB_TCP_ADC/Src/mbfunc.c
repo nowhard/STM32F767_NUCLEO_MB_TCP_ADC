@@ -172,7 +172,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 					*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_K])=configInfo.ConfigADC.calibrChannel[5].k;
 					*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_B])=configInfo.ConfigADC.calibrChannel[5].b;
 					
-					*((uint32_t*)&usRegHoldingBuf[ADC_SAMPLERATE])=configInfo.ConfigADC.sampleRate;
+					usRegHoldingBuf[ADC_SAMPLERATE]=(uint16_t)configInfo.ConfigADC.sampleRate;
 					
 					usRegHoldingBuf[ADC_STARTED]=adc_started_flag;
 					usRegHoldingBuf[DEV_SET_OUTPUTS_0] = outputs_temp_reg_0;
@@ -355,9 +355,9 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 									}
 									break;
 
-									case ADC_SAMPLERATE+(1):
+									case ADC_SAMPLERATE:
 									{
-											DCMI_ADC_SetSamplerate(*((uint32_t*)&usRegHoldingBuf[ADC_SAMPLERATE]));
+											DCMI_ADC_SetSamplerate(usRegHoldingBuf[ADC_SAMPLERATE]);
 											settings_need_write=1;										
 									}
 									break;	

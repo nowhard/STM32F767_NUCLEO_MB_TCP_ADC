@@ -10,6 +10,7 @@
 
 #include "FreeRTOS.h"
 #include "task.h"
+#include "adc_dcmi.h"
 
 //****************************************************************************
 // именованные константы
@@ -19,7 +20,7 @@ const sConfigInfo configInfoHard = {
 	LABEL_CFG_SECTOR,	// Поле не убирать! Метка активного сектора!
 	{IP_ADDR0,IP_ADDR1,IP_ADDR2,IP_ADDR3,0},
 	{SERVER_IP_ADDR0,SERVER_IP_ADDR1,SERVER_IP_ADDR2,SERVER_IP_ADDR3,SERVER_PORT},
-	{0xFF,10000,{{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0}}}
+	{0xFF,ADC_SAMPLERATE_100KHz,{{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0},{0.0,0.0}}}
 };
 
 //****************************************************************************
@@ -166,7 +167,7 @@ int ConfigInfoWrite(void)
     return -1;
   }
   // сотрем второй буфер FLASH
-  if(FLASH_ErasePage((uint32_t*)&pMyInfoActive) < 0){
+  if(FLASH_ErasePage((uint32_t*)pMyInfoActive) < 0){
     return -1;
   }
   pMyInfoActive = pMyInfoNoActive;
