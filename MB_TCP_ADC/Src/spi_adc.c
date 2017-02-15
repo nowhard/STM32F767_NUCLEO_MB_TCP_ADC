@@ -24,6 +24,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim->Instance==TIM9)
 	{
+		HAL_GPIO_WritePin(AIR_CS_GPIO_Port, AIR_CS_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(U_CS_GPIO_Port, U_CS_Pin, GPIO_PIN_RESET);
 		HAL_SPI_Receive_DMA(&hspi3, spi3_buf, 3);
 		HAL_SPI_Receive_DMA(&hspi6, spi6_buf, 3);
 	} 
@@ -35,7 +37,7 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
 	if(hspi->Instance==SPI3)
 	{
 			//osMessagePut( ADC_SPI3_QueueHandle, (uint32_t)&spi3_buf[1], osWaitForever );
-			SPI3_ADC_Buf.buf[SPI3_ADC_Buf.index]=*(uint16_t *)&spi3_buf[1];
+			SPI3_ADC_Buf.buf[SPI3_ADC_Buf.index]=(((uint16_t)spi3_buf[1])<<8)|((uint16_t)spi3_buf[2]);//*(uint16_t *)&spi3_buf[1];
 			SPI3_ADC_Buf.index++;
 			if(SPI3_ADC_Buf.index==SPI_ADC_BUF_LEN)
 			{
@@ -46,11 +48,13 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
 			{
 					currentSPI3_ADC_Buf=&SPI3_ADC_Buf.buf[0];
 			}
+			
+			HAL_GPIO_WritePin(AIR_CS_GPIO_Port, AIR_CS_Pin, GPIO_PIN_SET);
 	}
 	else if(hspi->Instance==SPI6)
 	{
 			//osMessagePut( ADC_SPI6_QueueHandle, (uint32_t)&spi6_buf[1], osWaitForever );
-			SPI6_ADC_Buf.buf[SPI6_ADC_Buf.index]=*(uint16_t *)&spi6_buf[1];
+			SPI6_ADC_Buf.buf[SPI6_ADC_Buf.index]=(((uint16_t)spi6_buf[1])<<8)|((uint16_t)spi6_buf[2]);//*(uint16_t *)&spi6_buf[1];
 			SPI6_ADC_Buf.index++;
 			if(SPI6_ADC_Buf.index==SPI_ADC_BUF_LEN)
 			{
@@ -61,6 +65,7 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
 			{
 					currentSPI6_ADC_Buf=&SPI6_ADC_Buf.buf[0];
 			}
+			HAL_GPIO_WritePin(U_CS_GPIO_Port, U_CS_Pin, GPIO_PIN_SET);
 	}
 }
 
