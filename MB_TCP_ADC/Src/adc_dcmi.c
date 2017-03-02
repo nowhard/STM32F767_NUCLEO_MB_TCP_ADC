@@ -12,9 +12,11 @@
 #include "cfg_info.h"
 
 
-
+extern DCMI_HandleTypeDef hdcmi;
 extern DMA_HandleTypeDef hdma_dcmi;
 extern TIM_HandleTypeDef htim2;
+extern TIM_HandleTypeDef htim4;
+extern TIM_HandleTypeDef htim5;
 
 
 #define RX_BUFF_SIZE	ADC_BUF_LEN
@@ -30,7 +32,7 @@ QueueHandle_t xADC_MB_Queue;
 
 extern sConfigInfo configInfo;
 
-void Timestamp_Init(void);
+
 void DCMI_DMA_HalfTransferCallback(void);
 void DCMI_DMA_TransferCallback(void);
 
@@ -39,8 +41,15 @@ void DCMI_ADC_Init(void)
 {
 	vSemaphoreCreateBinary( xAdcBuf_Send_Semaphore );
 	DCMI_ADC_SetSamplerate(configInfo.ConfigADC.sampleRate);
+	
+
 	HAL_DMA_RegisterCallback(&hdma_dcmi,HAL_DMA_XFER_HALFCPLT_CB_ID,DCMI_DMA_HalfTransferCallback);
 	HAL_DMA_RegisterCallback(&hdma_dcmi,HAL_DMA_XFER_CPLT_CB_ID,DCMI_DMA_TransferCallback);
+	
+	HAL_TIM_Base_Start(&htim4);
+	HAL_TIM_Base_Start(&htim5);
+	
+	HAL_DCMI_Start_DMA(&hdcmi,DCMI_MODE_CONTINUOUS,(uint32_t)DCMIAdcRxBuff,RX_BUFF_SIZE>>2);
 }
 
 void DCMI_ADC_SetSamplerate(enADCSamplerate sampleRate)

@@ -118,8 +118,8 @@ void UDP_Send_Task( void *pvParameters )
 	uint16_t result_buf_len=0;
 	while(1)
 	{
-		//xSemaphoreTake( xAdcBuf_Send_Semaphore, portMAX_DELAY );
-		vTaskDelay(10);//тестирование системы
+		xSemaphoreTake( xAdcBuf_Send_Semaphore, portMAX_DELAY );
+		//vTaskDelay(10);//тестирование системы
 		ADC_ConvertBuf(ADC_buf_pnt,(ADC_BUF_LEN>>1),currentSPI3_ADC_Buf,currentSPI3_ADC_Buf,(SPI_ADC_BUF_LEN>>1),ADC_resultBuf, &result_buf_len);
 		udp_client_send_buf(ADC_resultBuf,result_buf_len);
 //		ADC_GetLastVal();
