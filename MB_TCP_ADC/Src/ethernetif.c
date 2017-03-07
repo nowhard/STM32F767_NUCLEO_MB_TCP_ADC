@@ -62,7 +62,7 @@
 /* The time to block waiting for input. */
 #define TIME_WAITING_FOR_INPUT ( portMAX_DELAY )
 /* Stack size of the interface thread */
-#define INTERFACE_THREAD_STACK_SIZE ( 350 )
+#define INTERFACE_THREAD_STACK_SIZE ( 1024 )
 
 /* Network interface name */
 #define IFNAME0 's'
@@ -243,7 +243,7 @@ static void low_level_init(struct netif *netif)
   heth.Init.PhyAddress = LAN8742A_PHY_ADDRESS;
   MACAddr[0] = 0x00;
   MACAddr[1] = 0x80;
-  MACAddr[2] = 0xE1;
+  MACAddr[2] = 0xE2;
   MACAddr[3] = 0x00;
   MACAddr[4] = 0x00;
   MACAddr[5] = 0x00;

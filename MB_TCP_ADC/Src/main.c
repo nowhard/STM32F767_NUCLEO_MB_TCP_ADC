@@ -847,6 +847,11 @@ __weak void StartSPI_ADC_Task(void const * argument)
   /* USER CODE END StartSPI_ADC_Task */
 }
 
+void vApplicationStackOverflowHook( xTaskHandle *pxTask, signed portCHAR *pcTaskName )
+{
+	while(1);
+}
+
 /**
   * @brief  This function is executed in case of error occurrence.
   * @param  None

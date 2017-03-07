@@ -5,7 +5,7 @@
 #include "mbtcp.h"
 #include "cfg_info.h"
 
-#define MB_TCP_TASK_STACK_SIZE	512
+#define MB_TCP_TASK_STACK_SIZE	1024
 #define MB_TCP_SAVE_SETTINGS_TASK_STACK_SIZE	256
 static uint8_t Vendor[] = "GEOS";
 

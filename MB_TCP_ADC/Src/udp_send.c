@@ -77,7 +77,7 @@ void udp_client_init(void)
   pb->payload = (uint8_t*)&UDPPacket;
 
 
-  xTaskCreate( UDP_Send_Task, "UDP Task", 512, NULL, 2, NULL );
+  xTaskCreate( UDP_Send_Task, "UDP Task", 1024, NULL, 2, NULL );
 }
 
 /*inline*/ void delay(uint32_t time)

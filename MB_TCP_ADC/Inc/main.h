@@ -201,7 +201,7 @@
 #define IP_ADDR0   192
 #define IP_ADDR1   168
 #define IP_ADDR2   109
-#define IP_ADDR3   155
+#define IP_ADDR3   160
    
 /*NETMASK*/
 #define NETMASK_ADDR0   255
@@ -229,6 +229,13 @@
 #define ADC_BUF_LEN 32000
 
 #define ADC_DCMI_MAX_SAMPLERATE		100000
+
+#define MASTER_MACADDR0		0x70
+#define MASTER_MACADDR1		0x4D
+#define MASTER_MACADDR2		0x7B
+#define MASTER_MACADDR3		0x2A
+#define MASTER_MACADDR4		0x4F
+#define MASTER_MACADDR5		0x21
 
 /* USER CODE END Private defines */
 
