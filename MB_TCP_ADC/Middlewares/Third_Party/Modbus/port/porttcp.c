@@ -125,7 +125,7 @@ prvvMBPortReleaseClient( struct tcp_pcb *pxPCB )
         {
             tcp_abort( pxPCB );
         }
-       // vPortEnterCritical(  );
+        vPortEnterCritical(  );
         if( pxPCB == pxPCBClient )
         {
 #ifdef MB_TCP_DEBUG
@@ -140,7 +140,7 @@ prvvMBPortReleaseClient( struct tcp_pcb *pxPCB )
         {
             pxPCBListen = NULL;
         }
-        //vPortExitCritical(  );
+        vPortExitCritical(  );
     }
 }
 void

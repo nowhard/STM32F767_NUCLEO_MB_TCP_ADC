@@ -56,7 +56,7 @@
 #include "netif/etharp.h"
 #include "lwip/dhcp.h"
 #include "lwip/netif.h"
-#include "lwip/lwip_timers.h"
+#include "lwip/timeouts.h"
 #include "ethernetif.h"
 
 /* Includes for RTOS ---------------------------------------------------------*/

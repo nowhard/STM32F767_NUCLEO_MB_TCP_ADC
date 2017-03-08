@@ -83,6 +83,8 @@
 #define ENABLE_OUT_1_GPIO_Port GPIOC
 #define RMII_MDC_Pin GPIO_PIN_1
 #define RMII_MDC_GPIO_Port GPIOC
+#define SYNC_ADC_Pin GPIO_PIN_2
+#define SYNC_ADC_GPIO_Port GPIOC
 #define GPIO0_ADC_Pin GPIO_PIN_3
 #define GPIO0_ADC_GPIO_Port GPIOC
 #define SIG_100kHz_Pin GPIO_PIN_0
@@ -189,8 +191,8 @@
 #define U_MISO_GPIO_Port GPIOG
 #define RMII_TXD0_Pin GPIO_PIN_13
 #define RMII_TXD0_GPIO_Port GPIOG
-#define SW0_Pin GPIO_PIN_3
-#define SW0_GPIO_Port GPIOB
+#define DIN_ADC_Pin GPIO_PIN_3
+#define DIN_ADC_GPIO_Port GPIOB
 #define DATA5_Pin GPIO_PIN_6
 #define DATA5_GPIO_Port GPIOB
 #define SIG_SYNC_TIM_Pin GPIO_PIN_9

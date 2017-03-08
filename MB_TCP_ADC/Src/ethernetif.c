@@ -46,7 +46,8 @@
 #include "stm32f7xx_hal.h"
 #include "lwip/opt.h"
 
-#include "lwip/lwip_timers.h"
+#include "lwip/timeouts.h"
+#include "netif/ethernet.h"
 #include "netif/etharp.h"
 #include "lwip/ethip6.h"
 #include "ethernetif.h"
@@ -62,7 +63,7 @@
 /* The time to block waiting for input. */
 #define TIME_WAITING_FOR_INPUT ( portMAX_DELAY )
 /* Stack size of the interface thread */
-#define INTERFACE_THREAD_STACK_SIZE ( 1024 )
+#define INTERFACE_THREAD_STACK_SIZE ( 350 )
 
 /* Network interface name */
 #define IFNAME0 's'
@@ -243,7 +244,7 @@ static void low_level_init(struct netif *netif)
   heth.Init.PhyAddress = LAN8742A_PHY_ADDRESS;
   MACAddr[0] = 0x00;
   MACAddr[1] = 0x80;
-  MACAddr[2] = 0xE2;
+  MACAddr[2] = 0xE1;
   MACAddr[3] = 0x00;
   MACAddr[4] = 0x00;
   MACAddr[5] = 0x00;
@@ -263,7 +264,6 @@ static void low_level_init(struct netif *netif)
     /* Set netif link flag */  
     netif->flags |= NETIF_FLAG_LINK_UP;
   }
-
   /* Initialize Tx Descriptors list: Chain Mode */
   HAL_ETH_DMATxDescListInit(&heth, DMATxDscrTab, &Tx_Buff[0][0], ETH_TXBUFNB);
      
@@ -271,8 +271,9 @@ static void low_level_init(struct netif *netif)
   HAL_ETH_DMARxDescListInit(&heth, DMARxDscrTab, &Rx_Buff[0][0], ETH_RXBUFNB);
  
 #if LWIP_ARP || LWIP_ETHERNET 
+
   /* set MAC hardware address length */
-  netif->hwaddr_len = ETHARP_HWADDR_LEN;
+  netif->hwaddr_len = ETH_HWADDR_LEN;
   
   /* set MAC hardware address */
   netif->hwaddr[0] =  heth.Init.MACAddr[0];
@@ -434,7 +435,7 @@ error:
 static struct pbuf * low_level_input(struct netif *netif)
 {
   struct pbuf *p = NULL;
-  struct pbuf *q;
+  struct pbuf *q = NULL;
   uint16_t len = 0;
   uint8_t *buffer;
   __IO ETH_DMADescTypeDef *dmarxdesc;
