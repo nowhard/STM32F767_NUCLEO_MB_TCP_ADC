@@ -18,7 +18,7 @@ void MB_TCP_Init(void)
 	eMBEnable();
 	eMBSetSlaveID( MB_TCP_PSEUDO_ADDRESS, TRUE, Vendor, sizeof(Vendor) );
 	
-	xTaskCreate(MB_TCP_Task, "MB TCP Task", MB_TCP_TASK_STACK_SIZE, NULL, 2, ( TaskHandle_t * ) NULL);
+	xTaskCreate(MB_TCP_Task, "MB TCP Task", MB_TCP_TASK_STACK_SIZE, NULL, 4, ( TaskHandle_t * ) NULL);
 }
 
 

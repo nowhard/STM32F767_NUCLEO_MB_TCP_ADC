@@ -45,6 +45,12 @@ extern SemaphoreHandle_t xAdcBuf_Send_Semaphore;
 extern SemaphoreHandle_t xNetMutex;
 
 void UDP_Send_Task( void *pvParameters );
+
+#define TEST_BUF_LEN			6000
+#define TEST_CHANNEL_NUM	6
+float test_buf[TEST_BUF_LEN];
+void Set_TestBuf(float *buf, uint16_t buf_len, uint8_t chn_num);
+
 /*inline*/ void delay(uint32_t time);
 
 #pragma pack(push,1)
@@ -76,7 +82,7 @@ void udp_client_init(void)
   pb->len = pb->tot_len = sizeof(UDPPacket);
   pb->payload = (uint8_t*)&UDPPacket;
 
-
+	Set_TestBuf(test_buf,TEST_BUF_LEN,TEST_CHANNEL_NUM);
   xTaskCreate( UDP_Send_Task, "UDP Task", 1024, NULL, 2, NULL );
 }
 
@@ -119,12 +125,23 @@ void UDP_Send_Task( void *pvParameters )
 	while(1)
 	{
 		xSemaphoreTake( xAdcBuf_Send_Semaphore, portMAX_DELAY );
-		//vTaskDelay(10);//тестирование системы
 		ADC_ConvertBuf(ADC_buf_pnt,(ADC_BUF_LEN>>1),currentSPI3_ADC_Buf,currentSPI3_ADC_Buf,(SPI_ADC_BUF_LEN>>1),ADC_resultBuf, &result_buf_len);
-		udp_client_send_buf(ADC_resultBuf,result_buf_len);
-//		ADC_GetLastVal();
+		//udp_client_send_buf(ADC_resultBuf,result_buf_len);
+		udp_client_send_buf(test_buf,TEST_BUF_LEN);
 	}
 }
 
 
+void Set_TestBuf(float *buf, uint16_t buf_len, uint8_t chn_num)
+{
+	uint16_t buf_index=0;
+	uint8_t chn_index=0;
+	for(buf_index=0;buf_index<buf_len;buf_index+=chn_num)
+	{
+		for(chn_index=0;chn_index<chn_num;chn_index++)
+		{
+				buf[buf_index+chn_index]=buf_index;
+		}
+	}
+}
 

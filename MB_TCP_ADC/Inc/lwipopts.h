@@ -79,11 +79,13 @@
 /*----- Default Value for MEMP_NUM_PBUF: 16 ---*/
 #define MEMP_NUM_PBUF 100
 /*----- Default Value for MEMP_NUM_RAW_PCB: 4 ---*/
-#define MEMP_NUM_RAW_PCB 10
+#define MEMP_NUM_RAW_PCB 1
 /*----- Default Value for MEMP_NUM_TCP_PCB_LISTEN: 8 ---*/
-#define MEMP_NUM_TCP_PCB_LISTEN 20
+#define MEMP_NUM_TCP_PCB_LISTEN 10
 /*----- Default Value for MEMP_NUM_TCP_SEG: 16 ---*/
 #define MEMP_NUM_TCP_SEG 17
+/*----- Default Value for MEMP_NUM_LOCALHOSTLIST: 1 ---*/
+#define MEMP_NUM_LOCALHOSTLIST 10
 /*----- Value in opt.h for LWIP_ETHERNET: LWIP_ARP || PPPOE_SUPPORT -*/
 #define LWIP_ETHERNET 1
 /*----- Value in opt.h for LWIP_DNS_SECURE: (LWIP_DNS_SECURE_RAND_XID | LWIP_DNS_SECURE_NO_MULTIPLE_OUTSTANDING | LWIP_DNS_SECURE_RAND_SRC_PORT) -*/

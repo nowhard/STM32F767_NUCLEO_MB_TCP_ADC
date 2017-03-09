@@ -80,16 +80,16 @@ void MX_LWIP_Init(void)
   /* IP addresses initialization */
   IP_ADDRESS[0] = 192;
   IP_ADDRESS[1] = 168;
-  IP_ADDRESS[2] = 0;
-  IP_ADDRESS[3] = 50;
+  IP_ADDRESS[2] = 109;
+  IP_ADDRESS[3] = 160;
   NETMASK_ADDRESS[0] = 255;
   NETMASK_ADDRESS[1] = 255;
   NETMASK_ADDRESS[2] = 255;
   NETMASK_ADDRESS[3] = 0;
   GATEWAY_ADDRESS[0] = 192;
   GATEWAY_ADDRESS[1] = 168;
-  GATEWAY_ADDRESS[2] = 0;
-  GATEWAY_ADDRESS[3] = 3;
+  GATEWAY_ADDRESS[2] = 109;
+  GATEWAY_ADDRESS[3] = 8;
   
   /* Initilialize the LwIP stack with RTOS */
   tcpip_init( NULL, NULL );
