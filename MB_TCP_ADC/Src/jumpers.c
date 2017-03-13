@@ -1,6 +1,6 @@
 //#include "jumpers.h"
 #include "main.h"
-
+#include "stm32f7xx_hal.h"
 
 uint8_t jumpers_dev_addr=0;
 

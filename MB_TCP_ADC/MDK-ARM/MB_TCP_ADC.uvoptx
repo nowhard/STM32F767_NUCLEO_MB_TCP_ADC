@@ -149,34 +149,18 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>1596</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134381564</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>../Middlewares/Third_Party/LwIP/src/core/tcp.c</Filename>
-          <ExecCommand />
-          <Expression>\\MB_TCP_ADC\../Middlewares/Third_Party/LwIP/src/core/tcp.c\1596</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
           <LineNumber>90</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134394616</Address>
+          <Address>0</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
+          <BreakIfRCount>0</BreakIfRCount>
           <Filename>..\Middlewares\Third_Party\Modbus\port\portevent.c</Filename>
           <ExecCommand />
-          <Expression>\\MB_TCP_ADC\../Middlewares/Third_Party/Modbus/port/portevent.c\90</Expression>
+          <Expression />
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -1572,7 +1556,7 @@
 
   <Group>
     <GroupName>Drivers/CMSIS</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1580,7 +1564,7 @@
       <GroupNumber>5</GroupNumber>
       <FileNumber>107</FileNumber>
       <FileType>1</FileType>
-      <tvExp>1</tvExp>
+      <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>../Src/system_stm32f7xx.c</PathWithFileName>
@@ -1780,7 +1764,7 @@
       <GroupNumber>6</GroupNumber>
       <FileNumber>123</FileNumber>
       <FileType>1</FileType>
-      <tvExp>0</tvExp>
+      <tvExp>1</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Src\jumpers.c</PathWithFileName>

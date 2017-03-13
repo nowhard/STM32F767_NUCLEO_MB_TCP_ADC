@@ -51,6 +51,7 @@
 #include "main.h"
 #include "tcpip.h"
 #include "cfg_info.h"
+#include "jumpers.h"
 /* USER CODE END 0 */
 
 /* ETH Variables initialization ----------------------------------------------*/
