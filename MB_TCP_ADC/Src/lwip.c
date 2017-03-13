@@ -50,6 +50,7 @@
 /* USER CODE BEGIN 0 */
 #include "main.h"
 #include "tcpip.h"
+#include "cfg_info.h"
 /* USER CODE END 0 */
 
 /* ETH Variables initialization ----------------------------------------------*/
@@ -81,7 +82,7 @@ void MX_LWIP_Init(void)
   IP_ADDRESS[0] = 192;
   IP_ADDRESS[1] = 168;
   IP_ADDRESS[2] = 109;
-  IP_ADDRESS[3] = 150;
+  IP_ADDRESS[3] = 150+jumpers_dev_addr;
   NETMASK_ADDRESS[0] = 255;
   NETMASK_ADDRESS[1] = 255;
   NETMASK_ADDRESS[2] = 255;
@@ -90,6 +91,10 @@ void MX_LWIP_Init(void)
   GATEWAY_ADDRESS[1] = 168;
   GATEWAY_ADDRESS[2] = 109;
   GATEWAY_ADDRESS[3] = 8;
+	
+	/* USER CODE BEGIN 3 */
+	IP_ADDRESS[3] = 150+jumpers_dev_addr;	
+/* USER CODE END 3 */
   
   /* Initilialize the LwIP stack with RTOS */
   tcpip_init( NULL, NULL );
@@ -116,9 +121,7 @@ void MX_LWIP_Init(void)
     netif_set_down(&gnetif);
   }
 
-/* USER CODE BEGIN 3 */
 
-/* USER CODE END 3 */
 }
 /* USER CODE BEGIN 4 */
 

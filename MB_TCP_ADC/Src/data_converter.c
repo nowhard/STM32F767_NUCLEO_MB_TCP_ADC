@@ -5,9 +5,9 @@
 
 #pragma anon_unions
 
-// for calibration testing
-float a=2.356;
-float b=34.397;
+//// for calibration testing
+//float a=2.356;
+//float b=34.397;
 
 //extern sConfigInfo configInfo;	
 
