@@ -127,7 +127,10 @@
 /* ----------------------- Variables ----------------------------------------*/
 static eMBEventType eQueuedEvent;
 static BOOL     xEventInQueue;
-BOOL xMBPortTCPPool( void );
+
+extern stMB_TCPClient MB_TCPClient_1;
+
+BOOL xMBPortTCPPool( stMB_TCPClient *MB_TCPClient );
 /* ----------------------- Start implementation -----------------------------*/
 BOOL
 xMBPortEventInit( void )
@@ -157,7 +160,7 @@ xMBPortEventGet( eMBEventType * eEvent )
     }
 		else
 		{
-				(void)xMBPortTCPPool();
+				(void)xMBPortTCPPool( &MB_TCPClient_1 );
 		}
     return xEventHappened;
 }

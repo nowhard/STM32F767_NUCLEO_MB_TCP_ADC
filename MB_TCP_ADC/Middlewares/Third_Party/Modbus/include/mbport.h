@@ -34,7 +34,8 @@
 #ifdef __cplusplus
 PR_BEGIN_EXTERN_C
 #endif
-
+#include <socket.h>
+#include "port.h"
 /* ----------------------- Type definitions ---------------------------------*/
 
 typedef enum
@@ -59,7 +60,37 @@ typedef enum
     MB_PAR_EVEN                 /*!< Even parity. */
 } eMBParity;
 
+/* ----------------------- MBAP Header --------------------------------------*/
+#define MB_TCP_UID          6
+#define MB_TCP_LEN          4
+#define MB_TCP_FUNC         7
 
+/* ----------------------- Defines  -----------------------------------------*/
+#define MB_TCP_DEFAULT_PORT 502 /* TCP listening port. */
+#define MB_TCP_POOL_TIMEOUT 50  /* pool timeout for event waiting. */
+#define MB_TCP_READ_TIMEOUT 1000        /* Maximum timeout to wait for packets. */
+#define MB_TCP_READ_CYCLE   100 /* Time between checking for new data. */
+
+#define MB_TCP_DEBUG        1   /* Set to 1 for additional debug output. */
+
+#define MB_TCP_BUF_SIZE     ( 256 + 7 ) /* Must hold a complete Modbus TCP frame. */
+
+#define EV_CONNECTION       0
+#define EV_CLIENT           1
+#define EV_NEVENTS          EV_CLIENT + 1
+
+#define SOCKET 							int
+#define INVALID_SOCKET			(-1)
+#define SOCKET_ERROR				(-1)
+
+
+typedef struct
+{
+	SOCKET xClientSocket;
+	UCHAR    aucTCPBuf[MB_TCP_BUF_SIZE];
+	USHORT   usTCPBufPos;
+	USHORT   usTCPFrameBytesLeft;	
+}stMB_TCPClient;
 
 /* ----------------------- Supporting functions -----------------------------*/
 BOOL            xMBPortEventInit( void );
