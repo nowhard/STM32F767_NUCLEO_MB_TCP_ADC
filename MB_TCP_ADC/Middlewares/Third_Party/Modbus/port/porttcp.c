@@ -36,11 +36,20 @@
 /* ----------------------- Static variables ---------------------------------*/
 SOCKET          xListenSocket;
 SOCKET          xClientSocket = INVALID_SOCKET;
+SOCKET          xClientSocket_2 = INVALID_SOCKET;
 static fd_set   allset;
 
 static UCHAR    aucTCPBuf[MB_TCP_BUF_SIZE];
 static USHORT   usTCPBufPos;
 static USHORT   usTCPFrameBytesLeft;
+
+typedef struct
+{
+	SOCKET xClientSocket;
+	UCHAR    aucTCPBuf[MB_TCP_BUF_SIZE];
+	USHORT   usTCPBufPos;
+	USHORT   usTCPFrameBytesLeft;	
+}stMB_TCPClient;
 
 /* ----------------------- External functions -------------------------------*/
 CHAR           *WsaError2String( int dwError );
@@ -48,8 +57,8 @@ CHAR           *WsaError2String( int dwError );
 /* ----------------------- Static functions ---------------------------------*/
 BOOL            prvMBTCPPortAddressToString( SOCKET xSocket, CHAR * szAddr, USHORT usBufSize );
 CHAR           *prvMBTCPPortFrameToString( UCHAR * pucFrame, USHORT usFrameLen );
-static BOOL     prvbMBPortAcceptClient( void );
-static void     prvvMBPortReleaseClient( void );
+static BOOL     prvbMBPortAcceptClient( stMB_TCPClient *MB_TCPClient );
+static void     prvvMBPortReleaseClient( stMB_TCPClient *MB_TCPClient);
 static void 		usleep(uint32_t time);
 
 
@@ -102,30 +111,30 @@ xMBTCPPortInit( USHORT usTCPPort )
     return TRUE;
 }
 
-void
-vMBTCPPortClose(  )
-{
-    // Close all client sockets. 
-    if( xClientSocket != SOCKET_ERROR )
-    {
-        prvvMBPortReleaseClient(  );
-    }
-    // Close the listener socket.
-    if( xListenSocket != SOCKET_ERROR )
-    {
-        close( xListenSocket );
-    }
-}
+//void
+//vMBTCPPortClose(  )
+//{
+//    // Close all client sockets. 
+//    if( xClientSocket != SOCKET_ERROR )
+//    {
+//        prvvMBPortReleaseClient(  );
+//    }
+//    // Close the listener socket.
+//    if( xListenSocket != SOCKET_ERROR )
+//    {
+//        close( xListenSocket );
+//    }
+//}
 
-void
-vMBTCPPortDisable( void )
-{
-    /* Close all client sockets. */
-    if( xClientSocket != SOCKET_ERROR )
-    {
-        prvvMBPortReleaseClient(  );
-    }
-}
+//void
+//vMBTCPPortDisable( void )
+//{
+//    /* Close all client sockets. */
+//    if( xClientSocket != SOCKET_ERROR )
+//    {
+//        prvvMBPortReleaseClient(  );
+//    }
+//}
 
 /*! \ingroup port_win32tcp
  *
@@ -175,7 +184,7 @@ xMBPortTCPPool( void )
         }
         if( FD_ISSET( xListenSocket, &allset ) )
         {
-            ( void )prvbMBPortAcceptClient(  );
+            ( void )prvbMBPortAcceptClient( xClientSocket );
         }
     }
     while( TRUE )
@@ -302,23 +311,23 @@ xMBTCPPortSendResponse( const UCHAR * pucMBTCPFrame, USHORT usTCPLength )
 }
 
 void
-prvvMBPortReleaseClient(  )
+prvvMBPortReleaseClient( stMB_TCPClient *MB_TCPClient )
 {
-    ( void )recv( xClientSocket, &aucTCPBuf[0], MB_TCP_BUF_SIZE, 0 );
+    ( void )recv( MB_TCPClient->xClientSocket, &MB_TCPClient->aucTCPBuf[0], MB_TCP_BUF_SIZE, 0 );
 
-    ( void )close( xClientSocket );
-    xClientSocket = INVALID_SOCKET;
+    ( void )close( MB_TCPClient->xClientSocket );
+    MB_TCPClient->xClientSocket = INVALID_SOCKET;
 }
 
 BOOL
-prvbMBPortAcceptClient(  )
+prvbMBPortAcceptClient( stMB_TCPClient *MB_TCPClient )
 {
     SOCKET          xNewSocket;
     BOOL            bOkay;
 
     /* Check if we can handle a new connection. */
 
-    if( xClientSocket != INVALID_SOCKET )
+    if( MB_TCPClient->xClientSocket != INVALID_SOCKET )
     {
         fprintf( stderr, "can't accept new client. all connections in use.\n" );
         bOkay = FALSE;
@@ -329,9 +338,9 @@ prvbMBPortAcceptClient(  )
     }
     else
     {
-        xClientSocket = xNewSocket;
-        usTCPBufPos = 0;
-        usTCPFrameBytesLeft = MB_TCP_FUNC;
+        MB_TCPClient->xClientSocket = xNewSocket;
+        MB_TCPClient->usTCPBufPos = 0;
+        MB_TCPClient->usTCPFrameBytesLeft = MB_TCP_FUNC;
         bOkay = TRUE;
     }
     return bOkay;
