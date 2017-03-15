@@ -161,7 +161,10 @@ xMBPortTCPPool( stMB_TCPClient *MB_TCPClient )
         select( xListenSocket + 1, &allset, NULL, NULL, NULL );
         if( FD_ISSET( xListenSocket, &allset ) )
         {
-            ( void )prvbMBPortAcceptClient( MB_TCPClient );
+            if(prvbMBPortAcceptClient( MB_TCPClient ) == FALSE)
+						{
+								return FALSE;
+						}
         }
     }
 		
