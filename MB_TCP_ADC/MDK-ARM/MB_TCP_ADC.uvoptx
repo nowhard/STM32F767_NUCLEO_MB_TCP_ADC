@@ -149,18 +149,34 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>1011</LineNumber>
+          <LineNumber>171</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134379994</Address>
+          <Address>134394862</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>../Middlewares/Third_Party/LwIP/src/core/tcp_in.c</Filename>
+          <Filename>..\Middlewares\Third_Party\Modbus\port\portevent.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\MB_TCP_ADC\../Middlewares/Third_Party/LwIP/src/core/tcp_in.c\1011</Expression>
+          <Expression>\\MB_TCP_ADC\../Middlewares/Third_Party/Modbus/port/portevent.c\171</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>357</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134351880</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>..\Middlewares\Third_Party\Modbus\mb.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\MB_TCP_ADC\../Middlewares/Third_Party/Modbus/mb.c\357</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
