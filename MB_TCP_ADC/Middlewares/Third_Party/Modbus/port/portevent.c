@@ -131,7 +131,7 @@ static BOOL     xEventInQueue;
 extern stMB_TCPClient MB_TCPClient_1;
 extern stMB_TCPClient MB_TCPClient_2;
 
-BOOL xMBPortTCPPool( stMB_TCPClient *MB_TCPClient );
+BOOL xMBPortTCPPool( void );
 /* ----------------------- Start implementation -----------------------------*/
 BOOL
 xMBPortEventInit( void )
@@ -166,9 +166,9 @@ xMBPortEventGet( eMBEventType * eEvent )
 		{
 
 
-				(void)xMBPortTCPPool( &MB_TCPClient_1 );
+				(void)xMBPortTCPPool(  );
 
-				(void)xMBPortTCPPool( &MB_TCPClient_2 );
+//				(void)xMBPortTCPPool( &MB_TCPClient_2 );
 
 		}
 		
