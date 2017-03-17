@@ -8,6 +8,9 @@
 #include "mb.h"
 #include "mbport.h"
 
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
 
 
 
@@ -21,7 +24,9 @@ static fd_set   allset;
 
 stMB_TCPClient *Current_MB_TCPClient;
 
-#define MB_TCP_CLIENT_NUM	1
+#define MB_TCP_CLIENT_NUM					1
+#define MB_TCP_CLIENT_STACK_SIZE	256
+
 stMB_TCPClient MB_TCPClient[MB_TCP_CLIENT_NUM]={{INVALID_SOCKET,{0},0,0}};//,{INVALID_SOCKET,{0},0,0}};
 
 /* ----------------------- External functions -------------------------------*/
@@ -33,6 +38,7 @@ CHAR           *prvMBTCPPortFrameToString( UCHAR * pucFrame, USHORT usFrameLen )
 static BOOL     prvbMBPortAcceptClient( stMB_TCPClient *MB_TCPClient );
 static void     prvvMBPortReleaseClient( stMB_TCPClient *MB_TCPClient);
 static void 		usleep(uint32_t time);
+void xMBTCPPort_HandlingTask( void *pvParameters );
 
 
 /* ----------------------- Begin implementation -----------------------------*/
@@ -132,98 +138,24 @@ vMBTCPPortDisable( void )
 BOOL
 xMBPortTCPPool( void )
 {
-    int             n;
-    fd_set          fread;
-    struct timeval  tval;
-
-    tval.tv_sec = 0;
-    tval.tv_usec = 5000;
-    int             ret;
-    USHORT          usLength;
-		
 		int	clnt_index=0;
-	
-		//Current_MB_TCPClient=MB_TCPClient;
-	
 	
 		for(clnt_index=0;clnt_index<MB_TCP_CLIENT_NUM;clnt_index++)
 		{
 			if( MB_TCPClient[clnt_index].xClientSocket == INVALID_SOCKET )
 			{
+					listen(xListenSocket,2);
 					/* Accept to client */
-					select( xListenSocket + 1, &allset, NULL, NULL, NULL );
-					if( FD_ISSET( xListenSocket, &allset ) )
+				//	select( xListenSocket + 1, &allset, NULL, NULL, NULL );
+			//		if( FD_ISSET( xListenSocket, &allset ) )
 					{
-							prvbMBPortAcceptClient( &MB_TCPClient[clnt_index] );
+							if(prvbMBPortAcceptClient( &MB_TCPClient[clnt_index] )==TRUE)
+							{
+								  xTaskCreate( xMBTCPPort_HandlingTask, "MBTCP HANDLE", MB_TCP_CLIENT_STACK_SIZE, (void*)&MB_TCPClient[clnt_index], 2, NULL );
+							}
 					}
 			}
 		}	
-		
-		
-    while( TRUE )
-    {
-        FD_ZERO( &fread );
-				for(clnt_index=0;clnt_index<MB_TCP_CLIENT_NUM;clnt_index++)
-				{						
-					FD_SET( MB_TCPClient[clnt_index].xClientSocket, &fread );
-				}
-			
-			
-        if( ( ( ret = select( MB_TCPClient[0].xClientSocket + MB_TCP_CLIENT_NUM, &fread, NULL, NULL, &tval ) ) == SOCKET_ERROR )
-            || !ret )
-        {
-            continue;
-        }
-				
-				
-        if( ret > 0 )
-        {
-						for(clnt_index=0;clnt_index<MB_TCP_CLIENT_NUM;clnt_index++)
-						{	
-							if( FD_ISSET( MB_TCPClient[clnt_index].xClientSocket, &fread ) )
-							{
-									if( ( ( ret =
-													recv( MB_TCPClient[clnt_index].xClientSocket, &MB_TCPClient[clnt_index].aucTCPBuf[MB_TCPClient[clnt_index].usTCPBufPos], MB_TCPClient[clnt_index].usTCPFrameBytesLeft,
-																0 ) ) == SOCKET_ERROR ) || ( !ret ) )
-									{
-											close( MB_TCPClient[clnt_index].xClientSocket );
-											MB_TCPClient[clnt_index].xClientSocket = INVALID_SOCKET;
-											return TRUE;
-									}
-									
-									MB_TCPClient[clnt_index].usTCPBufPos += ret;
-									MB_TCPClient[clnt_index].usTCPFrameBytesLeft -= ret;
-									
-									if( MB_TCPClient[clnt_index].usTCPBufPos >= MB_TCP_FUNC )
-									{
-											/* Length is a byte count of Modbus PDU (function code + data) and the
-											 * unit identifier. */
-											usLength = MB_TCPClient[clnt_index].aucTCPBuf[MB_TCP_LEN] << 8U;
-											usLength |= MB_TCPClient[clnt_index].aucTCPBuf[MB_TCP_LEN + 1];
-
-											/* Is the frame already complete. */
-											if( MB_TCPClient[clnt_index].usTCPBufPos < ( MB_TCP_UID + usLength ) )
-											{
-													MB_TCPClient[clnt_index].usTCPFrameBytesLeft = usLength + MB_TCP_UID - MB_TCPClient[clnt_index].usTCPBufPos;
-											}
-											/* The frame is complete. */
-											else if( MB_TCPClient[clnt_index].usTCPBufPos == ( MB_TCP_UID + usLength ) )
-											{
-													
-													( void )xMBPortEventPost( EV_FRAME_RECEIVED );
-													return TRUE;
-											}
-											/* This can not happend because we always calculate the number of bytes
-											 * to receive. */
-											else
-											{
-													assert( MB_TCPClient[clnt_index].usTCPBufPos <= ( MB_TCP_UID + usLength ) );
-											}
-									}
-							}
-						}
-        }
-    }
     return TRUE;
 }
 
@@ -337,4 +269,79 @@ prvbMBPortAcceptClient( stMB_TCPClient *MB_TCPClient )
         bOkay = TRUE;
     }
     return bOkay;
+}
+
+
+void xMBTCPPort_HandlingTask( void *pvParameters )
+{
+		fd_set          fread;
+		int             ret;
+		USHORT          usLength;
+	  struct timeval  tval;
+
+    tval.tv_sec = 0;
+    tval.tv_usec = 5000;
+	
+		stMB_TCPClient *MB_TCPClient;
+		MB_TCPClient=(stMB_TCPClient*)pvParameters;
+	
+	  while(1)
+    {
+        FD_ZERO( &fread );
+        FD_SET( MB_TCPClient->xClientSocket, &fread );
+			
+			  ret = select( MB_TCPClient->xClientSocket + 1, &fread, NULL, NULL, &tval );
+        if(( ret == SOCKET_ERROR ) || (!ret) )
+        {
+            continue;
+        }
+				
+				
+        if( ret > 0 )
+        {
+            if( FD_ISSET( MB_TCPClient->xClientSocket, &fread ) )
+            {
+								ret = recv( MB_TCPClient->xClientSocket, &MB_TCPClient->aucTCPBuf[MB_TCPClient->usTCPBufPos], MB_TCPClient->usTCPFrameBytesLeft,0 );
+                if(( ret == SOCKET_ERROR ) || ( !ret ) )
+                {
+                    close( MB_TCPClient->xClientSocket );
+                    MB_TCPClient->xClientSocket = INVALID_SOCKET;
+                    vTaskDelete(NULL);
+                }
+								
+                MB_TCPClient->usTCPBufPos += ret;
+                MB_TCPClient->usTCPFrameBytesLeft -= ret;
+								
+                if( MB_TCPClient->usTCPBufPos >= MB_TCP_FUNC )
+                {
+                    /* Length is a byte count of Modbus PDU (function code + data) and the
+                     * unit identifier. */
+                    usLength = MB_TCPClient->aucTCPBuf[MB_TCP_LEN] << 8U;
+                    usLength |= MB_TCPClient->aucTCPBuf[MB_TCP_LEN + 1];
+
+                    /* Is the frame already complete. */
+                    if( MB_TCPClient->usTCPBufPos < ( MB_TCP_UID + usLength ) )
+                    {
+                        MB_TCPClient->usTCPFrameBytesLeft = usLength + MB_TCP_UID - MB_TCPClient->usTCPBufPos;
+                    }
+                    /* The frame is complete. */
+                    else if( MB_TCPClient->usTCPBufPos == ( MB_TCP_UID + usLength ) )
+                    {
+												
+                        ( void )xMBPortEventPost( EV_FRAME_RECEIVED );
+												Current_MB_TCPClient=MB_TCPClient;
+                        //vTaskDelete(NULL);
+                    }
+                    /* This can not happend because we always calculate the number of bytes
+                     * to receive. */
+                    else
+                    {
+                        assert( MB_TCPClient->usTCPBufPos <= ( MB_TCP_UID + usLength ) );
+                    }
+                }
+            }
+        }
+    }
+	
+		vTaskDelete(NULL);
 }
