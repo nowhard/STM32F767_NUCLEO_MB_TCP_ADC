@@ -164,12 +164,7 @@ xMBPortEventGet( eMBEventType * eEvent )
     }
 		else
 		{
-
-
 				(void)xMBPortTCPPool(  );
-
-//				(void)xMBPortTCPPool( &MB_TCPClient_2 );
-
 		}
 		
 

@@ -13,24 +13,19 @@
 #include "semphr.h"
 
 
-
-
-/* ----------------------- Static variables ---------------------------------*/
 SOCKET          xListenSocket;
-
 static fd_set   allset;
 
 
 
 stMB_TCPClient *Current_MB_TCPClient;
 
-#define MB_TCP_CLIENT_NUM					1
+#define MB_TCP_CLIENT_NUM					2
 #define MB_TCP_CLIENT_STACK_SIZE	256
 
-stMB_TCPClient MB_TCPClient[MB_TCP_CLIENT_NUM]={{INVALID_SOCKET,{0},0,0}};//,{INVALID_SOCKET,{0},0,0}};
+stMB_TCPClient MB_TCPClient[MB_TCP_CLIENT_NUM]={{INVALID_SOCKET,{0},0,0} , {INVALID_SOCKET,{0},0,0}};
 
-/* ----------------------- External functions -------------------------------*/
-//CHAR           *WsaError2String( int dwError );
+SemaphoreHandle_t xMB_FrameRec_Mutex;
 
 /* ----------------------- Static functions ---------------------------------*/
 BOOL            prvMBTCPPortAddressToString( SOCKET xSocket, CHAR * szAddr, USHORT usBufSize );
@@ -57,6 +52,8 @@ xMBTCPPortInit( USHORT usTCPPort )
 {
     USHORT          usPort;
     struct sockaddr_in serveraddr;
+	
+		 xMB_FrameRec_Mutex = xSemaphoreCreateMutex();
 
     if( usTCPPort == 0 )
     {
@@ -87,6 +84,8 @@ xMBTCPPortInit( USHORT usTCPPort )
     }
     FD_ZERO( &allset );
     FD_SET( xListenSocket, &allset );
+		
+		listen(xListenSocket,2);
     return TRUE;
 }
 
@@ -115,65 +114,30 @@ vMBTCPPortDisable( void )
     }
 }
 
-/*! \ingroup port_win32tcp
- *
- * \brief Pool the listening socket and currently connected Modbus TCP clients
- *   for new events.
- * \internal
- *
- * This function checks if new clients want to connect or if already connected 
- * clients are sending requests. If a new client is connected and there are 
- * still client slots left (The current implementation supports only one)
- * then the connection is accepted and an event object for the new client
- * socket is activated (See prvbMBPortAcceptClient() ).
- * Events for already existing clients in \c FD_READ and \c FD_CLOSE. In case of
- * an \c FD_CLOSE the client connection is released (See prvvMBPortReleaseClient() ).
- * In case of an \c FD_READ command the existing data is read from the client
- * and if a complete frame has been received the Modbus Stack is notified.
- *
- * \return FALSE in case of an internal I/O error. For example if the internal
- *   event objects are in an invalid state. Note that this does not include any 
- *   client errors. In all other cases returns TRUE.
- */
 BOOL
 xMBPortTCPPool( void )
 {
 		int	clnt_index=0;
-	
+
 		for(clnt_index=0;clnt_index<MB_TCP_CLIENT_NUM;clnt_index++)
 		{
 			if( MB_TCPClient[clnt_index].xClientSocket == INVALID_SOCKET )
 			{
-					listen(xListenSocket,2);
-					/* Accept to client */
-				//	select( xListenSocket + 1, &allset, NULL, NULL, NULL );
-			//		if( FD_ISSET( xListenSocket, &allset ) )
-					{
+//					//listen(xListenSocket,2);
+//					/* Accept to client */
+//					select( xListenSocket + 1, &allset, NULL, NULL, NULL );
+//					if( FD_ISSET( xListenSocket, &allset ) )
+//					{
 							if(prvbMBPortAcceptClient( &MB_TCPClient[clnt_index] )==TRUE)
 							{
-								  xTaskCreate( xMBTCPPort_HandlingTask, "MBTCP HANDLE", MB_TCP_CLIENT_STACK_SIZE, (void*)&MB_TCPClient[clnt_index], 2, NULL );
+								  xTaskCreate( xMBTCPPort_HandlingTask, "MBTCP HANDLE", MB_TCP_CLIENT_STACK_SIZE, (void*)&MB_TCPClient[clnt_index], 3, NULL );
 							}
-					}
+//					}
 			}
 		}	
     return TRUE;
 }
 
-/*!
- * \ingroup port_win32tcp
- * \brief Receives parts of a Modbus TCP frame and if complete notifies
- *    the protocol stack.
- * \internal 
- *
- * This function reads a complete Modbus TCP frame from the protocol stack.
- * It starts by reading the header with an initial request size for
- * usTCPFrameBytesLeft = MB_TCP_FUNC. If the header is complete the 
- * number of bytes left can be calculated from it (See Length in MBAP header).
- * Further read calls are issued until the frame is complete.
- *
- * \return \c TRUE if part of a Modbus TCP frame could be processed. In case
- *   of a communication error the function returns \c FALSE.
- */
 
 BOOL
 xMBTCPPortGetRequest( UCHAR ** ppucMBTCPFrame, USHORT * usTCPLength )
@@ -227,11 +191,8 @@ xMBTCPPortSendResponse( const UCHAR * pucMBTCPFrame, USHORT usTCPLength )
     while( ( iBytesSent != usTCPLength ) && !bAbort );
 
     bFrameSent = iBytesSent == usTCPLength ? TRUE : FALSE;
-
-
-		//activeSocket^=0x1;	
-
 		
+		xSemaphoreGive( xMB_FrameRec_Mutex );
     return bFrameSent;
 }
 
@@ -327,10 +288,19 @@ void xMBTCPPort_HandlingTask( void *pvParameters )
                     /* The frame is complete. */
                     else if( MB_TCPClient->usTCPBufPos == ( MB_TCP_UID + usLength ) )
                     {
-												
-                        ( void )xMBPortEventPost( EV_FRAME_RECEIVED );
-												Current_MB_TCPClient=MB_TCPClient;
-                        //vTaskDelete(NULL);
+
+											
+												if(1)// xSemaphoreTake( xMB_FrameRec_Mutex, ( TickType_t ) 100 ) == pdTRUE )
+												{
+														( void )xMBPortEventPost( EV_FRAME_RECEIVED );
+														Current_MB_TCPClient=MB_TCPClient;													
+												}
+												else
+												{
+														close( MB_TCPClient->xClientSocket );
+														MB_TCPClient->xClientSocket = INVALID_SOCKET;
+														vTaskDelete(NULL);
+												}
                     }
                     /* This can not happend because we always calculate the number of bytes
                      * to receive. */
