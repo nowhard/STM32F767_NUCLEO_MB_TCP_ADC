@@ -158,9 +158,9 @@ int main(void)
   /* USER CODE BEGIN 2 */
 	ConfigInfoRead ();
 	Jumpers_ReadSettings();
-	DiscretOutputs_Init();
+//	DiscretOutputs_Init();
 
-	DCMI_ADC_Init();
+//	DCMI_ADC_Init();
  
   /* USER CODE END 2 */
 
@@ -843,9 +843,9 @@ void StartDefaultTask(void const * argument)
 
   /* USER CODE BEGIN 5 */
 	MB_TCP_Init();
-	udp_client_init();
-	//tcp_client_init();
-  /* Infinite loop */
+//	udp_client_init();
+
+
   for(;;)
   {
     osDelay(1);

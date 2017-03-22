@@ -138,7 +138,7 @@
  
 
 /* USER CODE BEGIN 1 */
-
+#define MEM_SIZE                        (6 * 1024) 
 /* USER CODE END 1 */
 
 #ifdef __cplusplus

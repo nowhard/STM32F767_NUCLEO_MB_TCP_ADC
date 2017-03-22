@@ -128,8 +128,7 @@
 static eMBEventType eQueuedEvent;
 static BOOL     xEventInQueue;
 
-extern stMB_TCPClient MB_TCPClient_1;
-extern stMB_TCPClient MB_TCPClient_2;
+
 
 BOOL xMBPortTCPPool( void );
 /* ----------------------- Start implementation -----------------------------*/
@@ -149,7 +148,6 @@ xMBPortEventPost( eMBEventType eEvent )
 }
 
 
-extern uint8_t activeSocket;
 
 BOOL
 xMBPortEventGet( eMBEventType * eEvent )
@@ -158,14 +156,18 @@ xMBPortEventGet( eMBEventType * eEvent )
 
     if( xEventInQueue )
     {
+//				if(eQueuedEvent==EV_READY)
+//				{
+//						flag_mb_ready=1;
+//				}
         *eEvent = eQueuedEvent;
         xEventInQueue = FALSE;
         xEventHappened = TRUE;
     }
-		else
-		{
-				(void)xMBPortTCPPool(  );
-		}
+//		else
+//		{
+
+//		}
 		
 
     return xEventHappened;

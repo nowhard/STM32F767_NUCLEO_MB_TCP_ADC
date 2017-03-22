@@ -21,11 +21,14 @@ static fd_set   allset;
 stMB_TCPClient *Current_MB_TCPClient;
 
 #define MB_TCP_CLIENT_NUM					2
-#define MB_TCP_CLIENT_STACK_SIZE	256
+#define MB_TCP_CLIENT_STACK_SIZE	1024
+#define MB_TCP_POOL_STACK_SIZE		512
 
 stMB_TCPClient MB_TCPClient[MB_TCP_CLIENT_NUM]={{INVALID_SOCKET,{0},0,0} , {INVALID_SOCKET,{0},0,0}};
 
 SemaphoreHandle_t xMB_FrameRec_Mutex;
+
+uint8_t flag_mb_ready=0;
 
 /* ----------------------- Static functions ---------------------------------*/
 BOOL            prvMBTCPPortAddressToString( SOCKET xSocket, CHAR * szAddr, USHORT usBufSize );
@@ -34,7 +37,7 @@ static BOOL     prvbMBPortAcceptClient( stMB_TCPClient *MB_TCPClient );
 static void     prvvMBPortReleaseClient( stMB_TCPClient *MB_TCPClient);
 static void 		usleep(uint32_t time);
 void xMBTCPPort_HandlingTask( void *pvParameters );
-
+void xMBTCPPort_PoolTask( void *pvParameters );
 
 /* ----------------------- Begin implementation -----------------------------*/
 
@@ -85,7 +88,9 @@ xMBTCPPortInit( USHORT usTCPPort )
     FD_ZERO( &allset );
     FD_SET( xListenSocket, &allset );
 		
-		listen(xListenSocket,2);
+		listen(xListenSocket,10);
+		
+		xTaskCreate( xMBTCPPort_PoolTask, "MBTCP HANDLE", MB_TCP_POOL_STACK_SIZE, NULL, 2, NULL );
     return TRUE;
 }
 
@@ -123,16 +128,11 @@ xMBPortTCPPool( void )
 		{
 			if( MB_TCPClient[clnt_index].xClientSocket == INVALID_SOCKET )
 			{
-//					//listen(xListenSocket,2);
-//					/* Accept to client */
-//					select( xListenSocket + 1, &allset, NULL, NULL, NULL );
-//					if( FD_ISSET( xListenSocket, &allset ) )
-//					{
+
 							if(prvbMBPortAcceptClient( &MB_TCPClient[clnt_index] )==TRUE)
 							{
 								  xTaskCreate( xMBTCPPort_HandlingTask, "MBTCP HANDLE", MB_TCP_CLIENT_STACK_SIZE, (void*)&MB_TCPClient[clnt_index], 3, NULL );
 							}
-//					}
 			}
 		}	
     return TRUE;
@@ -191,8 +191,8 @@ xMBTCPPortSendResponse( const UCHAR * pucMBTCPFrame, USHORT usTCPLength )
     while( ( iBytesSent != usTCPLength ) && !bAbort );
 
     bFrameSent = iBytesSent == usTCPLength ? TRUE : FALSE;
-		
-		xSemaphoreGive( xMB_FrameRec_Mutex );
+
+		flag_mb_ready=1;
     return bFrameSent;
 }
 
@@ -232,6 +232,16 @@ prvbMBPortAcceptClient( stMB_TCPClient *MB_TCPClient )
     return bOkay;
 }
 
+void xMBTCPPort_PoolTask( void *pvParameters )
+{
+	while(1)
+	{
+			(void)xMBPortTCPPool(  );
+	}
+}
+
+
+uint8_t debug_cnt=0;
 
 void xMBTCPPort_HandlingTask( void *pvParameters )
 {
@@ -243,20 +253,24 @@ void xMBTCPPort_HandlingTask( void *pvParameters )
     tval.tv_sec = 0;
     tval.tv_usec = 5000;
 	
+	debug_cnt=0;
+	
 		stMB_TCPClient *MB_TCPClient;
 		MB_TCPClient=(stMB_TCPClient*)pvParameters;
 	
+
+	
 	  while(1)
     {
-        FD_ZERO( &fread );
-        FD_SET( MB_TCPClient->xClientSocket, &fread );
-			
+				FD_ZERO( &fread );
+				FD_SET( MB_TCPClient->xClientSocket, &fread );
 			  ret = select( MB_TCPClient->xClientSocket + 1, &fread, NULL, NULL, &tval );
         if(( ret == SOCKET_ERROR ) || (!ret) )
         {
             continue;
         }
 				
+				debug_cnt=1;
 				
         if( ret > 0 )
         {
@@ -269,6 +283,8 @@ void xMBTCPPort_HandlingTask( void *pvParameters )
                     MB_TCPClient->xClientSocket = INVALID_SOCKET;
                     vTaskDelete(NULL);
                 }
+								
+								debug_cnt=2;
 								
                 MB_TCPClient->usTCPBufPos += ret;
                 MB_TCPClient->usTCPFrameBytesLeft -= ret;
@@ -288,16 +304,27 @@ void xMBTCPPort_HandlingTask( void *pvParameters )
                     /* The frame is complete. */
                     else if( MB_TCPClient->usTCPBufPos == ( MB_TCP_UID + usLength ) )
                     {
-
 											
-												if(1)// xSemaphoreTake( xMB_FrameRec_Mutex, ( TickType_t ) 100 ) == pdTRUE )
+												if(xSemaphoreTake( xMB_FrameRec_Mutex, ( TickType_t ) 10 ) == pdTRUE )
 												{
+													debug_cnt=3;
+													
 														( void )xMBPortEventPost( EV_FRAME_RECEIVED );
-														Current_MB_TCPClient=MB_TCPClient;													
+														Current_MB_TCPClient=MB_TCPClient;		
+
+//														while(flag_mb_ready==0)
+//														{
+//															__NOP();
+//														}
+
+														flag_mb_ready=0;
+														
+														xSemaphoreGive( xMB_FrameRec_Mutex );
 												}
 												else
 												{
-														close( MB_TCPClient->xClientSocket );
+														debug_cnt=4;
+													  close( MB_TCPClient->xClientSocket );
 														MB_TCPClient->xClientSocket = INVALID_SOCKET;
 														vTaskDelete(NULL);
 												}
