@@ -72,17 +72,17 @@ xMBTCPPortInit( USHORT usTCPPort )
     serveraddr.sin_port = htons( usPort );
     if( ( xListenSocket = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP ) ) == -1 )
     {
-        fprintf( stderr, "Create socket failed.\r\n" );
+        printf( "Create socket failed.\r\n" );
         return FALSE;
     }
     else if( bind( xListenSocket, ( struct sockaddr * )&serveraddr, sizeof( serveraddr ) ) == -1 )
     {
-        fprintf( stderr, "Bind socket failed.\r\n" );
+        printf( "Bind socket failed.\r\n" );
         return FALSE;
     }
     else if( listen( xListenSocket, 5 ) == -1 )
     {
-        fprintf( stderr, "Listen socket failed.\r\n" );
+        printf( "Listen socket failed.\r\n" );
         return FALSE;
     }
     FD_ZERO( &allset );
@@ -162,6 +162,11 @@ xMBTCPPortSendResponse( const UCHAR * pucMBTCPFrame, USHORT usTCPLength )
     int             res;
     int             iBytesSent = 0;
     int             iTimeOut = MB_TCP_READ_TIMEOUT;
+	
+		if(Current_MB_TCPClient->xClientSocket==INVALID_SOCKET)
+		{
+				return FALSE;
+		}
 
     do
     {
@@ -215,7 +220,7 @@ prvbMBPortAcceptClient( stMB_TCPClient *MB_TCPClient )
 
     if( MB_TCPClient->xClientSocket != INVALID_SOCKET )
     {
-        fprintf( stderr, "can't accept new client. all connections in use.\n" );
+        printf( "can't accept new client %i. all connections in use.\n",MB_TCPClient->xClientSocket );
         bOkay = FALSE;
     }
     else if( ( xNewSocket = accept( xListenSocket, NULL, NULL ) ) == INVALID_SOCKET )
@@ -241,7 +246,7 @@ void xMBTCPPort_PoolTask( void *pvParameters )
 }
 
 
-uint8_t debug_cnt=0;
+
 
 void xMBTCPPort_HandlingTask( void *pvParameters )
 {
@@ -250,27 +255,29 @@ void xMBTCPPort_HandlingTask( void *pvParameters )
 		USHORT          usLength;
 	  struct timeval  tval;
 
-    tval.tv_sec = 0;
-    tval.tv_usec = 10000;
+    tval.tv_sec =  1;
+    tval.tv_usec = 0;
 	
 		
 	
 		stMB_TCPClient *MB_TCPClient;
 		MB_TCPClient=(stMB_TCPClient*)pvParameters;
 	
-		printf("Task of socket %i started",MB_TCPClient->xClientSocket);
+		printf("Task of socket %i started\r\n",MB_TCPClient->xClientSocket);
 	
 	  while(1)
     {
 				FD_ZERO( &fread );
 				FD_SET( MB_TCPClient->xClientSocket, &fread );
+				printf("Wait for Socket %i data... \r\n",MB_TCPClient->xClientSocket);
 			  ret = select( MB_TCPClient->xClientSocket + 1, &fread, NULL, NULL, &tval );
         if(( ret == SOCKET_ERROR ) || (!ret) )
         {
-            continue;
+          printf("Continue for Socket %i... \r\n",MB_TCPClient->xClientSocket);  
+					continue;
         }
 				
-				printf("Socket %i has new data",MB_TCPClient->xClientSocket);
+				printf("Socket %i has new data\r\n",MB_TCPClient->xClientSocket);
 				
         if( ret > 0 )
         {
@@ -279,13 +286,15 @@ void xMBTCPPort_HandlingTask( void *pvParameters )
 								ret = recv( MB_TCPClient->xClientSocket, &MB_TCPClient->aucTCPBuf[MB_TCPClient->usTCPBufPos], MB_TCPClient->usTCPFrameBytesLeft,0 );
                 if(( ret == SOCKET_ERROR ) || ( !ret ) )
                 {
-										printf("Task of socket %i deleted",MB_TCPClient->xClientSocket);
+										
                     close( MB_TCPClient->xClientSocket );
-                    MB_TCPClient->xClientSocket = INVALID_SOCKET;
+                    
+									  printf("Task of socket %i deleted\r\n",MB_TCPClient->xClientSocket);
+										MB_TCPClient->xClientSocket = INVALID_SOCKET;
                     vTaskDelete(NULL);
                 }
 								
-								debug_cnt=2;
+								printf("Task of socket %i receive %i data\r\n",MB_TCPClient->xClientSocket, ret);
 								
                 MB_TCPClient->usTCPBufPos += ret;
                 MB_TCPClient->usTCPFrameBytesLeft -= ret;
@@ -308,11 +317,11 @@ void xMBTCPPort_HandlingTask( void *pvParameters )
 											
 												if(xSemaphoreTake( xMB_FrameRec_Mutex, ( TickType_t ) 10 ) == pdTRUE )
 												{
-													debug_cnt=3;
+											
 													
 														( void )xMBPortEventPost( EV_FRAME_RECEIVED );
 														Current_MB_TCPClient=MB_TCPClient;		
-
+														printf("Task of socket %i send command EV_FRAME_RECEIVED\r\n",MB_TCPClient->xClientSocket);
 //														while(flag_mb_ready==0)
 //														{
 //															__NOP();
@@ -324,7 +333,7 @@ void xMBTCPPort_HandlingTask( void *pvParameters )
 												}
 												else
 												{
-														debug_cnt=4;
+													
 													  close( MB_TCPClient->xClientSocket );
 														MB_TCPClient->xClientSocket = INVALID_SOCKET;
 														vTaskDelete(NULL);
