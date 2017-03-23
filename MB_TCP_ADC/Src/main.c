@@ -117,7 +117,12 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
+#include <stdio.h>
 
+int fputc(int c, FILE *stream)
+{
+   return(ITM_SendChar(c));
+}
 /* USER CODE END 0 */
 
 int main(void)
@@ -158,6 +163,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 	ConfigInfoRead ();
 	Jumpers_ReadSettings();
+	printf("Init...\n\r");
 //	DiscretOutputs_Init();
 
 //	DCMI_ADC_Init();
@@ -777,11 +783,11 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : USB_OverCurrent_Pin */
-  GPIO_InitStruct.Pin = USB_OverCurrent_Pin;
+  /*Configure GPIO pins : USB_OverCurrent_Pin DIN_ADC_Pin */
+  GPIO_InitStruct.Pin = USB_OverCurrent_Pin|DIN_ADC_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(USB_OverCurrent_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PA8 */
   GPIO_InitStruct.Pin = GPIO_PIN_8;
@@ -812,12 +818,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : DIN_ADC_Pin */
-  GPIO_InitStruct.Pin = DIN_ADC_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(DIN_ADC_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : SIG_SYNC_TIM_Pin */
   GPIO_InitStruct.Pin = SIG_SYNC_TIM_Pin;

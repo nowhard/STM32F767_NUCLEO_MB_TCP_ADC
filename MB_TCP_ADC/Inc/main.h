@@ -191,8 +191,8 @@
 #define U_MISO_GPIO_Port GPIOG
 #define RMII_TXD0_Pin GPIO_PIN_13
 #define RMII_TXD0_GPIO_Port GPIOG
-#define DIN_ADC_Pin GPIO_PIN_3
-#define DIN_ADC_GPIO_Port GPIOB
+#define DIN_ADC_Pin GPIO_PIN_15
+#define DIN_ADC_GPIO_Port GPIOG
 #define DATA5_Pin GPIO_PIN_6
 #define DATA5_GPIO_Port GPIOB
 #define SIG_SYNC_TIM_Pin GPIO_PIN_9

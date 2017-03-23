@@ -251,14 +251,14 @@ void xMBTCPPort_HandlingTask( void *pvParameters )
 	  struct timeval  tval;
 
     tval.tv_sec = 0;
-    tval.tv_usec = 5000;
+    tval.tv_usec = 10000;
 	
-	debug_cnt=0;
+		
 	
 		stMB_TCPClient *MB_TCPClient;
 		MB_TCPClient=(stMB_TCPClient*)pvParameters;
 	
-
+		printf("Task of socket %i started",MB_TCPClient->xClientSocket);
 	
 	  while(1)
     {
@@ -270,7 +270,7 @@ void xMBTCPPort_HandlingTask( void *pvParameters )
             continue;
         }
 				
-				debug_cnt=1;
+				printf("Socket %i has new data",MB_TCPClient->xClientSocket);
 				
         if( ret > 0 )
         {
@@ -279,6 +279,7 @@ void xMBTCPPort_HandlingTask( void *pvParameters )
 								ret = recv( MB_TCPClient->xClientSocket, &MB_TCPClient->aucTCPBuf[MB_TCPClient->usTCPBufPos], MB_TCPClient->usTCPFrameBytesLeft,0 );
                 if(( ret == SOCKET_ERROR ) || ( !ret ) )
                 {
+										printf("Task of socket %i deleted",MB_TCPClient->xClientSocket);
                     close( MB_TCPClient->xClientSocket );
                     MB_TCPClient->xClientSocket = INVALID_SOCKET;
                     vTaskDelete(NULL);

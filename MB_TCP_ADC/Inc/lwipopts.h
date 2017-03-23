@@ -49,6 +49,7 @@
 
 #include "stm32f7xx_hal.h"
 
+
 /*-----------------------------------------------------------------------------*/
 /* Current version of LwIP supported by CubeMx: 2.0.0 -*/
 /*-----------------------------------------------------------------------------*/
@@ -78,17 +79,13 @@
 #define LWIP_ETHERNET 1
 /*----- Value in opt.h for LWIP_DNS_SECURE: (LWIP_DNS_SECURE_RAND_XID | LWIP_DNS_SECURE_NO_MULTIPLE_OUTSTANDING | LWIP_DNS_SECURE_RAND_SRC_PORT) -*/
 #define LWIP_DNS_SECURE 7
-/*----- Default Value for TCP_WND: 5840 ---*/
-#define TCP_WND 2144
-/*----- Default Value for TCP_SND_BUF: 2920 ---*/
-#define TCP_SND_BUF 1072
-/*----- Default Value for TCP_SND_QUEUELEN: 17 ---*/
+/*----- Value in opt.h for TCP_SND_QUEUELEN: (4*TCP_SND_BUF + (TCP_MSS - 1))/TCP_MSS -----*/
 #define TCP_SND_QUEUELEN 9
-/*----- Default Value for TCP_SNDLOWAT: 2921 ---*/
+/*----- Value in opt.h for TCP_SNDLOWAT: LWIP_MIN(LWIP_MAX(((TCP_SND_BUF)/2), (2 * TCP_MSS) + 1), (TCP_SND_BUF) - 1) -*/
 #define TCP_SNDLOWAT 1071
-/*----- Default Value for TCP_SNDQUEUELOWAT: 9 ---*/
+/*----- Value in opt.h for TCP_SNDQUEUELOWAT: LWIP_MAX(TCP_SND_QUEUELEN)/2, 5) -*/
 #define TCP_SNDQUEUELOWAT 5
-/*----- Default Value for TCP_WND_UPDATE_THRESHOLD: 1460 ---*/
+/*----- Value in opt.h for TCP_WND_UPDATE_THRESHOLD: LWIP_MIN(TCP_WND/4, TCP_MSS*4) -----*/
 #define TCP_WND_UPDATE_THRESHOLD 536
 /*----- Value in opt.h for TCPIP_THREAD_STACKSIZE: 0 -----*/
 #define TCPIP_THREAD_STACKSIZE 1024
@@ -139,6 +136,8 @@
 
 /* USER CODE BEGIN 1 */
 #define MEM_SIZE                        (6 * 1024) 
+#define LWIP_DEBUG	1
+#define SOCKETS_DEBUG  (LWIP_DBG_ON | LWIP_DBG_TYPES_ON | LWIP_DBG_MIN_LEVEL)
 /* USER CODE END 1 */
 
 #ifdef __cplusplus
