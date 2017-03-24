@@ -271,16 +271,22 @@ void xMBTCPPort_HandlingTask( void *pvParameters )
 				FD_SET( MB_TCPClient->xClientSocket, &fread );
 				printf("Wait for Socket %i data... \r\n",MB_TCPClient->xClientSocket);
 			  ret = select( MB_TCPClient->xClientSocket + 1, &fread, NULL, NULL, &tval );
-        if(( ret == SOCKET_ERROR ) || (!ret) )
+        if(!ret)
         {
           printf("Continue for Socket %i... \r\n",MB_TCPClient->xClientSocket);  
 					continue;
         }
-				
-				printf("Socket %i has new data\r\n",MB_TCPClient->xClientSocket);
-				
-        if( ret > 0 )
+				else if(ret == SOCKET_ERROR )
+				{
+						printf("Select return SOCKET_ERROR\r\n");
+						printf("Task of socket %i deleted\r\n",MB_TCPClient->xClientSocket);
+						MB_TCPClient->xClientSocket = INVALID_SOCKET;
+            vTaskDelete(NULL);
+				}
+        else if( ret > 0 )
         {
+						printf("Socket %i has new data\r\n",MB_TCPClient->xClientSocket);
+					
             if( FD_ISSET( MB_TCPClient->xClientSocket, &fread ) )
             {
 								ret = recv( MB_TCPClient->xClientSocket, &MB_TCPClient->aucTCPBuf[MB_TCPClient->usTCPBufPos], MB_TCPClient->usTCPFrameBytesLeft,0 );
