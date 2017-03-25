@@ -163,10 +163,9 @@ int main(void)
   /* USER CODE BEGIN 2 */
 	ConfigInfoRead ();
 	Jumpers_ReadSettings();
-	printf("Init...\n\r");
-//	DiscretOutputs_Init();
+	DiscretOutputs_Init();
 
-//	DCMI_ADC_Init();
+	DCMI_ADC_Init();
  
   /* USER CODE END 2 */
 
@@ -843,7 +842,7 @@ void StartDefaultTask(void const * argument)
 
   /* USER CODE BEGIN 5 */
 	MB_TCP_Init();
-//	udp_client_init();
+	udp_client_init();
 
 
   for(;;)

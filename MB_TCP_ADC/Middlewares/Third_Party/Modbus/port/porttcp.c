@@ -91,6 +91,15 @@ xMBTCPPortInit( USHORT usTCPPort )
 		listen(xListenSocket,10);
 		
 		xTaskCreate( xMBTCPPort_PoolTask, "MBTCP HANDLE", MB_TCP_POOL_STACK_SIZE, NULL, 2, NULL );
+		
+				
+	
+
+		int	clnt_index=0;
+		for(clnt_index=0;clnt_index<MB_TCP_CLIENT_NUM;clnt_index++)
+		{
+				xTaskCreate( xMBTCPPort_HandlingTask, "MBTCP HANDLE", MB_TCP_CLIENT_STACK_SIZE, (void*)&MB_TCPClient[clnt_index], 3, NULL );
+		}
     return TRUE;
 }
 
@@ -123,6 +132,8 @@ BOOL
 xMBPortTCPPool( void )
 {
 		int	clnt_index=0;
+	
+		BaseType_t task_ret=pdPASS;
 
 		for(clnt_index=0;clnt_index<MB_TCP_CLIENT_NUM;clnt_index++)
 		{
@@ -131,7 +142,8 @@ xMBPortTCPPool( void )
 
 							if(prvbMBPortAcceptClient( &MB_TCPClient[clnt_index] )==TRUE)
 							{
-								  xTaskCreate( xMBTCPPort_HandlingTask, "MBTCP HANDLE", MB_TCP_CLIENT_STACK_SIZE, (void*)&MB_TCPClient[clnt_index], 3, NULL );
+								  printf("New client accepted, Socket=%i\n",MB_TCPClient[clnt_index].xClientSocket);
+									taskYIELD();
 							}
 			}
 		}	
@@ -266,7 +278,14 @@ void xMBTCPPort_HandlingTask( void *pvParameters )
 		printf("Task of socket %i started\r\n",MB_TCPClient->xClientSocket);
 	
 	  while(1)
-    {
+    {		
+				if(MB_TCPClient->xClientSocket==INVALID_SOCKET)
+				{
+						vTaskDelay(1);
+						continue;
+				}
+				
+				
 				FD_ZERO( &fread );
 				FD_SET( MB_TCPClient->xClientSocket, &fread );
 				printf("Wait for Socket %i data... \r\n",MB_TCPClient->xClientSocket);
@@ -279,9 +298,10 @@ void xMBTCPPort_HandlingTask( void *pvParameters )
 				else if(ret == SOCKET_ERROR )
 				{
 						printf("Select return SOCKET_ERROR\r\n");
-						printf("Task of socket %i deleted\r\n",MB_TCPClient->xClientSocket);
+						printf("Socket %i closed(select)\r\n",MB_TCPClient->xClientSocket);
 						MB_TCPClient->xClientSocket = INVALID_SOCKET;
-            vTaskDelete(NULL);
+						continue;
+           // vTaskDelete(NULL);
 				}
         else if( ret > 0 )
         {
@@ -294,10 +314,10 @@ void xMBTCPPort_HandlingTask( void *pvParameters )
                 {
 										
                     close( MB_TCPClient->xClientSocket );
-                    
-									  printf("Task of socket %i deleted\r\n",MB_TCPClient->xClientSocket);
+									  printf("Socket %i closed\r\n",MB_TCPClient->xClientSocket);
 										MB_TCPClient->xClientSocket = INVALID_SOCKET;
-                    vTaskDelete(NULL);
+                    //vTaskDelete(NULL);
+										continue;
                 }
 								
 								printf("Task of socket %i receive %i data\r\n",MB_TCPClient->xClientSocket, ret);
@@ -342,7 +362,8 @@ void xMBTCPPort_HandlingTask( void *pvParameters )
 													
 													  close( MB_TCPClient->xClientSocket );
 														MB_TCPClient->xClientSocket = INVALID_SOCKET;
-														vTaskDelete(NULL);
+														//vTaskDelete(NULL);
+														continue;
 												}
                     }
                     /* This can not happend because we always calculate the number of bytes
@@ -355,6 +376,4 @@ void xMBTCPPort_HandlingTask( void *pvParameters )
             }
         }
     }
-	
-		vTaskDelete(NULL);
 }
