@@ -176,7 +176,7 @@ int ConfigInfoWrite(void)
 
 void StartConfigInfoWrite(void)
 {
-	xTaskCreate( Flash_Write_Task, "Flash Write Task", 512, NULL, tskIDLE_PRIORITY, NULL );
+	xTaskCreate( Flash_Write_Task, "Flash Write Task", 512, NULL, 4, NULL );
 }
 
 void Flash_Write_Task( void *pvParameters )

@@ -49,7 +49,6 @@
 
 #include "stm32f7xx_hal.h"
 
-
 /*-----------------------------------------------------------------------------*/
 /* Current version of LwIP supported by CubeMx: 2.0.0 -*/
 /*-----------------------------------------------------------------------------*/
@@ -67,38 +66,50 @@
 /* Parameters set in STM32CubeMX LwIP Configuration GUI -*/
 /*----- WITH_RTOS enabled (Since FREERTOS is set) -----*/
 #define WITH_RTOS 1
-/*----- CHECKSUM_BY_HARDWARE disabled -----*/
-#define CHECKSUM_BY_HARDWARE 0
+/*----- CHECKSUM_BY_HARDWARE enabled -----*/
+#define CHECKSUM_BY_HARDWARE 1
 /*-----------------------------------------------------------------------------*/
 
 /* LwIP Stack Parameters (modified compared to initialization value in opt.h) -*/
 /* Parameters set in STM32CubeMX LwIP Configuration GUI -*/
 /*----- Value in opt.h for MEM_ALIGNMENT: 1 -----*/
 #define MEM_ALIGNMENT 4
+/*----- Default Value for MEM_SIZE: 1600 ---*/
+#define MEM_SIZE 4096
+/*----- Default Value for MEMP_NUM_PBUF: 16 ---*/
+#define MEMP_NUM_PBUF 100
+/*----- Default Value for MEMP_NUM_RAW_PCB: 4 ---*/
+#define MEMP_NUM_RAW_PCB 1
+/*----- Default Value for MEMP_NUM_TCP_PCB_LISTEN: 8 ---*/
+#define MEMP_NUM_TCP_PCB_LISTEN 10
+/*----- Default Value for MEMP_NUM_TCP_SEG: 16 ---*/
+#define MEMP_NUM_TCP_SEG 17
+/*----- Default Value for MEMP_NUM_LOCALHOSTLIST: 1 ---*/
+#define MEMP_NUM_LOCALHOSTLIST 10
 /*----- Value in opt.h for LWIP_ETHERNET: LWIP_ARP || PPPOE_SUPPORT -*/
 #define LWIP_ETHERNET 1
 /*----- Value in opt.h for LWIP_DNS_SECURE: (LWIP_DNS_SECURE_RAND_XID | LWIP_DNS_SECURE_NO_MULTIPLE_OUTSTANDING | LWIP_DNS_SECURE_RAND_SRC_PORT) -*/
 #define LWIP_DNS_SECURE 7
-/*----- Value in opt.h for TCP_SND_QUEUELEN: (4*TCP_SND_BUF + (TCP_MSS - 1))/TCP_MSS -----*/
-#define TCP_SND_QUEUELEN 9
-/*----- Value in opt.h for TCP_SNDLOWAT: LWIP_MIN(LWIP_MAX(((TCP_SND_BUF)/2), (2 * TCP_MSS) + 1), (TCP_SND_BUF) - 1) -*/
-#define TCP_SNDLOWAT 1071
-/*----- Value in opt.h for TCP_SNDQUEUELOWAT: LWIP_MAX(TCP_SND_QUEUELEN)/2, 5) -*/
-#define TCP_SNDQUEUELOWAT 5
-/*----- Value in opt.h for TCP_WND_UPDATE_THRESHOLD: LWIP_MIN(TCP_WND/4, TCP_MSS*4) -----*/
-#define TCP_WND_UPDATE_THRESHOLD 536
+/*----- Default Value for MEMP_NUM_UDP_PCB: 4 ---*/
+#define MEMP_NUM_UDP_PCB 1
+/*----- Default Value for TCP_MSS: 536 ---*/
+#define TCP_MSS 1460
+/*----- Default Value for TCP_SND_BUF: 2920 ---*/
+#define TCP_SND_BUF 5840
+/*----- Default Value for MEMP_NUM_TCP_PCB: 5 ---*/
+#define MEMP_NUM_TCP_PCB 10
 /*----- Value in opt.h for TCPIP_THREAD_STACKSIZE: 0 -----*/
 #define TCPIP_THREAD_STACKSIZE 1024
 /*----- Value in opt.h for TCPIP_THREAD_PRIO: 1 -----*/
-#define TCPIP_THREAD_PRIO 3
+#define TCPIP_THREAD_PRIO 2
 /*----- Value in opt.h for TCPIP_MBOX_SIZE: 0 -----*/
-#define TCPIP_MBOX_SIZE 6
+#define TCPIP_MBOX_SIZE 100
 /*----- Value in opt.h for SLIPIF_THREAD_STACKSIZE: 0 -----*/
 #define SLIPIF_THREAD_STACKSIZE 1024
 /*----- Value in opt.h for SLIPIF_THREAD_PRIO: 1 -----*/
 #define SLIPIF_THREAD_PRIO 3
 /*----- Value in opt.h for DEFAULT_THREAD_STACKSIZE: 0 -----*/
-#define DEFAULT_THREAD_STACKSIZE 1024
+#define DEFAULT_THREAD_STACKSIZE 2048
 /*----- Value in opt.h for DEFAULT_THREAD_PRIO: 1 -----*/
 #define DEFAULT_THREAD_PRIO 3
 /*----- Value in opt.h for DEFAULT_UDP_RECVMBOX_SIZE: 0 -----*/
@@ -135,9 +146,7 @@
  
 
 /* USER CODE BEGIN 1 */
-#define MEM_SIZE                        (6 * 1024) 
-#define LWIP_DEBUG	1
-#define SOCKETS_DEBUG  (LWIP_DBG_ON | LWIP_DBG_TYPES_ON | LWIP_DBG_MIN_LEVEL)
+
 /* USER CODE END 1 */
 
 #ifdef __cplusplus

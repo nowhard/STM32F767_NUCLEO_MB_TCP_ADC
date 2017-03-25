@@ -127,6 +127,7 @@ void udp_client_send_buf(float *buf, uint16_t bufSize)
 void UDP_Send_Task( void *pvParameters )
 {
 	uint16_t result_buf_len=0;
+	printf("UDP Send Task started");
 	while(1)
 	{
 		xSemaphoreTake( xAdcBuf_Send_Semaphore, portMAX_DELAY );

@@ -205,6 +205,7 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
+		printf("Init");
 		//HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
 		HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_2);
 		HAL_TIM_Base_Start_IT(&htim9);
