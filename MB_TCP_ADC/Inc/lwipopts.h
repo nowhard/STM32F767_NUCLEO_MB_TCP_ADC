@@ -146,7 +146,9 @@
  
 
 /* USER CODE BEGIN 1 */
-
+#define LWIP_SO_RCVTIMEO                0
+#define	LWIP_DEBUG
+#define	API_MSG_DEBUG	(LWIP_DBG_ON | LWIP_DBG_TYPES_ON | LWIP_DBG_MIN_LEVEL)
 /* USER CODE END 1 */
 
 #ifdef __cplusplus

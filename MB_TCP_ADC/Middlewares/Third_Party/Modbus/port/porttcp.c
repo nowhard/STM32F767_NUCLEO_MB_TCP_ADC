@@ -57,6 +57,11 @@ xMBTCPPortInit( USHORT usTCPPort )
     struct sockaddr_in serveraddr;
 	
 		 xMB_FrameRec_Mutex = xSemaphoreCreateMutex();
+	
+			int timeoutTimeInMiliSeconds=100;
+	
+	
+		
 
     if( usTCPPort == 0 )
     {
@@ -75,6 +80,11 @@ xMBTCPPortInit( USHORT usTCPPort )
         printf( "Create socket failed.\r\n" );
         return FALSE;
     }
+//		else if(setsockopt( xListenSocket, SOL_SOCKET, SO_RCVTIMEO,&timeoutTimeInMiliSeconds, sizeof(int)) == -1)
+//		{
+//				printf( "Set timeout socket failed.\r\n" );
+//        return FALSE;
+//		}
     else if( bind( xListenSocket, ( struct sockaddr * )&serveraddr, sizeof( serveraddr ) ) == -1 )
     {
         printf( "Bind socket failed.\r\n" );
@@ -88,8 +98,9 @@ xMBTCPPortInit( USHORT usTCPPort )
     FD_ZERO( &allset );
     FD_SET( xListenSocket, &allset );
 		
-		listen(xListenSocket,10);
+		listen(xListenSocket,5);
 		
+
 		xTaskCreate( xMBTCPPort_PoolTask, "MBTCP HANDLE", MB_TCP_POOL_STACK_SIZE, NULL, 2, NULL );
 		
 				
