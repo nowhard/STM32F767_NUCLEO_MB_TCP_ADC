@@ -3,7 +3,7 @@
 <title>Static Call Graph - [MB_TCP_ADC\MB_TCP_ADC.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image MB_TCP_ADC\MB_TCP_ADC.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060061: Last Updated: Fri Mar 31 10:32:11 2017
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060061: Last Updated: Sat Apr 08 00:29:26 2017
 <BR><P>
 <H3>Maximum Stack Usage =        776 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -809,10 +809,10 @@ Global Symbols
 <P><STRONG><a name="[d0]"></a>ConfigInfoRead</STRONG> (Thumb, 96 bytes, Stack size 8 bytes, cfg_info.o(i.ConfigInfoRead))
 <BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = ConfigInfoRead &rArr; FlashWrite_32 &rArr; HAL_FLASH_Program &rArr; FLASH_WaitForLastOperation
 </UL>
-<BR>[Calls]<UL><LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strcmp
-<LI><a href="#[d4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
-<LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashWrite_32
+<BR>[Calls]<UL><LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashWrite_32
 <LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_ErasePage
+<LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strcmp
+<LI><a href="#[d4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -2004,7 +2004,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> mb.o(.data)
 </UL>
-<P><STRONG><a name="[158]"></a>eMBPoll</STRONG> (Thumb, 258 bytes, Stack size 16 bytes, mb.o(i.eMBPoll))
+<P><STRONG><a name="[158]"></a>eMBPoll</STRONG> (Thumb, 260 bytes, Stack size 16 bytes, mb.o(i.eMBPoll))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = eMBPoll
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xMBPortEventPost
@@ -4571,7 +4571,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBTCPSend
 </UL>
 
-<P><STRONG><a name="[b6]"></a>xMBTCPPort_HandlingTask</STRONG> (Thumb, 432 bytes, Stack size 24 bytes, porttcp.o(i.xMBTCPPort_HandlingTask))
+<P><STRONG><a name="[b6]"></a>xMBTCPPort_HandlingTask</STRONG> (Thumb, 434 bytes, Stack size 24 bytes, porttcp.o(i.xMBTCPPort_HandlingTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 432<LI>Call Chain = xMBTCPPort_HandlingTask &rArr; lwip_recv &rArr; lwip_recvfrom &rArr; netconn_recv &rArr; netconn_recv_data &rArr; netconn_close_shutdown &rArr; netconn_apimsg &rArr; tcpip_send_msg_wait_sem &rArr; sys_mutex_lock &rArr; osMutexWait &rArr; xQueueGenericReceive &rArr; vTaskPlaceOnEventList &rArr; prvAddCurrentTaskToDelayedList &rArr; vListInsert
 </UL>
 <BR>[Calls]<UL><LI><a href="#[237]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
