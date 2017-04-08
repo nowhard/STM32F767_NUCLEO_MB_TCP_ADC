@@ -20,17 +20,24 @@ stSPI_ADC_Buf SPI6_ADC_Buf;
 uint16_t *currentSPI3_ADC_Buf;
 uint16_t *currentSPI6_ADC_Buf;
 
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+//void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+//{
+//	if(htim->Instance==TIM9)
+//	{
+//		HAL_GPIO_WritePin(AIR_CS_GPIO_Port, AIR_CS_Pin, GPIO_PIN_RESET);
+//		HAL_GPIO_WritePin(U_CS_GPIO_Port, U_CS_Pin, GPIO_PIN_RESET);
+//		HAL_SPI_Receive_DMA(&hspi3, spi3_buf, 3);
+//		HAL_SPI_Receive_DMA(&hspi6, spi6_buf, 3);
+//	} 
+//}
+
+void SPI_ADC_TimerCallback(void)
 {
-	if(htim->Instance==TIM9)
-	{
 		HAL_GPIO_WritePin(AIR_CS_GPIO_Port, AIR_CS_Pin, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(U_CS_GPIO_Port, U_CS_Pin, GPIO_PIN_RESET);
 		HAL_SPI_Receive_DMA(&hspi3, spi3_buf, 3);
 		HAL_SPI_Receive_DMA(&hspi6, spi6_buf, 3);
-	} 
 }
-
 
 void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
 {

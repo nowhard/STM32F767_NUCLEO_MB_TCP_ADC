@@ -26,6 +26,7 @@
 #include "mbport.h"
 #include "mbconfig.h"
 
+extern UART_HandleTypeDef huart1;
 
 #if MB_MASTER_RTU_ENABLED > 0 || MB_MASTER_ASCII_ENABLED > 0
 /* ----------------------- Static variables ---------------------------------*/
@@ -46,14 +47,39 @@ BOOL xMBMasterPortSerialInit(UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits,
         eMBParity eParity)
 {
 
-
+  huart1.Instance = USART1;	
+  huart1.Init.BaudRate = ulBaudRate;
+  huart1.Init.WordLength = UART_WORDLENGTH_8B;
+  huart1.Init.StopBits = UART_STOPBITS_1;
+  huart1.Init.Parity = eParity;
+  huart1.Init.Mode = UART_MODE_TX_RX;
+  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+  HAL_UART_Init(&huart1);
+  return TRUE;
 		
     return TRUE;
 }
 
 void vMBMasterPortSerialEnable(BOOL xRxEnable, BOOL xTxEnable)
 {
+	if(TRUE==xRxEnable)
+	{
+			__HAL_UART_ENABLE_IT(&huart1, UART_IT_RXNE);
+	}
+	else
+	{
+			__HAL_UART_DISABLE_IT(&huart1, UART_IT_RXNE);
+	}
 
+	if(TRUE==xTxEnable)
+	{
+			__HAL_UART_ENABLE_IT(&huart1, UART_IT_TXE);
+	}
+	else
+	{
+			__HAL_UART_DISABLE_IT(&huart1, UART_IT_TXE);
+	}
 }
 
 void vMBMasterPortClose(void)
@@ -63,67 +89,35 @@ void vMBMasterPortClose(void)
 
 BOOL xMBMasterPortSerialPutByte(CHAR ucByte)
 {
-
-    return TRUE;
+		huart1.Instance->TDR=ucByte;
+	  return TRUE;
 }
 
 BOOL xMBMasterPortSerialGetByte(CHAR * pucByte)
 {
-
+		*pucByte=huart1.Instance->RDR;
     return TRUE;
 }
 
-/* 
- * Create an interrupt handler for the transmit buffer empty interrupt
- * (or an equivalent) for your target processor. This function should then
- * call pxMBFrameCBTransmitterEmpty( ) which tells the protocol stack that
- * a new character can be sent. The protocol stack will then call 
- * xMBPortSerialPutByte( ) to send the character.
- */
-void prvvUARTTxReadyISR(void)
+
+
+BOOL UART_IRQ_Handler(USART_TypeDef * usart) 
 {
-    pxMBMasterFrameCBTransmitterEmpty();
+	if (usart == huart1.Instance) 
+	{
+		if((__HAL_UART_GET_FLAG(&huart1, UART_FLAG_RXNE) != RESET) && (__HAL_UART_GET_IT_SOURCE(&huart1, UART_IT_RXNE) != RESET)) 
+		{
+			pxMBMasterFrameCBByteReceived();
+			//__HAL_UART_SEND_REQ(&huart1, UART_RXDATA_FLUSH_REQUEST);
+			return TRUE;
+		}
+		if((__HAL_UART_GET_FLAG(&huart1, UART_FLAG_TXE) != RESET) &&(__HAL_UART_GET_IT_SOURCE(&huart1, UART_IT_TXE) != RESET)) 
+		{
+			pxMBMasterFrameCBTransmitterEmpty();
+			return TRUE;
+		}
+	}
+	return FALSE;
 }
-
-/* 
- * Create an interrupt handler for the receive interrupt for your target
- * processor. This function should then call pxMBFrameCBByteReceived( ). The
- * protocol stack will then call xMBPortSerialGetByte( ) to retrieve the
- * character.
- */
-void prvvUARTRxISR(void)
-{
-    pxMBMasterFrameCBByteReceived();
-}
-
-/**
- * Software simulation serial transmit IRQ handler.
- *
- * @param parameter parameter
- */
-//static void serial_soft_trans_irq(void* parameter) {
-//    rt_uint32_t recved_event;
-//    while (1)
-//    {
-//        /* waiting for serial transmit start */
-//        rt_event_recv(&event_serial, EVENT_SERIAL_TRANS_START, RT_EVENT_FLAG_OR,
-//                RT_WAITING_FOREVER, &recved_event);
-//        /* execute modbus callback */
-//        prvvUARTTxReadyISR();
-//    }
-//}
-
-///**
-// * This function is serial receive callback function
-// *
-// * @param dev the device of serial
-// * @param size the data size that receive
-// *
-// * @return return RT_EOK
-// */
-//static rt_err_t serial_rx_ind(rt_device_t dev, rt_size_t size) {
-//    prvvUARTRxISR();
-//    return RT_EOK;
-//}
 
 #endif

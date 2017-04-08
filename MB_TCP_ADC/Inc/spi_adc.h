@@ -9,7 +9,7 @@ typedef struct
 	uint16_t  index;
 }stSPI_ADC_Buf;
 
-
+void SPI_ADC_TimerCallback(void);
 
 void SPI_ADC_Init(void);
 

@@ -37,7 +37,8 @@
 #include "cmsis_os.h"
 
 /* USER CODE BEGIN 0 */
-
+#include "spi_adc.h"
+#include "mbport.h"
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
@@ -46,6 +47,7 @@ extern DMA_HandleTypeDef hdma_dcmi;
 extern DMA_HandleTypeDef hdma_spi3_rx;
 extern DMA_HandleTypeDef hdma_spi5_tx;
 extern DMA_HandleTypeDef hdma_spi6_rx;
+extern TIM_HandleTypeDef htim6;
 extern TIM_HandleTypeDef htim9;
 
 /******************************************************************************/
@@ -117,6 +119,20 @@ void TIM1_BRK_TIM9_IRQHandler(void)
 }
 
 /**
+* @brief This function handles TIM6 global interrupt, DAC1 and DAC2 underrun error interrupts.
+*/
+void TIM6_DAC_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM6_DAC_IRQn 0 */
+
+  /* USER CODE END TIM6_DAC_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim6);
+  /* USER CODE BEGIN TIM6_DAC_IRQn 1 */
+
+  /* USER CODE END TIM6_DAC_IRQn 1 */
+}
+
+/**
 * @brief This function handles DMA2 stream1 global interrupt.
 */
 void DMA2_Stream1_IRQHandler(void)
@@ -174,7 +190,18 @@ void DMA2_Stream6_IRQHandler(void)
 
 /* USER CODE BEGIN 1 */
 
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
 
+	if(htim->Instance==TIM9)
+	{
+		SPI_ADC_TimerCallback();
+	} 
+	else if(htim->Instance==TIM6)
+	{
+		(void) pxMBMasterPortCBTimerExpired();
+	}
+}
 
 
 /* USER CODE END 1 */

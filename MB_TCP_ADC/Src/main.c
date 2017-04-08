@@ -72,6 +72,7 @@ TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim5;
+TIM_HandleTypeDef htim6;
 TIM_HandleTypeDef htim9;
 
 UART_HandleTypeDef huart1;
@@ -104,6 +105,7 @@ static void MX_SPI3_Init(void);
 static void MX_SPI6_Init(void);
 static void MX_TIM9_Init(void);
 static void MX_SPI5_Init(void);
+static void MX_TIM6_Init(void);
 void StartDefaultTask(void const * argument);
 void StartSPI_ADC_Task(void const * argument);
 
@@ -159,6 +161,7 @@ int main(void)
   MX_SPI6_Init();
   MX_TIM9_Init();
   MX_SPI5_Init();
+  MX_TIM6_Init();
 
   /* USER CODE BEGIN 2 */
 	ConfigInfoRead ();
@@ -584,6 +587,31 @@ static void MX_TIM5_Init(void)
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim5, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+}
+
+/* TIM6 init function */
+static void MX_TIM6_Init(void)
+{
+
+  TIM_MasterConfigTypeDef sMasterConfig;
+
+  htim6.Instance = TIM6;
+  htim6.Init.Prescaler = 108;
+  htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim6.Init.Period = 50-1;
+  htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim6, &sMasterConfig) != HAL_OK)
   {
     Error_Handler();
   }
