@@ -5274,7 +5274,7 @@ I (../Middlewares/Third_Party/LwIP/src/include/lwip/errno.h)(0x5890E951)
 I (..\Middlewares\Third_Party\Modbus\port\port.h)(0x58863950)
 I (../Middlewares/Third_Party/LwIP/src/include/lwip/sys.h)(0x5890E951)
 I (../Middlewares/Third_Party/LwIP/system/arch/sys_arch.h)(0x5890E951)
-F (../Src/main.c)(0x58E9308D)(-c --cpu Cortex-M7.fp.dp -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I../Inc -I../Middlewares/Third_Party/LwIP/src/include -I../Middlewares/Third_Party/LwIP/system -I../Drivers/STM32F7xx_HAL_Driver/Inc -I../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy -I../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM7/r0p1 -I../Drivers/CMSIS/Device/ST/STM32F7xx/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I../Middlewares/Third_Party/LwIP/src/include/lwip -I../Middlewares/Third_Party/LwIP/src/include/lwip/apps -I../Middlewares/Third_Party/LwIP/src/include/lwip/priv -I../Middlewares/Third_Party/LwIP/src/include/netif -I../Middlewares/Third_Party/LwIP/src/include/netif/ppp -I../Middlewares/Third_Party/LwIP/src/include/netif/ppp/polarssl -I../Middlewares/Third_Party/LwIP/src/include/posix -I../Middlewares/Third_Party/LwIP/src/include/posix/sys -I../Middlewares/Third_Party/LwIP/system/arch -I../Drivers/CMSIS/Include -I..\Middlewares\Third_Party\Modbus\include -I..\Middlewares\Third_Party\Modbus\functions -I..\Middlewares\Third_Party\Modbus\tcp -I..\Middlewares\Third_Party\Modbus\port -I..\Middlewares\Third_Party\Modbus -I../Middlewares/Third_Party/LwIP/src/include/lwip/prot -I..\Middlewares\Third_Party\Modbus\rtu --C99-I D:\PROJECTS\STM32F767_NUCLEO_MB_TCP_ADC\STM32F767_NUCLEO_MB_TCP_ADC\MB_TCP_ADC\MDK-ARM\RTE-I D:\Programs\Keil\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I D:\Programs\Keil\ARM\PACK\Keil\STM32F7xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F7xx\Include-D__UVISION_VERSION="517" -D_RTE_ -DSTM32F767xx -DUSE_HAL_DRIVER -DSTM32F767xx-o mb_tcp_adc\main.o --omf_browse mb_tcp_adc\main.crf --depend mb_tcp_adc\main.d)
+F (../Src/main.c)(0x58E9521F)(-c --cpu Cortex-M7.fp.dp -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I../Inc -I../Middlewares/Third_Party/LwIP/src/include -I../Middlewares/Third_Party/LwIP/system -I../Drivers/STM32F7xx_HAL_Driver/Inc -I../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy -I../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM7/r0p1 -I../Drivers/CMSIS/Device/ST/STM32F7xx/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I../Middlewares/Third_Party/LwIP/src/include/lwip -I../Middlewares/Third_Party/LwIP/src/include/lwip/apps -I../Middlewares/Third_Party/LwIP/src/include/lwip/priv -I../Middlewares/Third_Party/LwIP/src/include/netif -I../Middlewares/Third_Party/LwIP/src/include/netif/ppp -I../Middlewares/Third_Party/LwIP/src/include/netif/ppp/polarssl -I../Middlewares/Third_Party/LwIP/src/include/posix -I../Middlewares/Third_Party/LwIP/src/include/posix/sys -I../Middlewares/Third_Party/LwIP/system/arch -I../Drivers/CMSIS/Include -I..\Middlewares\Third_Party\Modbus\include -I..\Middlewares\Third_Party\Modbus\functions -I..\Middlewares\Third_Party\Modbus\tcp -I..\Middlewares\Third_Party\Modbus\port -I..\Middlewares\Third_Party\Modbus -I../Middlewares/Third_Party/LwIP/src/include/lwip/prot -I..\Middlewares\Third_Party\Modbus\rtu --C99-I D:\PROJECTS\STM32F767_NUCLEO_MB_TCP_ADC\STM32F767_NUCLEO_MB_TCP_ADC\MB_TCP_ADC\MDK-ARM\RTE-I D:\Programs\Keil\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I D:\Programs\Keil\ARM\PACK\Keil\STM32F7xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F7xx\Include-D__UVISION_VERSION="517" -D_RTE_ -DSTM32F767xx -DUSE_HAL_DRIVER -DSTM32F767xx-o mb_tcp_adc\main.o --omf_browse mb_tcp_adc\main.crf --depend mb_tcp_adc\main.d)
 I (../Inc/main.h)(0x58E9308C)
 I (../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal.h)(0x5890E94F)
 I (../Inc/stm32f7xx_hal_conf.h)(0x58E9308C)
@@ -5366,7 +5366,8 @@ I (../Inc/cfg_info.h)(0x58A9BAB0)
 I (../Inc/data_converter.h)(0x58972F96)
 I (../Inc/discret_out.h)(0x58A0207D)
 I (../Inc/jumpers.h)(0x58C819EB)
-F (../Src/lwip.c)(0x58E930A3)(-c --cpu Cortex-M7.fp.dp -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I../Inc -I../Middlewares/Third_Party/LwIP/src/include -I../Middlewares/Third_Party/LwIP/system -I../Drivers/STM32F7xx_HAL_Driver/Inc -I../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy -I../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM7/r0p1 -I../Drivers/CMSIS/Device/ST/STM32F7xx/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I../Middlewares/Third_Party/LwIP/src/include/lwip -I../Middlewares/Third_Party/LwIP/src/include/lwip/apps -I../Middlewares/Third_Party/LwIP/src/include/lwip/priv -I../Middlewares/Third_Party/LwIP/src/include/netif -I../Middlewares/Third_Party/LwIP/src/include/netif/ppp -I../Middlewares/Third_Party/LwIP/src/include/netif/ppp/polarssl -I../Middlewares/Third_Party/LwIP/src/include/posix -I../Middlewares/Third_Party/LwIP/src/include/posix/sys -I../Middlewares/Third_Party/LwIP/system/arch -I../Drivers/CMSIS/Include -I..\Middlewares\Third_Party\Modbus\include -I..\Middlewares\Third_Party\Modbus\functions -I..\Middlewares\Third_Party\Modbus\tcp -I..\Middlewares\Third_Party\Modbus\port -I..\Middlewares\Third_Party\Modbus -I../Middlewares/Third_Party/LwIP/src/include/lwip/prot -I..\Middlewares\Third_Party\Modbus\rtu --C99-I D:\PROJECTS\STM32F767_NUCLEO_MB_TCP_ADC\STM32F767_NUCLEO_MB_TCP_ADC\MB_TCP_ADC\MDK-ARM\RTE-I D:\Programs\Keil\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I D:\Programs\Keil\ARM\PACK\Keil\STM32F7xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F7xx\Include-D__UVISION_VERSION="517" -D_RTE_ -DSTM32F767xx -DUSE_HAL_DRIVER -DSTM32F767xx-o mb_tcp_adc\lwip.o --omf_browse mb_tcp_adc\lwip.crf --depend mb_tcp_adc\lwip.d)
+I (../Inc/mbmasterinit.h)(0x58E95116)
+F (../Src/lwip.c)(0x58E95616)(-c --cpu Cortex-M7.fp.dp -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I../Inc -I../Middlewares/Third_Party/LwIP/src/include -I../Middlewares/Third_Party/LwIP/system -I../Drivers/STM32F7xx_HAL_Driver/Inc -I../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy -I../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM7/r0p1 -I../Drivers/CMSIS/Device/ST/STM32F7xx/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I../Middlewares/Third_Party/LwIP/src/include/lwip -I../Middlewares/Third_Party/LwIP/src/include/lwip/apps -I../Middlewares/Third_Party/LwIP/src/include/lwip/priv -I../Middlewares/Third_Party/LwIP/src/include/netif -I../Middlewares/Third_Party/LwIP/src/include/netif/ppp -I../Middlewares/Third_Party/LwIP/src/include/netif/ppp/polarssl -I../Middlewares/Third_Party/LwIP/src/include/posix -I../Middlewares/Third_Party/LwIP/src/include/posix/sys -I../Middlewares/Third_Party/LwIP/system/arch -I../Drivers/CMSIS/Include -I..\Middlewares\Third_Party\Modbus\include -I..\Middlewares\Third_Party\Modbus\functions -I..\Middlewares\Third_Party\Modbus\tcp -I..\Middlewares\Third_Party\Modbus\port -I..\Middlewares\Third_Party\Modbus -I../Middlewares/Third_Party/LwIP/src/include/lwip/prot -I..\Middlewares\Third_Party\Modbus\rtu --C99-I D:\PROJECTS\STM32F767_NUCLEO_MB_TCP_ADC\STM32F767_NUCLEO_MB_TCP_ADC\MB_TCP_ADC\MDK-ARM\RTE-I D:\Programs\Keil\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I D:\Programs\Keil\ARM\PACK\Keil\STM32F7xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F7xx\Include-D__UVISION_VERSION="517" -D_RTE_ -DSTM32F767xx -DUSE_HAL_DRIVER -DSTM32F767xx-o mb_tcp_adc\lwip.o --omf_browse mb_tcp_adc\lwip.crf --depend mb_tcp_adc\lwip.d)
 I (../Inc/lwip.h)(0x58E93089)
 I (../Middlewares/Third_Party/LwIP/src/include/lwip/opt.h)(0x5890E951)
 I (../Inc/lwipopts.h)(0x58E930B5)
@@ -6052,6 +6053,84 @@ I (..\Middlewares\Third_Party\Modbus\include\mbconfig.h)(0x58E7F63E)
 I (..\Middlewares\Third_Party\Modbus\include\mb_m.h)(0x58E7E16F)
 I (..\Middlewares\Third_Party\Modbus\include\mbframe.h)(0x58863950)
 I (..\Middlewares\Third_Party\Modbus\include\mbutils.h)(0x58863950)
+F (..\Src\mbmasterinit.c)(0x58E95E08)(-c --cpu Cortex-M7.fp.dp -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I../Inc -I../Middlewares/Third_Party/LwIP/src/include -I../Middlewares/Third_Party/LwIP/system -I../Drivers/STM32F7xx_HAL_Driver/Inc -I../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy -I../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM7/r0p1 -I../Drivers/CMSIS/Device/ST/STM32F7xx/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I../Middlewares/Third_Party/LwIP/src/include/lwip -I../Middlewares/Third_Party/LwIP/src/include/lwip/apps -I../Middlewares/Third_Party/LwIP/src/include/lwip/priv -I../Middlewares/Third_Party/LwIP/src/include/netif -I../Middlewares/Third_Party/LwIP/src/include/netif/ppp -I../Middlewares/Third_Party/LwIP/src/include/netif/ppp/polarssl -I../Middlewares/Third_Party/LwIP/src/include/posix -I../Middlewares/Third_Party/LwIP/src/include/posix/sys -I../Middlewares/Third_Party/LwIP/system/arch -I../Drivers/CMSIS/Include -I..\Middlewares\Third_Party\Modbus\include -I..\Middlewares\Third_Party\Modbus\functions -I..\Middlewares\Third_Party\Modbus\tcp -I..\Middlewares\Third_Party\Modbus\port -I..\Middlewares\Third_Party\Modbus -I../Middlewares/Third_Party/LwIP/src/include/lwip/prot -I..\Middlewares\Third_Party\Modbus\rtu --C99-I D:\PROJECTS\STM32F767_NUCLEO_MB_TCP_ADC\STM32F767_NUCLEO_MB_TCP_ADC\MB_TCP_ADC\MDK-ARM\RTE-I D:\Programs\Keil\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I D:\Programs\Keil\ARM\PACK\Keil\STM32F7xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F7xx\Include-D__UVISION_VERSION="517" -D_RTE_ -DSTM32F767xx -DUSE_HAL_DRIVER -DSTM32F767xx-o mb_tcp_adc\mbmasterinit.o --omf_browse mb_tcp_adc\mbmasterinit.crf --depend mb_tcp_adc\mbmasterinit.d)
+I (../Inc/mbmasterinit.h)(0x58E95116)
+I (../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h)(0x5890E950)
+I (D:\Programs\Keil\ARM\ARMCC\include\stddef.h)(0x55DB71CE)
+I (D:\Programs\Keil\ARM\ARMCC\include\stdint.h)(0x55DB71D0)
+I (../Inc/FreeRTOSConfig.h)(0x58E930BA)
+I (../Inc/main.h)(0x58E9308C)
+I (../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h)(0x5890E950)
+I (../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h)(0x5890E950)
+I (../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h)(0x5890E950)
+I (../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM7/r0p1/portmacro.h)(0x5890E951)
+I (../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h)(0x5890E950)
+I (../Middlewares/Third_Party/FreeRTOS/Source/include/task.h)(0x5890E950)
+I (../Middlewares/Third_Party/FreeRTOS/Source/include/list.h)(0x5890E950)
+I (..\Middlewares\Third_Party\Modbus\include\mb.h)(0x58E802DA)
+I (..\Middlewares\Third_Party\Modbus\port\port.h)(0x58863950)
+I (../Middlewares/Third_Party/LwIP/src/include/lwip/opt.h)(0x5890E951)
+I (../Inc/lwipopts.h)(0x58E930B5)
+I (../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal.h)(0x5890E94F)
+I (../Inc/stm32f7xx_hal_conf.h)(0x58E9308C)
+I (../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_rcc.h)(0x5890E94F)
+I (../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_def.h)(0x5890E94F)
+I (../Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f7xx.h)(0x5890E94E)
+I (../Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f767xx.h)(0x5890E94E)
+I (../Drivers/CMSIS/Include/core_cm7.h)(0x5890E94F)
+I (../Drivers/CMSIS/Include/core_cmInstr.h)(0x5890E94F)
+I (../Drivers/CMSIS/Include/cmsis_armcc.h)(0x5890E94F)
+I (../Drivers/CMSIS/Include/core_cmFunc.h)(0x5890E94F)
+I (../Drivers/CMSIS/Include/core_cmSimd.h)(0x5890E94F)
+I (../Drivers/CMSIS/Device/ST/STM32F7xx/Include/system_stm32f7xx.h)(0x5890E94E)
+I (../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h)(0x5890E94F)
+I (D:\Programs\Keil\ARM\ARMCC\include\stdio.h)(0x55DB71C6)
+I (../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_rcc_ex.h)(0x5890E94F)
+I (../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_gpio.h)(0x5890E94F)
+I (../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_gpio_ex.h)(0x5890E94F)
+I (../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_dma.h)(0x5890E94F)
+I (../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_dma_ex.h)(0x5890E94F)
+I (../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_cortex.h)(0x5890E94F)
+I (../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_dcmi.h)(0x5890E94F)
+I (../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_eth.h)(0x5890E94F)
+I (../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_flash.h)(0x5890E94F)
+I (../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_flash_ex.h)(0x5890E94F)
+I (../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_i2c.h)(0x5890E94F)
+I (../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_i2c_ex.h)(0x5890E94F)
+I (../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_pwr.h)(0x5890E94F)
+I (../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_pwr_ex.h)(0x5890E94F)
+I (../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_spi.h)(0x5890E94F)
+I (../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim.h)(0x5890E94F)
+I (../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim_ex.h)(0x5890E94F)
+I (../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h)(0x5890E94F)
+I (../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart_ex.h)(0x5890E94F)
+I (../Middlewares/Third_Party/LwIP/src/include/lwip/debug.h)(0x5890E951)
+I (../Middlewares/Third_Party/LwIP/src/include/lwip/arch.h)(0x5890E951)
+I (../Middlewares/Third_Party/LwIP/system/arch/cc.h)(0x5890E951)
+I (../Middlewares/Third_Party/LwIP/system/arch/cpu.h)(0x5890E951)
+I (D:\Programs\Keil\ARM\ARMCC\include\stdlib.h)(0x55DB71C8)
+I (D:\Programs\Keil\ARM\ARMCC\include\inttypes.h)(0x55DB71CE)
+I (../Middlewares/Third_Party/LwIP/src/include/lwip/sys.h)(0x5890E951)
+I (../Middlewares/Third_Party/LwIP/src/include/lwip/err.h)(0x5890E951)
+I (../Middlewares/Third_Party/LwIP/system/arch/sys_arch.h)(0x5890E951)
+I (../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h)(0x5890E950)
+I (../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h)(0x5890E950)
+I (../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h)(0x5890E950)
+I (../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h)(0x5890E950)
+I (../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h)(0x5890E950)
+I (..\Middlewares\Third_Party\Modbus\include\mbport.h)(0x58E7F424)
+I (../Middlewares/Third_Party/LwIP/src/include/posix/sys/socket.h)(0x5890E951)
+I (../Middlewares/Third_Party/LwIP/src/include/lwip/sockets.h)(0x5890E951)
+I (../Middlewares/Third_Party/LwIP/src/include/lwip/ip_addr.h)(0x5890E951)
+I (../Middlewares/Third_Party/LwIP/src/include/lwip/def.h)(0x5890E951)
+I (../Middlewares/Third_Party/LwIP/src/include/lwip/ip4_addr.h)(0x5890E951)
+I (../Middlewares/Third_Party/LwIP/src/include/lwip/ip6_addr.h)(0x5890E951)
+I (../Middlewares/Third_Party/LwIP/src/include/lwip/inet.h)(0x5890E951)
+I (../Middlewares/Third_Party/LwIP/src/include/lwip/errno.h)(0x5890E951)
+I (..\Middlewares\Third_Party\Modbus\include\mbproto.h)(0x58863950)
+I (..\Middlewares\Third_Party\Modbus\include\mbconfig.h)(0x58E7F63E)
+I (..\Middlewares\Third_Party\Modbus\include\mb_m.h)(0x58E7E16F)
+I (..\Middlewares\Third_Party\Modbus\rtu\mbrtu.h)(0x58E7E16F)
 F (..\Middlewares\Third_Party\Modbus\mb.c)(0x58863950)(-c --cpu Cortex-M7.fp.dp -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I../Inc -I../Middlewares/Third_Party/LwIP/src/include -I../Middlewares/Third_Party/LwIP/system -I../Drivers/STM32F7xx_HAL_Driver/Inc -I../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy -I../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM7/r0p1 -I../Drivers/CMSIS/Device/ST/STM32F7xx/Include -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I../Middlewares/Third_Party/LwIP/src/include/lwip -I../Middlewares/Third_Party/LwIP/src/include/lwip/apps -I../Middlewares/Third_Party/LwIP/src/include/lwip/priv -I../Middlewares/Third_Party/LwIP/src/include/netif -I../Middlewares/Third_Party/LwIP/src/include/netif/ppp -I../Middlewares/Third_Party/LwIP/src/include/netif/ppp/polarssl -I../Middlewares/Third_Party/LwIP/src/include/posix -I../Middlewares/Third_Party/LwIP/src/include/posix/sys -I../Middlewares/Third_Party/LwIP/system/arch -I../Drivers/CMSIS/Include -I..\Middlewares\Third_Party\Modbus\include -I..\Middlewares\Third_Party\Modbus\functions -I..\Middlewares\Third_Party\Modbus\tcp -I..\Middlewares\Third_Party\Modbus\port -I..\Middlewares\Third_Party\Modbus -I../Middlewares/Third_Party/LwIP/src/include/lwip/prot -I..\Middlewares\Third_Party\Modbus\rtu --C99-I D:\PROJECTS\STM32F767_NUCLEO_MB_TCP_ADC\STM32F767_NUCLEO_MB_TCP_ADC\MB_TCP_ADC\MDK-ARM\RTE-I D:\Programs\Keil\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I D:\Programs\Keil\ARM\PACK\Keil\STM32F7xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F7xx\Include-D__UVISION_VERSION="517" -D_RTE_ -DSTM32F767xx -DUSE_HAL_DRIVER -DSTM32F767xx-o mb_tcp_adc\mb.o --omf_browse mb_tcp_adc\mb.crf --depend mb_tcp_adc\mb.d)
 I (D:\Programs\Keil\ARM\ARMCC\include\stdlib.h)(0x55DB71C8)
 I (D:\Programs\Keil\ARM\ARMCC\include\string.h)(0x55DB71C8)

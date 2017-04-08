@@ -54,6 +54,7 @@
 #include "cfg_info.h"
 #include "discret_out.h"
 #include "jumpers.h"
+#include "mbmasterinit.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -871,6 +872,7 @@ void StartDefaultTask(void const * argument)
 
   /* USER CODE BEGIN 5 */
 	MB_TCP_Init();
+	MBMaster_RTU_Init();
 	udp_client_init();
 
 
