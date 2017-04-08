@@ -39,6 +39,7 @@
 /* USER CODE BEGIN 0 */
 #include "spi_adc.h"
 #include "mbport.h"
+BOOL UART_IRQ_Handler(USART_TypeDef * usart) ;
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
@@ -49,6 +50,7 @@ extern DMA_HandleTypeDef hdma_spi5_tx;
 extern DMA_HandleTypeDef hdma_spi6_rx;
 extern TIM_HandleTypeDef htim6;
 extern TIM_HandleTypeDef htim9;
+extern UART_HandleTypeDef huart1;
 
 /******************************************************************************/
 /*            Cortex-M7 Processor Interruption and Exception Handlers         */ 
@@ -116,6 +118,23 @@ void TIM1_BRK_TIM9_IRQHandler(void)
   /* USER CODE BEGIN TIM1_BRK_TIM9_IRQn 1 */
 
   /* USER CODE END TIM1_BRK_TIM9_IRQn 1 */
+}
+
+/**
+* @brief This function handles USART1 global interrupt.
+*/
+void USART1_IRQHandler(void)
+{
+  /* USER CODE BEGIN USART1_IRQn 0 */
+	if (FALSE != UART_IRQ_Handler(USART1))
+	{
+		return;
+	}
+  /* USER CODE END USART1_IRQn 0 */
+  HAL_UART_IRQHandler(&huart1);
+  /* USER CODE BEGIN USART1_IRQn 1 */
+
+  /* USER CODE END USART1_IRQn 1 */
 }
 
 /**
