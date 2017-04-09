@@ -69,7 +69,7 @@ void vMBMasterPortTimersT35Enable()
 {
     /* Enable the timer with the timeout passed to xMBPortTimersInit( ) */
 	vMBMasterSetCurTimerMode(MB_TMODE_T35);
-	__HAL_TIM_SET_AUTORELOAD(&htim6, 5);
+	__HAL_TIM_SET_AUTORELOAD(&htim6, 5*70);
 	__HAL_TIM_SET_COUNTER(&htim6, 0);
 	HAL_TIM_Base_Start_IT(&htim6);
 }

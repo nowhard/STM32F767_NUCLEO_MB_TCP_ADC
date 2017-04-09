@@ -45,6 +45,22 @@ xMBMasterPortEventPost( eMBMasterEventType eEvent )
     return TRUE;
 }
 
+static BOOL xMBMasterEventGetMasked(eMBMasterEventType * eEvent, uint16_t eventMask)
+{
+	    BOOL            xEventHappened = FALSE;
+
+    if( xEventInQueue )
+    {
+				if(eventMask & eQueuedEvent)
+				{
+					*eEvent = eQueuedEvent;
+					xEventInQueue = FALSE;
+					xEventHappened = TRUE;
+				}
+    }
+    return xEventHappened;	
+}
+
 BOOL
 xMBMasterPortEventGet( eMBMasterEventType * eEvent )
 {
@@ -76,15 +92,16 @@ xMBMasterPortEventGet( eMBMasterEventType * eEvent )
 //    }
 //    return TRUE;
 
-    BOOL            xEventHappened = FALSE;
+//    BOOL            xEventHappened = FALSE;
 
-    if( xEventInQueue )
-    {
-        *eEvent = eQueuedEvent;
-        xEventInQueue = FALSE;
-        xEventHappened = TRUE;
-    }
-    return xEventHappened;
+//    if( xEventInQueue )
+//    {
+//        *eEvent = eQueuedEvent;
+//        xEventInQueue = FALSE;
+//        xEventHappened = TRUE;
+//    }
+//    return xEventHappened;
+	return xMBMasterEventGetMasked(eEvent,EV_MASTER_READY | EV_MASTER_FRAME_RECEIVED | EV_MASTER_EXECUTE | EV_MASTER_FRAME_SENT | EV_MASTER_ERROR_PROCESS);
 }
 /**
  * This function is initialize the OS resource for modbus master.
@@ -230,8 +247,8 @@ eMBMasterReqErrCode eMBMasterWaitRequestFinish( void ) {
 //            RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR, RT_WAITING_FOREVER,
 //            &recvedEvent);
 	
-		while(xMBMasterPortEventGet( &recvedEvent)==FALSE);
-	
+		while(xMBMasterEventGetMasked( &recvedEvent,EV_MASTER_PROCESS_SUCESS | EV_MASTER_ERROR_RESPOND_TIMEOUT | EV_MASTER_ERROR_RECEIVE_DATA | EV_MASTER_ERROR_EXECUTE_FUNCTION)==FALSE);
+
     switch (recvedEvent)
     {
 			case EV_MASTER_PROCESS_SUCESS:

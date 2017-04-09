@@ -38,7 +38,7 @@ void MBMaster_RTU_Poll(void *pvParameters)
 	while (1)
 	{
 		vTaskDelay(500);
-		errorCode = eMBMasterReqReadInputRegister(0xA,3,2,100);
+		errorCode = eMBMasterReqReadInputRegister(0xA,1001,2,100);
 		
 	}
 }
