@@ -5,6 +5,7 @@
 #include "adc_dcmi.h"
 #include "udp_send.h"
 #include "discret_out.h"
+#include "mb_master_user.h"
 //#include "main.h"
 
 
@@ -20,6 +21,9 @@
 
 //extern sConfigInfo configInfo;
 
+extern USHORT   usMRegInBuf[MB_MASTER_TOTAL_SLAVE_NUM][M_REG_INPUT_NREGS];
+extern USHORT   usMRegHoldBuf[MB_MASTER_TOTAL_SLAVE_NUM][M_REG_HOLDING_NREGS];
+
 //-------ADC RESULT REGS--------
 #define ADC_CHANNEL_0_RESULT				0
 #define ADC_CHANNEL_1_RESULT				2
@@ -28,6 +32,15 @@
 #define ADC_CHANNEL_4_RESULT				8
 #define ADC_CHANNEL_5_RESULT				10
 #define TIMESTAMP_CURRENT						12
+
+#define ADC_PYRO_SQUIB_0						16
+#define ADC_PYRO_SQUIB_1						18
+#define ADC_PYRO_SQUIB_2						20
+#define ADC_PYRO_SQUIB_3						22
+#define ADC_PYRO_SQUIB_4						24
+#define ADC_PYRO_SQUIB_5						26
+#define ADC_PYRO_SQUIB_6						28
+#define ADC_PYRO_SQUIB_7						30
 
 /* ----------------------- Static variables ---------------------------------*/
 static USHORT   usRegInputStart = REG_INPUT_START;
@@ -62,6 +75,8 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 			*((float*)&usRegInputBuf[ADC_CHANNEL_4_RESULT])=ADC_resultBuf[4];
 			*((float*)&usRegInputBuf[ADC_CHANNEL_5_RESULT])=ADC_resultBuf[5];
 			*((uint64_t*)&usRegInputBuf[TIMESTAMP_CURRENT])=DCMI_ADC_GetLastTimestamp();
+			
+			memcpy((void *)&usRegInputBuf[ADC_PYRO_SQUIB_0],(const void*)&usMRegInBuf[0][0],M_REG_INPUT_NREGS);
 			
         while( usNRegs > 0 )
         {
@@ -118,6 +133,15 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 #define DEV_SET_OUTPUTS_2			39
 //--------SYNC DEV REGS--------------------
 #define DEV_RESET_TIMESTAMP		40
+
+#define PIR_EN_PYRO_SQUIB_0		41
+#define PIR_EN_PYRO_SQUIB_1		42
+#define PIR_EN_PYRO_SQUIB_2		43
+#define PIR_EN_PYRO_SQUIB_3		44
+#define PIR_EN_PYRO_SQUIB_4		45
+#define PIR_EN_PYRO_SQUIB_5		46
+#define PIR_EN_PYRO_SQUIB_6		47
+#define PIR_EN_PYRO_SQUIB_7		48
 
 static uint16_t outputs_temp_reg_0=0;
 static uint16_t outputs_temp_reg_1=0;
@@ -179,6 +203,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 					usRegHoldingBuf[DEV_SET_OUTPUTS_1] = outputs_temp_reg_1;
 					usRegHoldingBuf[DEV_SET_OUTPUTS_2] = outputs_temp_reg_2;
 
+					memcpy((void *)&usRegHoldingBuf[PIR_EN_PYRO_SQUIB_0],(const void*)&usMRegHoldBuf[0][0],M_REG_HOLDING_NREGS);
 
             while( usNRegs > 0 )
             {

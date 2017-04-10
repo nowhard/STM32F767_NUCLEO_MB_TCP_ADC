@@ -61,7 +61,7 @@ eMBErrorCode eMBMasterRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT
     USHORT          REG_INPUT_NREGS;
     USHORT          usRegInStart;
 
-    pusRegInputBuf = usMRegInBuf[ucMBMasterGetDestAddress() - 1];
+    pusRegInputBuf = usMRegInBuf[/*ucMBMasterGetDestAddress() - 1*/0];
     REG_INPUT_START = M_REG_INPUT_START;
     REG_INPUT_NREGS = M_REG_INPUT_NREGS;
     usRegInStart = usMRegInStart;
@@ -80,6 +80,8 @@ eMBErrorCode eMBMasterRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT
             iRegIndex++;
             usNRegs--;
         }
+				
+				
     }
     else
     {
@@ -109,7 +111,7 @@ eMBErrorCode eMBMasterRegHoldingCB(UCHAR * pucRegBuffer, USHORT usAddress,
     USHORT          REG_HOLDING_NREGS;
     USHORT          usRegHoldStart;
 
-    pusRegHoldingBuf = usMRegHoldBuf[ucMBMasterGetDestAddress() - 1];
+    pusRegHoldingBuf = usMRegHoldBuf[/*ucMBMasterGetDestAddress() - 1*/0];
     REG_HOLDING_START = M_REG_HOLDING_START;
     REG_HOLDING_NREGS = M_REG_HOLDING_NREGS;
     usRegHoldStart = usMRegHoldStart;
@@ -175,7 +177,7 @@ eMBErrorCode eMBMasterRegCoilsCB(UCHAR * pucRegBuffer, USHORT usAddress,
     USHORT          usCoilStart;
     iNReg =  usNCoils / 8 + 1;
 
-    pucCoilBuf = ucMCoilBuf[ucMBMasterGetDestAddress() - 1];
+    pucCoilBuf = ucMCoilBuf[/*ucMBMasterGetDestAddress() - 1*/0];
     COIL_START = M_COIL_START;
     COIL_NCOILS = M_COIL_NCOILS;
     usCoilStart = usMCoilStart;
@@ -254,7 +256,7 @@ eMBErrorCode eMBMasterRegDiscreteCB( UCHAR * pucRegBuffer, USHORT usAddress, USH
     USHORT          usDiscreteInputStart;
     iNReg =  usNDiscrete / 8 + 1;
 
-    pucDiscreteInputBuf = ucMDiscInBuf[ucMBMasterGetDestAddress() - 1];
+    pucDiscreteInputBuf = ucMDiscInBuf[/*ucMBMasterGetDestAddress() - 1*/0];
     DISCRETE_INPUT_START = M_DISCRETE_INPUT_START;
     DISCRETE_INPUT_NDISCRETES = M_DISCRETE_INPUT_NDISCRETES;
     usDiscreteInputStart = usMDiscInStart;

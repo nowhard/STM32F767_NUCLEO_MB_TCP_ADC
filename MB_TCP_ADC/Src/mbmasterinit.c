@@ -4,10 +4,16 @@
 #include "mb.h"
 #include "mb_m.h"
 #include "mbrtu.h"
+#include "mb_master_user.h"
 
 
 #define MB_RTU_TASK_STACK_SIZE	2048
 #define MB_RTU_POLL_TASK_STACK_SIZE	256
+
+#define SLAVE_PYRO_SQUIB_ADDR					0xA
+#define SLAVE_PYRO_SQUIB_TIMEOUT			100
+#define SLAVE_PYRO_SQUIB_POLL_PERIOD	500
+
 
 
 void MBMaster_RTU_Task(void *pvParameters);
@@ -32,14 +38,15 @@ void MBMaster_RTU_Task(void *pvParameters)
 	}
 }
 
+eMBMasterReqErrCode    errorCode = MB_MRE_NO_ERR;
 void MBMaster_RTU_Poll(void *pvParameters)
 {
-	eMBMasterReqErrCode    errorCode = MB_MRE_NO_ERR;
+
 	while (1)
 	{
-		vTaskDelay(500);
-		errorCode = eMBMasterReqReadInputRegister(0xA,1001,2,100);
-		
+		vTaskDelay(SLAVE_PYRO_SQUIB_POLL_PERIOD);
+		errorCode = eMBMasterReqReadInputRegister(SLAVE_PYRO_SQUIB_ADDR,M_REG_INPUT_START,M_REG_INPUT_NREGS,SLAVE_PYRO_SQUIB_TIMEOUT);
+		errorCode = eMBMasterReqReadHoldingRegister(SLAVE_PYRO_SQUIB_ADDR,M_REG_HOLDING_START,M_REG_HOLDING_NREGS,SLAVE_PYRO_SQUIB_TIMEOUT);
 	}
 }
 
