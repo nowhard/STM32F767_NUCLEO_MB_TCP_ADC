@@ -15,14 +15,6 @@
 #define REG_HOLDING_START       2001
 #define REG_HOLDING_NREGS       64
 
-//extern uint32_t LocalTime;
-////extern uint16_t ADC_last_data[ADC_CHN_NUM];
-//extern QueueHandle_t xADC_MB_Queue;
-
-//extern sConfigInfo configInfo;
-
-extern USHORT   usMRegInBuf[MB_MASTER_TOTAL_SLAVE_NUM][M_REG_INPUT_NREGS];
-extern USHORT   usMRegHoldBuf[MB_MASTER_TOTAL_SLAVE_NUM][M_REG_HOLDING_NREGS];
 
 //-------ADC RESULT REGS--------
 #define ADC_CHANNEL_0_RESULT				0
@@ -50,6 +42,12 @@ static USHORT   usRegHoldingBuf[REG_HOLDING_NREGS];
 
 extern float ADC_resultBuf[ADC_RESULT_BUF_LEN];
 extern SemaphoreHandle_t	xMBSaveSettingsSemaphore;
+
+extern USHORT   usMRegInBuf[MB_MASTER_TOTAL_SLAVE_NUM][M_REG_INPUT_NREGS];
+extern USHORT   usMRegHoldBuf[MB_MASTER_TOTAL_SLAVE_NUM][M_REG_HOLDING_NREGS];
+extern xSemaphoreHandle xSendRTURegSem;
+
+stTCPtoRTURegWrite TCPtoRTURegWrite;
 
 eMBErrorCode
 eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
@@ -442,7 +440,80 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 													usRegHoldingBuf[DEV_RESET_TIMESTAMP]=0;
 											}	
 									}
-									break;										
+									break;	
+
+									case PIR_EN_PYRO_SQUIB_0:
+									{
+											TCPtoRTURegWrite.nRegs=1;
+											TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+0;
+											TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PIR_EN_PYRO_SQUIB_0];
+											xSemaphoreGive(xSendRTURegSem);
+									}
+									break;
+									
+									case PIR_EN_PYRO_SQUIB_1:
+									{
+											TCPtoRTURegWrite.nRegs=1;
+											TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+1;
+											TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PIR_EN_PYRO_SQUIB_1];
+											xSemaphoreGive(xSendRTURegSem);	
+									}
+									break;
+									
+									case PIR_EN_PYRO_SQUIB_2:
+									{
+											TCPtoRTURegWrite.nRegs=1;
+											TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+2;
+											TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PIR_EN_PYRO_SQUIB_2];
+											xSemaphoreGive(xSendRTURegSem);										
+									}
+									break;
+									
+									case PIR_EN_PYRO_SQUIB_3:
+									{
+											TCPtoRTURegWrite.nRegs=1;
+											TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+3;
+											TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PIR_EN_PYRO_SQUIB_3];
+											xSemaphoreGive(xSendRTURegSem);											
+									}
+									break;	
+
+									case PIR_EN_PYRO_SQUIB_4:
+									{
+											TCPtoRTURegWrite.nRegs=1;
+											TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+4;
+											TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PIR_EN_PYRO_SQUIB_4];
+											xSemaphoreGive(xSendRTURegSem);											
+									}
+									break;
+									
+									case PIR_EN_PYRO_SQUIB_5:
+									{
+											TCPtoRTURegWrite.nRegs=1;
+											TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+5;
+											TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PIR_EN_PYRO_SQUIB_5];
+											xSemaphoreGive(xSendRTURegSem);											
+									}
+									break;
+									
+									case PIR_EN_PYRO_SQUIB_6:
+									{
+											TCPtoRTURegWrite.nRegs=1;
+											TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+6;
+											TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PIR_EN_PYRO_SQUIB_6];
+											xSemaphoreGive(xSendRTURegSem);											
+									}
+									break;
+									
+									case PIR_EN_PYRO_SQUIB_7:
+									{
+											TCPtoRTURegWrite.nRegs=1;
+											TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+7;
+											TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PIR_EN_PYRO_SQUIB_7];
+											xSemaphoreGive(xSendRTURegSem);											
+									}
+									break;									
+																	
 								
 								}
 														

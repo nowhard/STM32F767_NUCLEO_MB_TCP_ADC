@@ -28,29 +28,13 @@ Project File Date:  04/10/2017
 *** Using Compiler 'V5.06 update 1 (build 61)', folder: 'C:\Program Files\Keil\ARM\ARMCC\Bin'
 Build target 'MB_TCP_ADC'
 compiling mbmasterinit.c...
-compiling mb_master_user.c...
-compiling mbfunc.c...
-../Inc/mbfunc.h(50): warning:  #1-D: last line of file ends without a newline
+../Inc/mbfunc.h(59): warning:  #1-D: last line of file ends without a newline
   #endif
-../Inc/discret_out.h(11): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\Src\mbfunc.c(79): warning:  #223-D: function "memcpy" declared implicitly
-  			memcpy((void *)&usRegInputBuf[ADC_PYRO_SQUIB_0],(const void*)&usMRegInBuf[0][0],M_REG_INPUT_NREGS);
-..\Src\mbfunc.c(59): warning:  #177-D: variable "i" was declared but never referenced
-      uint8_t i=0;
-..\Src\mbfunc.c(206): warning:  #223-D: function "memcpy" declared implicitly
-  					memcpy((void *)&usRegHoldingBuf[PIR_EN_PYRO_SQUIB_0],(const void*)&usMRegHoldBuf[0][0],M_REG_HOLDING_NREGS);
-..\Src\mbfunc.c(294): warning:  #1441-D: nonstandard cast on lvalue
-  											(uint16_t)configInfo.ConfigADC.channelMask=usRegHoldingBuf[
-DC_CHANNEL_MASK_REG];
-..\Src\mbfunc.c(385): warning:  #188-D: enumerated type mixed with another type
-  											DCMI_ADC_SetSamplerate(usRegHoldingBuf[
-DC_SAMPLERATE]);
-..\Src\mbfunc.c: 7 warnings, 0 errors
+..\Src\mbmasterinit.c: 1 warning, 0 errors
 linking...
-Program Size: Code=91564 RO-data=2000 RW-data=1580 ZI-data=222788  
+Program Size: Code=92052 RO-data=2000 RW-data=1596 ZI-data=222788  
 FromELF: creating hex file...
-"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 7 Warning(s).
+"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 1 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -68,7 +52,7 @@ Package Vendor: ARM
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.0.1
-Build Time Elapsed:  00:00:14
+Build Time Elapsed:  00:00:06
 </pre>
 </body>
 </html>
