@@ -149,82 +149,34 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>354</LineNumber>
+          <LineNumber>138</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134355020</Address>
+          <Address>134349102</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\Middlewares\Third_Party\Modbus\mb_m.c</Filename>
+          <Filename>..\Src\udp_send.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\MB_TCP_ADC\../Middlewares/Third_Party/Modbus/mb_m.c\354</Expression>
+          <Expression>\\MB_TCP_ADC\../Src/udp_send.c\138</Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>87</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134399842</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\Middlewares\Third_Party\Modbus\port\porttimer_m.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\MB_TCP_ADC\../Middlewares/Third_Party/Modbus/port/porttimer_m.c\87</Expression>
-        </Bp>
-        <Bp>
-          <Number>2</Number>
-          <Type>0</Type>
           <LineNumber>41</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134342008</Address>
+          <Address>0</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
+          <BreakIfRCount>0</BreakIfRCount>
           <Filename>..\Src\mbmasterinit.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\MB_TCP_ADC\../Src/mbmasterinit.c\41</Expression>
-        </Bp>
-        <Bp>
-          <Number>3</Number>
-          <Type>0</Type>
-          <LineNumber>235</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134356454</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\Middlewares\Third_Party\Modbus\port\portevent_m.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\MB_TCP_ADC\../Middlewares/Third_Party/Modbus/port/portevent_m.c\235</Expression>
-        </Bp>
-        <Bp>
-          <Number>4</Number>
-          <Type>0</Type>
-          <LineNumber>235</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134356492</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\Middlewares\Third_Party\Modbus\port\portevent_m.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\MB_TCP_ADC\../Middlewares/Third_Party/Modbus/port/portevent_m.c\235</Expression>
+          <Expression></Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>

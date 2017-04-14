@@ -45,6 +45,7 @@ void UDP_Send_Task( void *pvParameters );
 #define TEST_BUF_LEN			6000
 #define TEST_CHANNEL_NUM	6
 float test_buf[TEST_BUF_LEN];
+
 void Set_TestBuf(float *buf, uint16_t buf_len, uint8_t chn_num);
 
 
@@ -101,7 +102,7 @@ void udp_client_init(void)
 	ra.sin_port = htons(configInfo.IPAdress_Server.port);
 
 
-	Set_TestBuf(test_buf,TEST_BUF_LEN,TEST_CHANNEL_NUM);
+//	Set_TestBuf(test_buf,TEST_BUF_LEN,TEST_CHANNEL_NUM);
   xTaskCreate( UDP_Send_Task, "UDP Task", 1024, NULL, 2, NULL );
 }
 
@@ -133,7 +134,8 @@ void UDP_Send_Task( void *pvParameters )
 		xSemaphoreTake( xAdcBuf_Send_Semaphore, portMAX_DELAY );
 		ADC_ConvertBuf(ADC_buf_pnt,(ADC_BUF_LEN>>1),currentSPI3_ADC_Buf,currentSPI3_ADC_Buf,(SPI_ADC_BUF_LEN>>1),ADC_resultBuf, &result_buf_len);
 		//udp_client_send_buf(ADC_resultBuf,result_buf_len);
-		udp_client_send_buf(test_buf,TEST_BUF_LEN);
+		Set_TestBuf(ADC_resultBuf,TEST_BUF_LEN,TEST_CHANNEL_NUM);
+		udp_client_send_buf(ADC_resultBuf,TEST_BUF_LEN);
 	}
 }
 
@@ -146,7 +148,11 @@ void Set_TestBuf(float *buf, uint16_t buf_len, uint8_t chn_num)
 	{
 		for(chn_index=0;chn_index<chn_num;chn_index++)
 		{
-				buf[buf_index+chn_index]=buf_index;
+				buf[buf_index+chn_index]++;
+				if(buf[buf_index+chn_index]>=10000)
+				{
+						buf[buf_index+chn_index]=0;
+				}
 		}
 	}
 }
