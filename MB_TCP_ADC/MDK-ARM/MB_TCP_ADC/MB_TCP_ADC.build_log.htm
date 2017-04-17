@@ -34,11 +34,17 @@ compiling udp_send.c...
   	ADC_buf_pnt=DCMIAdcRxBuff;
 ..\Src\udp_send.c(112): warning:  #177-D: variable "err" was declared but never referenced
   		err_t err;
-..\Src\udp_send.c: 3 warnings, 0 errors
+..\Src\udp_send.c(155): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  		signal_value+=
+IGNAL_VALUE_INCREMENT;
+..\Src\udp_send.c(157): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  		if(signal_value>=
+IGNAL_VALUE_MAX)
+..\Src\udp_send.c: 5 warnings, 0 errors
 linking...
-Program Size: Code=92104 RO-data=2000 RW-data=1596 ZI-data=222788  
+Program Size: Code=92128 RO-data=2000 RW-data=1596 ZI-data=222788  
 FromELF: creating hex file...
-"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 3 Warning(s).
+"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 5 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -56,7 +62,7 @@ Package Vendor: ARM
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.0.1
-Build Time Elapsed:  00:00:05
+Build Time Elapsed:  00:00:06
 </pre>
 </body>
 </html>

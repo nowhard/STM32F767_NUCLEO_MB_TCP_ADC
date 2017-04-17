@@ -115,7 +115,7 @@ void udp_client_send_buf(float *buf, uint16_t bufSize)
 		UDPPacket.id=0;
 		UDPPacket.timestamp=DCMI_ADC_GetLastTimestamp();
 
-		while(adc_buf_offset<=(bufSize*sizeof(float)))
+		while(adc_buf_offset<(bufSize*sizeof(float)))
 		{
 			memcpy(&UDPPacket.data,((uint8_t*)buf+adc_buf_offset),UDP_ADC_PACKET_SIZE);			
 			sendto(socket_fd, &UDPPacket,sizeof(UDPPacket),0,(struct sockaddr*)&ra,sizeof(ra));			
@@ -132,27 +132,36 @@ void UDP_Send_Task( void *pvParameters )
 	while(1)
 	{
 		xSemaphoreTake( xAdcBuf_Send_Semaphore, portMAX_DELAY );
-		ADC_ConvertBuf(ADC_buf_pnt,(ADC_BUF_LEN>>1),currentSPI3_ADC_Buf,currentSPI3_ADC_Buf,(SPI_ADC_BUF_LEN>>1),ADC_resultBuf, &result_buf_len);
+		ADC_ConvertBuf(ADC_buf_pnt,(ADC_BUF_LEN>>1),currentSPI3_ADC_Buf,currentSPI3_ADC_Buf,(SPI_ADC_BUF_LEN>>1),test_buf, &result_buf_len);
 		//udp_client_send_buf(ADC_resultBuf,result_buf_len);
 		Set_TestBuf(ADC_resultBuf,TEST_BUF_LEN,TEST_CHANNEL_NUM);
+		
 		udp_client_send_buf(ADC_resultBuf,TEST_BUF_LEN);
 	}
 }
 
 
+#define SIGNAL_VALUE_MAX 50000.0
+#define SIGNAL_VALUE_INCREMENT 0.1
 void Set_TestBuf(float *buf, uint16_t buf_len, uint8_t chn_num)
 {
 	uint16_t buf_index=0;
 	uint8_t chn_index=0;
+	
+	static float signal_value=0.0;
+
 	for(buf_index=0;buf_index<buf_len;buf_index+=chn_num)
 	{
+		signal_value+=SIGNAL_VALUE_INCREMENT;
+		
+		if(signal_value>=SIGNAL_VALUE_MAX)
+		{
+				signal_value=0.1;
+		}
+		
 		for(chn_index=0;chn_index<chn_num;chn_index++)
 		{
-				buf[buf_index+chn_index]++;
-				if(buf[buf_index+chn_index]>=10000)
-				{
-						buf[buf_index+chn_index]=0;
-				}
+				buf[buf_index+chn_index]=signal_value;
 		}
 	}
 }

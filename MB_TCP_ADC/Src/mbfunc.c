@@ -66,6 +66,8 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
     {
         iRegIndex = ( int )( usAddress - usRegInputStart );
 			
+
+			
 			*((float*)&usRegInputBuf[ADC_CHANNEL_0_RESULT])=ADC_resultBuf[0];
 			*((float*)&usRegInputBuf[ADC_CHANNEL_1_RESULT])=ADC_resultBuf[1];
 			*((float*)&usRegInputBuf[ADC_CHANNEL_2_RESULT])=ADC_resultBuf[2];
