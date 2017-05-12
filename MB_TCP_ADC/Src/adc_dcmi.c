@@ -39,6 +39,20 @@ void DCMI_DMA_TransferCallback(void);
 
 void DCMI_ADC_Init(void)
 {
+	//Set mode and format of data
+	//Mode -HI SPEED MODE=00
+	 HAL_GPIO_WritePin(GPIO0_ADC_GPIO_Port, GPIO0_ADC_Pin, GPIO_PIN_RESET);
+	 HAL_GPIO_WritePin(GPIO1_ADC_GPIO_Port, GPIO1_ADC_Pin, GPIO_PIN_RESET);
+	
+	//Format-Frame-Sync Discrete FORMAT=101
+	 HAL_GPIO_WritePin(GPIO2_ADC_GPIO_Port, GPIO2_ADC_Pin, GPIO_PIN_SET);
+	 HAL_GPIO_WritePin(GPIO3_ADC_GPIO_Port, GPIO3_ADC_Pin, GPIO_PIN_RESET);
+	 HAL_GPIO_WritePin(GPIO4_ADC_GPIO_Port, GPIO4_ADC_Pin, GPIO_PIN_SET);
+	
+	//SYNC ADC to HIGH
+	
+	HAL_GPIO_WritePin(SYNC_ADC_GPIO_Port, SYNC_ADC_Pin, GPIO_PIN_SET);
+	
 	vSemaphoreCreateBinary( xAdcBuf_Send_Semaphore );
 	DCMI_ADC_SetSamplerate(configInfo.ConfigADC.sampleRate);
 	

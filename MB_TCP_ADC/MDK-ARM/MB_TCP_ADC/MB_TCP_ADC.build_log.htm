@@ -27,24 +27,27 @@ Project File Date:  04/10/2017
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 1 (build 61)', folder: 'C:\Program Files\Keil\ARM\ARMCC\Bin'
 Build target 'MB_TCP_ADC'
-compiling udp_send.c...
-../Inc/spi_adc.h(16): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\Src\udp_send.c(75): warning:  #513-D: a value of type "volatile uint8_t *" cannot be assigned to an entity of type "uint8_t *"
-  	ADC_buf_pnt=DCMIAdcRxBuff;
-..\Src\udp_send.c(112): warning:  #177-D: variable "err" was declared but never referenced
-  		err_t err;
-..\Src\udp_send.c(155): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-  		signal_value+=
-IGNAL_VALUE_INCREMENT;
-..\Src\udp_send.c(157): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-  		if(signal_value>=
-IGNAL_VALUE_MAX)
-..\Src\udp_send.c: 5 warnings, 0 errors
+compiling adc_dcmi.c...
+..\Src\adc_dcmi.c(60): warning:  #167-D: argument of type "void (*)(void)" is incompatible with parameter of type "void (*)(DMA_HandleTypeDef *)"
+  	HAL_DMA_RegisterCallback(&hdma_dcmi,HAL_DMA_XFER_HALFCPLT_CB_ID,DCMI_DMA_HalfTransferCallback);
+..\Src\adc_dcmi.c(61): warning:  #167-D: argument of type "void (*)(void)" is incompatible with parameter of type "void (*)(DMA_HandleTypeDef *)"
+  	HAL_DMA_RegisterCallback(&hdma_dcmi,HAL_DMA_XFER_CPLT_CB_ID,DCMI_DMA_TransferCallback);
+..\Src\adc_dcmi.c(71): warning:  #177-D: variable "sClockSourceConfig" was declared but never referenced
+  	TIM_ClockConfigTypeDef sClockSourceConfig;
+..\Src\adc_dcmi.c(72): warning:  #177-D: variable "sMasterConfig" was declared but never referenced
+    TIM_MasterConfigTypeDef sMasterConfig;
+..\Src\adc_dcmi.c(73): warning:  #177-D: variable "sConfigOC" was declared but never referenced
+    TIM_OC_InitTypeDef sConfigOC;
+..\Src\adc_dcmi.c(151): warning:  #513-D: a value of type "volatile uint8_t *" cannot be assigned to an entity of type "uint8_t *"
+  		ADC_buf_pnt=&DCMIAdcRxBuff[0];
+..\Src\adc_dcmi.c(158): warning:  #513-D: a value of type "volatile uint8_t *" cannot be assigned to an entity of type "uint8_t *"
+  	  ADC_buf_pnt=&DCMIAdcRxBuff[
+DC_BUF_LEN>>1];
+..\Src\adc_dcmi.c: 7 warnings, 0 errors
 linking...
-Program Size: Code=92128 RO-data=2000 RW-data=1596 ZI-data=222788  
+Program Size: Code=92052 RO-data=2000 RW-data=1596 ZI-data=222788  
 FromELF: creating hex file...
-"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 5 Warning(s).
+"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 7 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -62,7 +65,7 @@ Package Vendor: ARM
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.0.1
-Build Time Elapsed:  00:00:06
+Build Time Elapsed:  00:00:05
 </pre>
 </body>
 </html>

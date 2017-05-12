@@ -576,7 +576,12 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* htim)
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /* USER CODE BEGIN TIM3_MspPostInit 1 */
-
+//    GPIO_InitStruct.Pin = GPIO_PIN_5;
+//    GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
+//    GPIO_InitStruct.Pull = GPIO_PULLUP;
+//    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+//    GPIO_InitStruct.Alternate = GPIO_AF2_TIM3;
+//    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
   /* USER CODE END TIM3_MspPostInit 1 */
   }
 
