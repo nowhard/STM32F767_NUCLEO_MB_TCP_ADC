@@ -322,7 +322,7 @@ HAL_StatusTypeDef HAL_DCMI_Start_DMA(DCMI_HandleTypeDef* hdcmi, uint32_t DCMI_Mo
   hdcmi->Instance->CR |=  (uint32_t)(DCMI_Mode);
 
   /* Set the DMA memory0 conversion complete callback */
-  hdcmi->DMA_Handle->XferCpltCallback = DCMI_DMAXferCplt;
+  //hdcmi->DMA_Handle->XferCpltCallback = DCMI_DMAXferCplt;
 
   /* Set the DMA error callback */
   hdcmi->DMA_Handle->XferErrorCallback = DCMI_DMAError;

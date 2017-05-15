@@ -27,22 +27,38 @@ union bytefield{
 
 union wordfield{
 	struct{
-		uint_fast16_t b0:1;
-		uint_fast16_t b1:1;
-		uint_fast16_t b2:1;
-		uint_fast16_t b3:1;
-		uint_fast16_t b4:1;
-		uint_fast16_t b5:1;
-		uint_fast16_t b6:1;
-		uint_fast16_t b7:1;
-		uint_fast16_t b8:1;
-		uint_fast16_t b9:1;
-		uint_fast16_t b10:1;
-		uint_fast16_t b11:1;
-		uint_fast16_t b12:1;
-		uint_fast16_t b13:1;
-		uint_fast16_t b14:1;
+//		uint_fast16_t b0:1;
+//		uint_fast16_t b1:1;
+//		uint_fast16_t b2:1;
+//		uint_fast16_t b3:1;
+//		uint_fast16_t b4:1;
+//		uint_fast16_t b5:1;
+//		uint_fast16_t b6:1;
+//		uint_fast16_t b7:1;
+//		uint_fast16_t b8:1;
+//		uint_fast16_t b9:1;
+//		uint_fast16_t b10:1;
+//		uint_fast16_t b11:1;
+//		uint_fast16_t b12:1;
+//		uint_fast16_t b13:1;
+//		uint_fast16_t b14:1;
+//		uint_fast16_t b15:1;
 		uint_fast16_t b15:1;
+		uint_fast16_t b14:1;
+		uint_fast16_t b13:1;
+		uint_fast16_t b12:1;
+		uint_fast16_t b11:1;
+		uint_fast16_t b10:1;
+		uint_fast16_t b9:1;
+		uint_fast16_t b8:1;
+		uint_fast16_t b7:1;
+		uint_fast16_t b6:1;
+		uint_fast16_t b5:1;
+		uint_fast16_t b4:1;
+		uint_fast16_t b3:1;
+		uint_fast16_t b2:1;
+		uint_fast16_t b1:1;
+		uint_fast16_t b0:1;
 	};
 	uint_fast16_t val;
 };
@@ -260,37 +276,37 @@ void ADC_ConvertBuf(uint8_t *dcmiBuf,uint16_t dcmiBufLen, uint16_t *spiBuf_1, ui
 			
 			if(configInfo.ConfigADC.channelMask&(0x1<<0))	
 			{
-				*(resultBuf+offset)=configInfo.ConfigADC.calibrChannel[0].k*out1.val+configInfo.ConfigADC.calibrChannel[0].b;
+				*(resultBuf+offset)=configInfo.ConfigADC.calibrChannel[0].k*(out1.val&0xFFFF)+configInfo.ConfigADC.calibrChannel[0].b;
 				offset++;
 			}
 			
 			if(configInfo.ConfigADC.channelMask&(0x1<<1))	
 			{
-				*(resultBuf+offset)=configInfo.ConfigADC.calibrChannel[1].k*out2.val+configInfo.ConfigADC.calibrChannel[1].b;
+				*(resultBuf+offset)=configInfo.ConfigADC.calibrChannel[1].k*(out2.val&0xFFFF)+configInfo.ConfigADC.calibrChannel[1].b;
 				offset++;
 			}
 			
 			if(configInfo.ConfigADC.channelMask&(0x1<<2))	
 			{
-				*(resultBuf+offset)=configInfo.ConfigADC.calibrChannel[2].k*out3.val+configInfo.ConfigADC.calibrChannel[2].b;
+				*(resultBuf+offset)=configInfo.ConfigADC.calibrChannel[2].k*(out3.val&0xFFFF)+configInfo.ConfigADC.calibrChannel[2].b;
 				offset++;
 			}
 			
 			if(configInfo.ConfigADC.channelMask&(0x1<<3))	
 			{
-				*(resultBuf+offset)=configInfo.ConfigADC.calibrChannel[3].k*out4.val+configInfo.ConfigADC.calibrChannel[3].b;
+				*(resultBuf+offset)=configInfo.ConfigADC.calibrChannel[3].k*(out4.val&0xFFFF)+configInfo.ConfigADC.calibrChannel[3].b;
 				offset++;
 			}
 			
 			if(configInfo.ConfigADC.channelMask&(0x1<<4))	
 			{
-				*(resultBuf+offset)=configInfo.ConfigADC.calibrChannel[4].k*(spiBuf_1[cycle_count/SPI_ADC_FREQ_DIV])+configInfo.ConfigADC.calibrChannel[4].b;
+				*(resultBuf+offset)=configInfo.ConfigADC.calibrChannel[4].k*(spiBuf_1[cycle_count/SPI_ADC_FREQ_DIV]&0xFFFF)+configInfo.ConfigADC.calibrChannel[4].b;
 				offset++;
 			}
 			
 			if(configInfo.ConfigADC.channelMask&(0x1<<5))	
 			{
-				*(resultBuf+offset)=configInfo.ConfigADC.calibrChannel[5].k*(spiBuf_2[cycle_count/SPI_ADC_FREQ_DIV])+configInfo.ConfigADC.calibrChannel[5].b;
+				*(resultBuf+offset)=configInfo.ConfigADC.calibrChannel[5].k*(spiBuf_2[cycle_count/SPI_ADC_FREQ_DIV]&0xFFFF)+configInfo.ConfigADC.calibrChannel[5].b;
 				offset++;
 			}
 		
