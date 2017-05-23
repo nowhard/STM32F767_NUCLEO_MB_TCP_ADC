@@ -131,18 +131,27 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 #define DEV_SET_OUTPUTS_0			37
 #define DEV_SET_OUTPUTS_1			38
 #define DEV_SET_OUTPUTS_2			39
-#define DEV_SET_OUTPUTS_3			49
-//--------SYNC DEV REGS--------------------
-#define DEV_RESET_TIMESTAMP		40
+#define DEV_SET_OUTPUTS_3			40
 
-#define PIR_EN_PYRO_SQUIB_0		41
-#define PIR_EN_PYRO_SQUIB_1		42
-#define PIR_EN_PYRO_SQUIB_2		43
-#define PIR_EN_PYRO_SQUIB_3		44
-#define PIR_EN_PYRO_SQUIB_4		45
-#define PIR_EN_PYRO_SQUIB_5		46
-#define PIR_EN_PYRO_SQUIB_6		47
-#define PIR_EN_PYRO_SQUIB_7		48
+#define DEV_ENABLE_OUT_1			54//?
+#define DEV_ENABLE_OUT_7			55
+//--------SYNC DEV REGS--------------------
+#define DEV_RESET_TIMESTAMP		41
+
+#define PIR_EN_PYRO_SQUIB_0		42
+#define PIR_EN_PYRO_SQUIB_1		43
+#define PIR_EN_PYRO_SQUIB_2		44
+#define PIR_EN_PYRO_SQUIB_3		45
+#define PIR_EN_PYRO_SQUIB_4		46
+#define PIR_EN_PYRO_SQUIB_5		47
+#define PIR_EN_PYRO_SQUIB_6		48
+#define PIR_EN_PYRO_SQUIB_7		49
+
+//--DIGITAL POTENTIOMETERS-----------------
+#define PIR_SET_POT1			50
+#define PIR_SET_POT2			51
+#define PIR_SET_POT3			52
+#define PIR_SET_POT4			53
 
 static uint16_t outputs_temp_reg_0=0;
 static uint16_t outputs_temp_reg_1=0;
@@ -205,6 +214,9 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 					usRegHoldingBuf[DEV_SET_OUTPUTS_1] = outputs_temp_reg_1;
 					usRegHoldingBuf[DEV_SET_OUTPUTS_2] = outputs_temp_reg_2;
 					usRegHoldingBuf[DEV_SET_OUTPUTS_3] = outputs_temp_reg_3;
+					
+					usRegHoldingBuf[DEV_ENABLE_OUT_1]=HAL_GPIO_ReadPin(ENABLE_OUT_1_GPIO_Port,ENABLE_OUT_1_Pin);
+					usRegHoldingBuf[DEV_ENABLE_OUT_7]=HAL_GPIO_ReadPin(ENABLE_OUT_7_GPIO_Port,ENABLE_OUT_7_Pin);
 
 					memcpy((void *)&usRegHoldingBuf[PIR_EN_PYRO_SQUIB_0],(const void*)&usMRegHoldBuf[0][0],M_REG_HOLDING_NREGS);
 
@@ -443,7 +455,19 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 											outputs_temp_reg_3|=usRegHoldingBuf[DEV_SET_OUTPUTS_3];
 											DiscretOutputs_Set((((uint64_t)outputs_temp_reg_0))|(((uint64_t)outputs_temp_reg_1)<<16)|(((uint64_t)outputs_temp_reg_2)<<32)|(((uint64_t)outputs_temp_reg_3)<<48));
 									}
-									break;										
+									break;		
+
+									case DEV_ENABLE_OUT_1:
+									{
+											HAL_GPIO_WritePin(ENABLE_OUT_1_GPIO_Port,ENABLE_OUT_1_Pin,usRegHoldingBuf[DEV_ENABLE_OUT_1]);
+									}
+									break;
+									
+									case DEV_ENABLE_OUT_7:
+									{
+											HAL_GPIO_WritePin(ENABLE_OUT_7_GPIO_Port,ENABLE_OUT_7_Pin,usRegHoldingBuf[DEV_ENABLE_OUT_7]);
+									}
+									break;								
 
 									case DEV_RESET_TIMESTAMP:
 									{
@@ -524,6 +548,42 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 											TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+7;
 											TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PIR_EN_PYRO_SQUIB_7];
 											xSemaphoreGive(xSendRTURegSem);											
+									}
+									break;	
+
+									case PIR_SET_POT1:
+									{
+											TCPtoRTURegWrite.nRegs=1;
+											TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+8;
+											TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PIR_SET_POT1];
+											xSemaphoreGive(xSendRTURegSem);		
+									}
+									break;
+									
+									case PIR_SET_POT2:
+									{
+											TCPtoRTURegWrite.nRegs=1;
+											TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+9;
+											TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PIR_SET_POT2];
+											xSemaphoreGive(xSendRTURegSem);		
+									}
+									break;
+									
+									case PIR_SET_POT3:
+									{
+											TCPtoRTURegWrite.nRegs=1;
+											TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+10;
+											TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PIR_SET_POT3];
+											xSemaphoreGive(xSendRTURegSem);		
+									}
+									break;
+									
+									case PIR_SET_POT4:
+									{
+											TCPtoRTURegWrite.nRegs=1;
+											TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+11;
+											TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PIR_SET_POT4];
+											xSemaphoreGive(xSendRTURegSem);		
 									}
 									break;									
 																	
