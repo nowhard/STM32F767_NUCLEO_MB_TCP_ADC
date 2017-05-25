@@ -34,6 +34,15 @@
 #define ADC_PYRO_SQUIB_6						28
 #define ADC_PYRO_SQUIB_7						30
 
+//--------FAULT SIGNALS-----------
+#define FAULT_OUT_1_SIG							31
+#define FAULT_OUT_7_SIG							32
+
+#define FAULT_250A_SIG							33
+#define FAULT_150A_SIG							34
+#define FAULT_75A_SIG								35
+#define FAULT_7_5A_SIG							36
+
 /* ----------------------- Static variables ---------------------------------*/
 static USHORT   usRegInputStart = REG_INPUT_START;
 static USHORT   usRegInputBuf[REG_INPUT_NREGS];
@@ -77,6 +86,14 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 			*((uint64_t*)&usRegInputBuf[TIMESTAMP_CURRENT])=DCMI_ADC_GetLastTimestamp();
 			
 			memcpy((void *)&usRegInputBuf[ADC_PYRO_SQUIB_0],(const void*)&usMRegInBuf[0][0],M_REG_INPUT_NREGS);
+			
+			usRegInputBuf[FAULT_OUT_1_SIG]=HAL_GPIO_ReadPin(FAULT_OUT_1_GPIO_Port,FAULT_OUT_1_Pin);
+			usRegInputBuf[FAULT_OUT_7_SIG]=HAL_GPIO_ReadPin(FAULT_OUT_7_GPIO_Port,FAULT_OUT_7_Pin);
+			
+			usRegInputBuf[FAULT_250A_SIG]=HAL_GPIO_ReadPin(FAULT_250A_GPIO_Port,FAULT_250A_Pin);
+			usRegInputBuf[FAULT_150A_SIG]=HAL_GPIO_ReadPin(FAULT_150A_GPIO_Port,FAULT_150A_Pin);
+			usRegInputBuf[FAULT_75A_SIG]=HAL_GPIO_ReadPin(FAULT_75A_GPIO_Port,FAULT_75A_Pin);
+			usRegInputBuf[FAULT_7_5A_SIG]=HAL_GPIO_ReadPin(FAULT_7_5A_GPIO_Port,FAULT_7_5A_Pin);
 			
         while( usNRegs > 0 )
         {
@@ -122,7 +139,7 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 #define ADC_CHANNEL_5_K				30
 #define ADC_CHANNEL_5_B				32
 
-#define ADC_SAMPLERATE				34 //0-100000
+#define ADC_SAMPLERATE				34 
 #define ADC_STARTED						36
 
 //--------BITFIELDS------------------------
@@ -133,25 +150,32 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 #define DEV_SET_OUTPUTS_2			39
 #define DEV_SET_OUTPUTS_3			40
 
-#define DEV_ENABLE_OUT_1			54//?
-#define DEV_ENABLE_OUT_7			55
-//--------SYNC DEV REGS--------------------
-#define DEV_RESET_TIMESTAMP		41
+#define DEV_ENABLE_OUT_1			41
+#define DEV_ENABLE_OUT_7			42
 
-#define PIR_EN_PYRO_SQUIB_0		42
-#define PIR_EN_PYRO_SQUIB_1		43
-#define PIR_EN_PYRO_SQUIB_2		44
-#define PIR_EN_PYRO_SQUIB_3		45
-#define PIR_EN_PYRO_SQUIB_4		46
-#define PIR_EN_PYRO_SQUIB_5		47
-#define PIR_EN_PYRO_SQUIB_6		48
-#define PIR_EN_PYRO_SQUIB_7		49
+#define DEV_EN_VCC_250				43
+#define DEV_EN_VCC_150				44
+#define DEV_EN_VCC_75					45
+#define DEV_EN_VCC_7_5				46
+
+#define DEV_ENABLE_AIR				47
+//--------SYNC DEV REGS--------------------
+#define DEV_RESET_TIMESTAMP		48
+
+#define PIR_EN_PYRO_SQUIB_0		49
+#define PIR_EN_PYRO_SQUIB_1		50
+#define PIR_EN_PYRO_SQUIB_2		51
+#define PIR_EN_PYRO_SQUIB_3		52
+#define PIR_EN_PYRO_SQUIB_4		53
+#define PIR_EN_PYRO_SQUIB_5		54
+#define PIR_EN_PYRO_SQUIB_6		55
+#define PIR_EN_PYRO_SQUIB_7		56
 
 //--DIGITAL POTENTIOMETERS-----------------
-#define PIR_SET_POT1			50
-#define PIR_SET_POT2			51
-#define PIR_SET_POT3			52
-#define PIR_SET_POT4			53
+#define PIR_SET_POT1			57
+#define PIR_SET_POT2			58
+#define PIR_SET_POT3			59
+#define PIR_SET_POT4			60
 
 static uint16_t outputs_temp_reg_0=0;
 static uint16_t outputs_temp_reg_1=0;
@@ -217,6 +241,14 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 					
 					usRegHoldingBuf[DEV_ENABLE_OUT_1]=HAL_GPIO_ReadPin(ENABLE_OUT_1_GPIO_Port,ENABLE_OUT_1_Pin);
 					usRegHoldingBuf[DEV_ENABLE_OUT_7]=HAL_GPIO_ReadPin(ENABLE_OUT_7_GPIO_Port,ENABLE_OUT_7_Pin);
+					
+					usRegHoldingBuf[DEV_EN_VCC_250]=HAL_GPIO_ReadPin(EN_VCC_250_GPIO_Port,EN_VCC_250_Pin);
+					usRegHoldingBuf[DEV_EN_VCC_150]=HAL_GPIO_ReadPin(EN_VCC_150_GPIO_Port,EN_VCC_150_Pin);
+					usRegHoldingBuf[DEV_EN_VCC_75]=HAL_GPIO_ReadPin(EN_VCC_75_GPIO_Port,EN_VCC_75_Pin);
+					usRegHoldingBuf[DEV_EN_VCC_7_5]=HAL_GPIO_ReadPin(EN_VCC_7_5_GPIO_Port,EN_VCC_7_5_Pin);
+					
+					usRegHoldingBuf[DEV_ENABLE_AIR]=HAL_GPIO_ReadPin(ENABLE_AIR_GPIO_Port,ENABLE_AIR_Pin);
+					
 
 					memcpy((void *)&usRegHoldingBuf[PIR_EN_PYRO_SQUIB_0],(const void*)&usMRegHoldBuf[0][0],M_REG_HOLDING_NREGS);
 
@@ -467,7 +499,37 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 									{
 											HAL_GPIO_WritePin(ENABLE_OUT_7_GPIO_Port,ENABLE_OUT_7_Pin,usRegHoldingBuf[DEV_ENABLE_OUT_7]);
 									}
-									break;								
+									break;				
+
+									case DEV_EN_VCC_250:
+									{
+											HAL_GPIO_WritePin(EN_VCC_250_GPIO_Port,EN_VCC_250_Pin,usRegHoldingBuf[DEV_EN_VCC_250]);
+									}
+									break;
+									
+									case DEV_EN_VCC_150:
+									{
+											HAL_GPIO_WritePin(EN_VCC_150_GPIO_Port,EN_VCC_150_Pin,usRegHoldingBuf[DEV_EN_VCC_150]);
+									}
+									break;		
+
+									case DEV_EN_VCC_75:
+									{
+											HAL_GPIO_WritePin(EN_VCC_75_GPIO_Port,EN_VCC_75_Pin,usRegHoldingBuf[DEV_EN_VCC_75]);
+									}
+									break;	
+
+									case DEV_EN_VCC_7_5:
+									{
+											HAL_GPIO_WritePin(EN_VCC_7_5_GPIO_Port,EN_VCC_7_5_Pin,usRegHoldingBuf[DEV_EN_VCC_7_5]);
+									}
+									break;	
+
+									case DEV_ENABLE_AIR:
+									{
+											HAL_GPIO_WritePin(ENABLE_AIR_GPIO_Port,ENABLE_AIR_Pin,usRegHoldingBuf[DEV_ENABLE_AIR]);
+									}
+									break;										
 
 									case DEV_RESET_TIMESTAMP:
 									{
