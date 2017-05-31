@@ -227,8 +227,10 @@
 #define ADC_DCMI_CHN_NUM	4
 #define ADC_SPI_CHN_NUM		2
 
-#define ADC_CHN_NUM 6
+#define ADC_CHN_NUM 	6
 #define ADC_BUF_LEN 32000
+
+#define ANALOG_CHN_NUM	3
 
 #define ADC_DCMI_MAX_SAMPLERATE		100000
 

@@ -6,6 +6,7 @@
 #include "udp_send.h"
 #include "discret_out.h"
 #include "mb_master_user.h"
+#include "data_converter.h"
 //#include "main.h"
 
 
@@ -55,8 +56,12 @@ extern SemaphoreHandle_t	xMBSaveSettingsSemaphore;
 extern USHORT   usMRegInBuf[MB_MASTER_TOTAL_SLAVE_NUM][M_REG_INPUT_NREGS];
 extern USHORT   usMRegHoldBuf[MB_MASTER_TOTAL_SLAVE_NUM][M_REG_HOLDING_NREGS];
 extern xSemaphoreHandle xSendRTURegSem;
+extern stChnCalibrValues ChnCalibrValues;
 
 stTCPtoRTURegWrite TCPtoRTURegWrite;
+
+extern uint32_t counter_DMA_half;
+extern uint32_t counter_DMA_full;
 
 eMBErrorCode
 eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
@@ -77,12 +82,12 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 			
 
 			
-			*((float*)&usRegInputBuf[ADC_CHANNEL_0_RESULT])=ADC_resultBuf[0];
-			*((float*)&usRegInputBuf[ADC_CHANNEL_1_RESULT])=ADC_resultBuf[1];
-			*((float*)&usRegInputBuf[ADC_CHANNEL_2_RESULT])=ADC_resultBuf[2];
-			*((float*)&usRegInputBuf[ADC_CHANNEL_3_RESULT])=ADC_resultBuf[3];
-			*((float*)&usRegInputBuf[ADC_CHANNEL_4_RESULT])=ADC_resultBuf[4];
-			*((float*)&usRegInputBuf[ADC_CHANNEL_5_RESULT])=ADC_resultBuf[5];
+			*((float*)&usRegInputBuf[ADC_CHANNEL_0_RESULT])=(float)counter_DMA_half;//ChnCalibrValues.val_250A;
+			*((float*)&usRegInputBuf[ADC_CHANNEL_1_RESULT])=(float)counter_DMA_full;//ChnCalibrValues.val_150A;
+			*((float*)&usRegInputBuf[ADC_CHANNEL_2_RESULT])=ChnCalibrValues.val_75A;
+			*((float*)&usRegInputBuf[ADC_CHANNEL_3_RESULT])=ChnCalibrValues.val_7_5A;
+			*((float*)&usRegInputBuf[ADC_CHANNEL_4_RESULT])=ChnCalibrValues.val_voltage_1;
+			*((float*)&usRegInputBuf[ADC_CHANNEL_5_RESULT])=ChnCalibrValues.val_7_5A;
 			*((uint64_t*)&usRegInputBuf[TIMESTAMP_CURRENT])=DCMI_ADC_GetLastTimestamp();
 			
 			memcpy((void *)&usRegInputBuf[ADC_PYRO_SQUIB_0],(const void*)&usMRegInBuf[0][0],M_REG_INPUT_NREGS);

@@ -24,13 +24,15 @@ __IO uint8_t DCMIAdcRxBuff[RX_BUFF_SIZE];
 
 
 uint8_t *ADC_buf_pnt;
-uint16_t ADC_last_data[ADC_CHN_NUM];
 uint64_t timestamp=0;
 
 SemaphoreHandle_t xAdcBuf_Send_Semaphore=NULL;
 QueueHandle_t xADC_MB_Queue;
 
 extern sConfigInfo configInfo;
+
+uint32_t counter_DMA_half=0;
+uint32_t counter_DMA_full=0;
 
 
 void DCMI_DMA_HalfTransferCallback(void);
@@ -149,6 +151,7 @@ void DCMI_DMA_HalfTransferCallback(void)
 {
 		timestamp=((((uint64_t)(TIM5->CNT))<<16)|TIM4->CNT);
 		ADC_buf_pnt=&DCMIAdcRxBuff[0];
+		counter_DMA_half++;
 		xSemaphoreGiveFromISR( xAdcBuf_Send_Semaphore, NULL);
 }
 
@@ -156,6 +159,7 @@ void DCMI_DMA_TransferCallback(void)
 {
 		timestamp=((((uint64_t)(TIM5->CNT))<<16)|TIM4->CNT);
 	  ADC_buf_pnt=&DCMIAdcRxBuff[ADC_BUF_LEN>>1];
+		counter_DMA_full++;
 		xSemaphoreGiveFromISR( xAdcBuf_Send_Semaphore, NULL);
 }
 
