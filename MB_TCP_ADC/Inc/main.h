@@ -197,6 +197,7 @@
 #define DATA5_GPIO_Port GPIOB
 #define SIG_SYNC_TIM_Pin GPIO_PIN_9
 #define SIG_SYNC_TIM_GPIO_Port GPIOB
+#define SIG_SYNC_TIM_EXTI_IRQn EXTI9_5_IRQn
 /* USER CODE BEGIN Private defines */
 
 

@@ -62,6 +62,7 @@ stTCPtoRTURegWrite TCPtoRTURegWrite;
 
 extern uint32_t counter_DMA_half;
 extern uint32_t counter_DMA_full;
+extern uint32_t udp_send_counter;
 
 eMBErrorCode
 eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
@@ -82,8 +83,8 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 			
 
 			
-			*((float*)&usRegInputBuf[ADC_CHANNEL_0_RESULT])=(float)counter_DMA_half;//ChnCalibrValues.val_250A;
-			*((float*)&usRegInputBuf[ADC_CHANNEL_1_RESULT])=(float)counter_DMA_full;//ChnCalibrValues.val_150A;
+			*((float*)&usRegInputBuf[ADC_CHANNEL_0_RESULT])=ChnCalibrValues.val_250A;
+			*((float*)&usRegInputBuf[ADC_CHANNEL_1_RESULT])=ChnCalibrValues.val_150A;
 			*((float*)&usRegInputBuf[ADC_CHANNEL_2_RESULT])=ChnCalibrValues.val_75A;
 			*((float*)&usRegInputBuf[ADC_CHANNEL_3_RESULT])=ChnCalibrValues.val_7_5A;
 			*((float*)&usRegInputBuf[ADC_CHANNEL_4_RESULT])=ChnCalibrValues.val_voltage_1;

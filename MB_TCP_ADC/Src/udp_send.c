@@ -103,9 +103,12 @@ void udp_client_init(void)
 
 
 //	Set_TestBuf(test_buf,TEST_BUF_LEN,TEST_CHANNEL_NUM);
-  xTaskCreate( UDP_Send_Task, "UDP Task", 1024, NULL, 2, NULL );
+  xTaskCreate( UDP_Send_Task, "UDP Task", 1024, NULL, 4, NULL );
 }
 
+//test
+uint32_t udp_send_counter=0;
+//test
 
 void udp_client_send_buf(float *buf, uint16_t bufSize)
 {
@@ -114,6 +117,7 @@ void udp_client_send_buf(float *buf, uint16_t bufSize)
 		
 		UDPPacket.id=0;
 		UDPPacket.timestamp=DCMI_ADC_GetLastTimestamp();
+		udp_send_counter++;
 
 		while(adc_buf_offset<(bufSize*sizeof(float)))
 		{
@@ -128,7 +132,7 @@ void udp_client_send_buf(float *buf, uint16_t bufSize)
 void UDP_Send_Task( void *pvParameters )
 {
 	uint16_t result_buf_len=0;
-	printf("UDP Send Task started");
+	//printf("UDP Send Task started");
 	while(1)
 	{
 		xSemaphoreTake( xAdcBuf_Send_Semaphore, portMAX_DELAY );
