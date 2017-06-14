@@ -713,29 +713,32 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOF_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
-  __HAL_RCC_GPIOG_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOG_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(STROB_GPIO_Port, STROB_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, ENABLE_OUT_1_Pin|SYNC_ADC_Pin|GPIO0_ADC_Pin|BUSE_SIG_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, SYNC_ADC_Pin|GPIO0_ADC_Pin|BUSE_SIG_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOE, OE_Pin|EN_VCC_7_5_Pin|EN_VCC_250_Pin|EN_VCC_75_Pin 
-                          |EN_VCC_150_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(ENABLE_OUT_1_GPIO_Port, ENABLE_OUT_1_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOG, ENABLE_AIR_Pin|AIR_CS_Pin|USB_PowerSwitchOn_Pin|U_CS_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(OE_GPIO_Port, OE_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOD, EN_VCC_75_Pin|GPIO1_ADC_Pin|GPIO2_ADC_Pin|GPIO3_ADC_Pin 
+                          |GPIO4_ADC_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOG, ENABLE_AIR_Pin|AIR_CS_Pin|EN_VCC_7_5_Pin|EN_VCC_150_Pin 
+                          |USB_PowerSwitchOn_Pin|EN_VCC_250_Pin|U_CS_Pin|ENABLE_OUT_7_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(BUSE_SYNC_GPIO_Port, BUSE_SYNC_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, ENABLE_OUT_7_Pin|GPIO1_ADC_Pin|GPIO2_ADC_Pin|GPIO3_ADC_Pin 
-                          |GPIO4_ADC_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : User_Blue_Button_Pin */
   GPIO_InitStruct.Pin = User_Blue_Button_Pin;
@@ -743,10 +746,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(User_Blue_Button_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : ADR0_Pin ADR1_Pin ADR2_Pin ADR3_Pin */
-  GPIO_InitStruct.Pin = ADR0_Pin|ADR1_Pin|ADR2_Pin|ADR3_Pin;
+  /*Configure GPIO pins : ADR0_Pin ADR1_Pin ADR2_Pin */
+  GPIO_InitStruct.Pin = ADR0_Pin|ADR1_Pin|ADR2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
   /*Configure GPIO pin : STROB_Pin */
@@ -756,18 +759,33 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(STROB_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : FAULT_OUT_1_Pin FAULT_OUT_7_Pin TEST_250_Pin TEST_150_Pin */
-  GPIO_InitStruct.Pin = FAULT_OUT_1_Pin|FAULT_OUT_7_Pin|TEST_250_Pin|TEST_150_Pin;
+  /*Configure GPIO pins : ADR3_Pin TEST_250_Pin FAULT_OUT_7_Pin FAULT_250A_Pin 
+                           FAULT_75A_Pin TEST_150_Pin */
+  GPIO_InitStruct.Pin = ADR3_Pin|TEST_250_Pin|FAULT_OUT_7_Pin|FAULT_250A_Pin 
+                          |FAULT_75A_Pin|TEST_150_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : ENABLE_OUT_1_Pin SYNC_ADC_Pin GPIO0_ADC_Pin BUSE_SIG_Pin */
-  GPIO_InitStruct.Pin = ENABLE_OUT_1_Pin|SYNC_ADC_Pin|GPIO0_ADC_Pin|BUSE_SIG_Pin;
+  /*Configure GPIO pins : SYNC_ADC_Pin GPIO0_ADC_Pin BUSE_SIG_Pin */
+  GPIO_InitStruct.Pin = SYNC_ADC_Pin|GPIO0_ADC_Pin|BUSE_SIG_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : ENABLE_OUT_1_Pin */
+  GPIO_InitStruct.Pin = ENABLE_OUT_1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(ENABLE_OUT_1_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : FAULT_OUT_1_Pin */
+  GPIO_InitStruct.Pin = FAULT_OUT_1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(FAULT_OUT_1_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : ADR6_Pin ADR7_Pin */
   GPIO_InitStruct.Pin = ADR6_Pin|ADR7_Pin;
@@ -775,17 +793,15 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : OE_Pin EN_VCC_7_5_Pin EN_VCC_250_Pin EN_VCC_75_Pin 
-                           EN_VCC_150_Pin */
-  GPIO_InitStruct.Pin = OE_Pin|EN_VCC_7_5_Pin|EN_VCC_250_Pin|EN_VCC_75_Pin 
-                          |EN_VCC_150_Pin;
+  /*Configure GPIO pin : OE_Pin */
+  GPIO_InitStruct.Pin = OE_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+  HAL_GPIO_Init(OE_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : TEST_75_Pin FAULT_250A_Pin TEST_7_5_Pin */
-  GPIO_InitStruct.Pin = TEST_75_Pin|FAULT_250A_Pin|TEST_7_5_Pin;
+  /*Configure GPIO pins : TEST_75_Pin TEST_7_5_Pin */
+  GPIO_InitStruct.Pin = TEST_75_Pin|TEST_7_5_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
@@ -798,14 +814,25 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Alternate = GPIO_AF7_USART3;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : FAULT_150A_Pin FAULT_75A_Pin FAULT_7_5A_Pin */
-  GPIO_InitStruct.Pin = FAULT_150A_Pin|FAULT_75A_Pin|FAULT_7_5A_Pin;
+  /*Configure GPIO pins : EN_VCC_75_Pin GPIO1_ADC_Pin GPIO2_ADC_Pin GPIO3_ADC_Pin 
+                           GPIO4_ADC_Pin */
+  GPIO_InitStruct.Pin = EN_VCC_75_Pin|GPIO1_ADC_Pin|GPIO2_ADC_Pin|GPIO3_ADC_Pin 
+                          |GPIO4_ADC_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : FAULT_7_5A_Pin FAULT_150A_Pin */
+  GPIO_InitStruct.Pin = FAULT_7_5A_Pin|FAULT_150A_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : ENABLE_AIR_Pin AIR_CS_Pin USB_PowerSwitchOn_Pin U_CS_Pin */
-  GPIO_InitStruct.Pin = ENABLE_AIR_Pin|AIR_CS_Pin|USB_PowerSwitchOn_Pin|U_CS_Pin;
+  /*Configure GPIO pins : ENABLE_AIR_Pin AIR_CS_Pin EN_VCC_7_5_Pin EN_VCC_150_Pin 
+                           USB_PowerSwitchOn_Pin EN_VCC_250_Pin U_CS_Pin ENABLE_OUT_7_Pin */
+  GPIO_InitStruct.Pin = ENABLE_AIR_Pin|AIR_CS_Pin|EN_VCC_7_5_Pin|EN_VCC_150_Pin 
+                          |USB_PowerSwitchOn_Pin|EN_VCC_250_Pin|U_CS_Pin|ENABLE_OUT_7_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -836,15 +863,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pin = ADR5_Pin|ADR4_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : ENABLE_OUT_7_Pin GPIO1_ADC_Pin GPIO2_ADC_Pin GPIO3_ADC_Pin 
-                           GPIO4_ADC_Pin */
-  GPIO_InitStruct.Pin = ENABLE_OUT_7_Pin|GPIO1_ADC_Pin|GPIO2_ADC_Pin|GPIO3_ADC_Pin 
-                          |GPIO4_ADC_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
   /*Configure GPIO pin : SIG_SYNC_TIM_Pin */

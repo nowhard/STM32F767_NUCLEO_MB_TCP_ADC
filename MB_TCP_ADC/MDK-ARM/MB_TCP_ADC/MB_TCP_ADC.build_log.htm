@@ -22,68 +22,19 @@ Dialog DLL:      TCM.DLL V1.14.6.0
  
 <h2>Project:</h2>
 E:\PROJECTS\GIT_REPOSITORY\STM32\STM32F767_NUCLEO_MB_TCP_ADC\MB_TCP_ADC\MDK-ARM\MB_TCP_ADC.uvprojx
-Project File Date:  06/01/2017
+Project File Date:  06/14/2017
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 1 (build 61)', folder: 'C:\Program Files\Keil\ARM\ARMCC\Bin'
 Build target 'MB_TCP_ADC'
-compiling mbfunc.c...
-../Inc/mbfunc.h(59): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Inc/discret_out.h(11): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\Src\mbfunc.c(94): warning:  #223-D: function "memcpy" declared implicitly
-  			memcpy((void *)&usRegInputBuf[ADC_PYRO_SQUIB_0],(const void*)&usMRegInBuf[0][0],M_REG_INPUT_NREGS);
-..\Src\mbfunc.c(72): warning:  #177-D: variable "i" was declared but never referenced
-      uint8_t i=0;
-..\Src\mbfunc.c(259): warning:  #223-D: function "memcpy" declared implicitly
-  					memcpy((void *)&usRegHoldingBuf[PIR_EN_PYRO_SQUIB_0],(const void*)&usMRegHoldBuf[0][0],M_REG_HOLDING_NREGS);
-..\Src\mbfunc.c(347): warning:  #1441-D: nonstandard cast on lvalue
-  											(uint16_t)configInfo.ConfigADC.channelMask=usRegHoldingBuf[
-DC_CHANNEL_MASK_REG];
-..\Src\mbfunc.c(438): warning:  #188-D: enumerated type mixed with another type
-  											DCMI_ADC_SetSamplerate(usRegHoldingBuf[
-DC_SAMPLERATE]);
-..\Src\mbfunc.c(500): warning:  #188-D: enumerated type mixed with another type
-  											HAL_GPIO_WritePin(
-NABLE_OUT_1_GPIO_Port,
-NABLE_OUT_1_Pin,usRegHoldingBuf[
-EV_ENABLE_OUT_1]);
-..\Src\mbfunc.c(506): warning:  #188-D: enumerated type mixed with another type
-  											HAL_GPIO_WritePin(
-NABLE_OUT_7_GPIO_Port,
-NABLE_OUT_7_Pin,usRegHoldingBuf[
-EV_ENABLE_OUT_7]);
-..\Src\mbfunc.c(512): warning:  #188-D: enumerated type mixed with another type
-  											HAL_GPIO_WritePin(
-N_VCC_250_GPIO_Port,
-N_VCC_250_Pin,usRegHoldingBuf[
-EV_EN_VCC_250]);
-..\Src\mbfunc.c(518): warning:  #188-D: enumerated type mixed with another type
-  											HAL_GPIO_WritePin(
-N_VCC_150_GPIO_Port,
-N_VCC_150_Pin,usRegHoldingBuf[
-EV_EN_VCC_150]);
-..\Src\mbfunc.c(524): warning:  #188-D: enumerated type mixed with another type
-  											HAL_GPIO_WritePin(
-N_VCC_75_GPIO_Port,
-N_VCC_75_Pin,usRegHoldingBuf[
-EV_EN_VCC_75]);
-..\Src\mbfunc.c(530): warning:  #188-D: enumerated type mixed with another type
-  											HAL_GPIO_WritePin(
-N_VCC_7_5_GPIO_Port,
-N_VCC_7_5_Pin,usRegHoldingBuf[
-EV_EN_VCC_7_5]);
-..\Src\mbfunc.c(536): warning:  #188-D: enumerated type mixed with another type
-  											HAL_GPIO_WritePin(
-NABLE_AIR_GPIO_Port,
-NABLE_AIR_Pin,usRegHoldingBuf[
-EV_ENABLE_AIR]);
-..\Src\mbfunc.c: 14 warnings, 0 errors
+compiling jumpers.c...
+..\Src\jumpers.c(24): warning:  #1-D: last line of file ends without a newline
+  }
+..\Src\jumpers.c: 1 warning, 0 errors
 linking...
-Program Size: Code=92844 RO-data=2000 RW-data=1624 ZI-data=222928  
+Program Size: Code=92932 RO-data=2000 RW-data=1624 ZI-data=222928  
 FromELF: creating hex file...
-"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 14 Warning(s).
+"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 1 Warning(s).
 
 <h2>Software Packages used:</h2>
 
