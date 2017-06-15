@@ -27,27 +27,31 @@ Project File Date:  06/14/2017
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 1 (build 61)', folder: 'C:\Program Files\Keil\ARM\ARMCC\Bin'
 Build target 'MB_TCP_ADC'
-compiling adc_dcmi.c...
-..\Src\adc_dcmi.c(62): warning:  #167-D: argument of type "void (*)(void)" is incompatible with parameter of type "void (*)(DMA_HandleTypeDef *)"
-  	HAL_DMA_RegisterCallback(&hdma_dcmi,HAL_DMA_XFER_HALFCPLT_CB_ID,DCMI_DMA_HalfTransferCallback);
-..\Src\adc_dcmi.c(63): warning:  #167-D: argument of type "void (*)(void)" is incompatible with parameter of type "void (*)(DMA_HandleTypeDef *)"
-  	HAL_DMA_RegisterCallback(&hdma_dcmi,HAL_DMA_XFER_CPLT_CB_ID,DCMI_DMA_TransferCallback);
-..\Src\adc_dcmi.c(73): warning:  #177-D: variable "sClockSourceConfig" was declared but never referenced
-  	TIM_ClockConfigTypeDef sClockSourceConfig;
-..\Src\adc_dcmi.c(74): warning:  #177-D: variable "sMasterConfig" was declared but never referenced
-    TIM_MasterConfigTypeDef sMasterConfig;
-..\Src\adc_dcmi.c(75): warning:  #177-D: variable "sConfigOC" was declared but never referenced
-    TIM_OC_InitTypeDef sConfigOC;
-..\Src\adc_dcmi.c(159): warning:  #513-D: a value of type "volatile uint8_t *" cannot be assigned to an entity of type "uint8_t *"
-  		ADC_buf_pnt=&DCMIAdcRxBuff[0];
-..\Src\adc_dcmi.c: 7 warnings, 0 errors
-#513-D: a value of type "volatile uint8_t *" cannot be assigned to an entity of type "uint8_t *"
-  	  ADC_buf_pnt=&DCMIAdcRxBuff[
-DC_BUF_LEN>>1];
+compiling data_converter.c...
+../Inc/spi_adc.h(16): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\Src\data_converter.c(181): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  			if(ChnCalibrValues.val_7_5A>=
+HANNEL_7_5A_MAX_VAL)
+..\Src\data_converter.c(183): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  					if(ChnCalibrValues.val_75A>=
+HANNEL_75A_MAX_VAL)
+..\Src\data_converter.c(185): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  							if(ChnCalibrValues.val_150A>=
+HANNEL_150A_MAX_VAL)
+..\Src\data_converter.c(57): warning:  #177-D: variable "out5" was declared but never referenced
+  	union wordfield out1, out2, out3, out4, out5, out6, out7, out8;
+..\Src\data_converter.c(57): warning:  #177-D: variable "out6" was declared but never referenced
+  	union wordfield out1, out2, out3, out4, out5, out6, out7, out8;
+..\Src\data_converter.c(57): warning:  #177-D: variable "out7" was declared but never referenced
+  	union wordfield out1, out2, out3, out4, out5, out6, out7, out8;
+..\Src\data_converter.c(57): warning:  #177-D: variable "out8" was declared but never referenced
+  	union wordfield out1, out2, out3, out4, out5, out6, out7, out8;
+..\Src\data_converter.c: 8 warnings, 0 errors
 linking...
 Program Size: Code=93080 RO-data=2000 RW-data=1632 ZI-data=222928  
 FromELF: creating hex file...
-"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 6 Warning(s).
+"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 8 Warning(s).
 
 <h2>Software Packages used:</h2>
 
