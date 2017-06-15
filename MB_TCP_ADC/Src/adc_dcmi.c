@@ -132,9 +132,12 @@ uint64_t DCMI_ADC_GetLastTimestamp(void)
 
 void DCMI_ADC_ResetTimestamp(void)
 {
+		__HAL_DMA_DISABLE(&hdma_dcmi);  
 		TIM5->CNT=0;
 		TIM4->CNT=0;
 		timestamp=0;
+	  HAL_DCMI_Start_DMA(&hdcmi,DCMI_MODE_CONTINUOUS,(uint32_t)DCMIAdcRxBuff,RX_BUFF_SIZE>>2);	
+		__HAL_DMA_ENABLE(&hdma_dcmi); 
 }
 
 void DCMI_ADC_Clock_Start(void)
@@ -149,18 +152,34 @@ void DCMI_ADC_Clock_Stop(void)
 
 void DCMI_DMA_HalfTransferCallback(void)
 {
+		static portBASE_TYPE xHigherPriorityTaskWoken;
+    xHigherPriorityTaskWoken = pdFALSE;
+	
 		timestamp=((((uint64_t)(TIM5->CNT))<<16)|TIM4->CNT);
 		ADC_buf_pnt=&DCMIAdcRxBuff[0];
 		counter_DMA_half++;
-		xSemaphoreGiveFromISR( xAdcBuf_Send_Semaphore, NULL);
+		xSemaphoreGiveFromISR( xAdcBuf_Send_Semaphore, &xHigherPriorityTaskWoken );
+	
+	  if( xHigherPriorityTaskWoken == pdTRUE )
+		{
+			portEND_SWITCHING_ISR( xHigherPriorityTaskWoken );
+		}
 }
 
 void DCMI_DMA_TransferCallback(void)
 {
+		static portBASE_TYPE xHigherPriorityTaskWoken;
+    xHigherPriorityTaskWoken = pdFALSE;
+	
 		timestamp=((((uint64_t)(TIM5->CNT))<<16)|TIM4->CNT);
 	  ADC_buf_pnt=&DCMIAdcRxBuff[ADC_BUF_LEN>>1];
 		counter_DMA_full++;
-		xSemaphoreGiveFromISR( xAdcBuf_Send_Semaphore, NULL);
+		xSemaphoreGiveFromISR( xAdcBuf_Send_Semaphore, &xHigherPriorityTaskWoken);
+	
+		if( xHigherPriorityTaskWoken == pdTRUE )
+		{
+			portEND_SWITCHING_ISR( xHigherPriorityTaskWoken );
+		}
 }
 
 
