@@ -167,7 +167,8 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 #define DEV_ENABLE_AIR				47
 //--------SYNC DEV REGS--------------------
 #define DEV_RESET_TIMESTAMP		48
-
+#define DEV_RESET_CONTROLLER	61
+//--------REGS STM32F100DISCOVERY----------
 #define PIR_EN_PYRO_SQUIB_0		49
 #define PIR_EN_PYRO_SQUIB_1		50
 #define PIR_EN_PYRO_SQUIB_2		51
@@ -546,6 +547,17 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 											}	
 									}
 									break;	
+									
+									case DEV_RESET_CONTROLLER:
+									{
+											if(usRegHoldingBuf[DEV_RESET_CONTROLLER])//reset timestamp
+											{
+													//DCMI_ADC_ResetTimestamp();
+													usRegHoldingBuf[DEV_RESET_CONTROLLER]=0;
+													NVIC_SystemReset();
+											}	
+									}
+									break;	
 
 									case PIR_EN_PYRO_SQUIB_0:
 									{
@@ -653,9 +665,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 											TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PIR_SET_POT4];
 											xSemaphoreGive(xSendRTURegSem);		
 									}
-									break;									
-																	
-								
+									break;																																	
 								}
 														
 								iRegIndex++;
