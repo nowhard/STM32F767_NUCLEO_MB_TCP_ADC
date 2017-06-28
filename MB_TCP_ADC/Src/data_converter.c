@@ -173,10 +173,10 @@ void ADC_ConvertBuf(uint8_t *dcmiBuf,uint16_t dcmiBufLen, uint16_t *spiBuf_1, ui
 
 		  uint8_t offset=0;
 			
-			ChnCalibrValues.val_250A=configInfo.ConfigADC.calibrChannel[0].k*out1.val+configInfo.ConfigADC.calibrChannel[0].b;
-			ChnCalibrValues.val_150A=configInfo.ConfigADC.calibrChannel[1].k*out2.val+configInfo.ConfigADC.calibrChannel[1].b;
-			ChnCalibrValues.val_75A	=configInfo.ConfigADC.calibrChannel[2].k*out3.val+configInfo.ConfigADC.calibrChannel[2].b;
-			ChnCalibrValues.val_7_5A=configInfo.ConfigADC.calibrChannel[3].k*out4.val+configInfo.ConfigADC.calibrChannel[3].b;
+			ChnCalibrValues.val_250A=configInfo.ConfigADC.calibrChannel[0].k*(out1.val&0xFFFF)+configInfo.ConfigADC.calibrChannel[0].b;
+			ChnCalibrValues.val_150A=configInfo.ConfigADC.calibrChannel[1].k*(out2.val&0xFFFF)+configInfo.ConfigADC.calibrChannel[1].b;
+			ChnCalibrValues.val_75A	=configInfo.ConfigADC.calibrChannel[2].k*(out3.val&0xFFFF)+configInfo.ConfigADC.calibrChannel[2].b;
+			ChnCalibrValues.val_7_5A=configInfo.ConfigADC.calibrChannel[3].k*(out4.val&0xFFFF)+configInfo.ConfigADC.calibrChannel[3].b;
 						
 			if(ChnCalibrValues.val_7_5A>=CHANNEL_7_5A_MAX_VAL)
 			{

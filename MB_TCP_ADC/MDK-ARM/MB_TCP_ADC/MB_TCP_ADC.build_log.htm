@@ -27,58 +27,31 @@ Project File Date:  06/15/2017
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 1 (build 61)', folder: 'C:\Program Files\Keil\ARM\ARMCC\Bin'
 Build target 'MB_TCP_ADC'
-compiling mbfunc.c...
-../Inc/mbfunc.h(59): warning:  #1-D: last line of file ends without a newline
+compiling data_converter.c...
+../Inc/spi_adc.h(16): warning:  #1-D: last line of file ends without a newline
   #endif
-../Inc/discret_out.h(11): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\Src\mbfunc.c(94): warning:  #223-D: function "memcpy" declared implicitly
-  			memcpy((void *)&usRegInputBuf[ADC_PYRO_SQUIB_0],(const void*)&usMRegInBuf[0][0],M_REG_INPUT_NREGS);
-..\Src\mbfunc.c(72): warning:  #177-D: variable "i" was declared but never referenced
-      uint8_t i=0;
-..\Src\mbfunc.c(260): warning:  #223-D: function "memcpy" declared implicitly
-  					memcpy((void *)&usRegHoldingBuf[PIR_EN_PYRO_SQUIB_0],(const void*)&usMRegHoldBuf[0][0],M_REG_HOLDING_NREGS);
-..\Src\mbfunc.c(348): warning:  #1441-D: nonstandard cast on lvalue
-  											(uint16_t)configInfo.ConfigADC.channelMask=usRegHoldingBuf[
-DC_CHANNEL_MASK_REG];
-..\Src\mbfunc.c(439): warning:  #188-D: enumerated type mixed with another type
-  											DCMI_ADC_SetSamplerate(usRegHoldingBuf[
-DC_SAMPLERATE]);
-..\Src\mbfunc.c(501): warning:  #188-D: enumerated type mixed with another type
-  											HAL_GPIO_WritePin(
-NABLE_OUT_1_GPIO_Port,
-NABLE_OUT_1_Pin,usRegHoldingBuf[
-EV_ENABLE_OUT_1]);
-..\Src\mbfunc.c(507): warning:  #188-D: enumerated type mixed with another type
-  											HAL_GPIO_WritePin(
-NABLE_OUT_7_GPIO_Port,
-NABLE_OUT_7_Pin,usRegHoldingBuf[
-EV_ENABLE_OUT_7]);
-..\Src\mbfunc.c(513): warning:  #188-D: enumerated type mixed with another type
-  											HAL_GPIO_WritePin(
-N_VCC_250_GPIO_Port,
-N_VCC_250_Pin,usRegHoldingBuf[
-EV_EN_VCC_250]);
-..\Src\mbfunc.c(525): warning:  #188-D: enumerated type mixed with another type
-  											HAL_GPIO_WritePin(
-N_VCC_75_GPIO_Port,
-N_VCC_75_Pin,usRegHoldingBuf[
-EV_EN_VCC_75]);
-..\Src\mbfunc.c(531): warning:  #188-D: enumerated type mixed with another type
-  											HAL_GPIO_WritePin(
-N_VCC_7_5_GPIO_Port,
-N_VCC_7_5_Pin,usRegHoldingBuf[
-EV_EN_VCC_7_5]);
-..\Src\mbfunc.c(537): warning:  #188-D: enumerated type mixed with another type
-  											HAL_GPIO_WritePin(
-NABLE_AIR_GPIO_Port,
-NABLE_AIR_Pin,usRegHoldingBuf[
-EV_ENABLE_AIR]);
-..\Src\mbfunc.c: 14 warnings, 0 errors
+..\Src\data_converter.c(181): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  			if(ChnCalibrValues.val_7_5A>=
+HANNEL_7_5A_MAX_VAL)
+..\Src\data_converter.c(183): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  					if(ChnCalibrValues.val_75A>=
+HANNEL_75A_MAX_VAL)
+..\Src\data_converter.c(185): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  							if(ChnCalibrValues.val_150A>=
+HANNEL_150A_MAX_VAL)
+..\Src\data_converter.c(57): warning:  #177-D: variable "out5" was declared but never referenced
+  	union wordfield out1, out2, out3, out4, out5, out6, out7, out8;
+..\Src\data_converter.c(57): warning:  #177-D: variable "out6" was declared but never referenced
+  	union wordfield out1, out2, out3, out4, out5, out6, out7, out8;
+..\Src\data_converter.c(57): warning:  #177-D: variable "out7" was declared but never referenced
+  	union wordfield out1, out2, out3, out4, out5, out6, out7, out8;
+..\Src\data_converter.c(57): warning:  #177-D: variable "out8" was declared but never referenced
+  	union wordfield out1, out2, out3, out4, out5, out6, out7, out8;
+..\Src\data_converter.c: 8 warnings, 0 errors
 linking...
-Program Size: Code=93168 RO-data=2000 RW-data=1632 ZI-data=222928  
+Program Size: Code=93192 RO-data=2000 RW-data=1632 ZI-data=222928  
 FromELF: creating hex file...
-"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 13 Warning(s).
+"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 8 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -96,7 +69,7 @@ Package Vendor: ARM
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.0.1
-Build Time Elapsed:  00:00:17
+Build Time Elapsed:  00:00:05
 </pre>
 </body>
 </html>
