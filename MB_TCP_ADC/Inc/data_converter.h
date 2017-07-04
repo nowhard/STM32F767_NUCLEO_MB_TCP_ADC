@@ -3,6 +3,8 @@
 
 #include "stm32f7xx_hal.h"
 
+#define TEST_TRACEMODE
+
 typedef struct
 {
 		float k;
@@ -21,6 +23,6 @@ typedef struct
 	float val_voltage_2;
 }stChnCalibrValues;
 
-
+void ADC_ConvertBuf_Init(void);
 void ADC_ConvertBuf(uint8_t *dcmiBuf,uint16_t dcmiBufLen, uint16_t *spiBuf_1, uint16_t *spiBuf_2, uint16_t spiBufLen,float *resultBuf, uint16_t *resultBufLen);
 #endif

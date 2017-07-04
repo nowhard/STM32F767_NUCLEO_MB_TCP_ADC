@@ -55,6 +55,7 @@
 #include "discret_out.h"
 #include "jumpers.h"
 #include "mbmasterinit.h"
+#include "data_converter.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -168,6 +169,7 @@ int main(void)
 	ConfigInfoRead ();
 	Jumpers_ReadSettings();
 	DiscretOutputs_Init();
+	ADC_ConvertBuf_Init();
 
 	DCMI_ADC_Init();
  

@@ -3,6 +3,39 @@
 #include "spi_adc.h"
 #include "cfg_info.h"
 
+
+
+#ifdef TEST_TRACEMODE
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+
+static uint16_t ch1_test_val=0;
+static uint16_t ch2_test_val=0;
+
+void Test_ADC_increment_Task( void *pvParameters );
+
+void Test_ADC_increment_Task( void *pvParameters )
+{
+	ch1_test_val=0;
+	ch2_test_val=32768;
+	
+	while(1)
+	{
+			ch1_test_val+=64;
+			ch2_test_val+=64;
+			vTaskDelay(50);
+	}
+}
+#endif
+
+void ADC_ConvertBuf_Init(void)
+{
+	#ifdef TEST_TRACEMODE
+	xTaskCreate( Test_ADC_increment_Task, "Test inc Task", 128, NULL, 4, NULL );
+	#endif
+}
+
 #pragma anon_unions
 
 #define CHANNEL_250A_MAX_VAL	250.0
@@ -173,8 +206,13 @@ void ADC_ConvertBuf(uint8_t *dcmiBuf,uint16_t dcmiBufLen, uint16_t *spiBuf_1, ui
 
 		  uint8_t offset=0;
 			
+			#ifdef TEST_TRACEMODE
+			ChnCalibrValues.val_250A=configInfo.ConfigADC.calibrChannel[0].k*(ch1_test_val&0xFFFF)+configInfo.ConfigADC.calibrChannel[0].b;
+			ChnCalibrValues.val_150A=configInfo.ConfigADC.calibrChannel[1].k*(ch2_test_val&0xFFFF)+configInfo.ConfigADC.calibrChannel[1].b;
+			#else
 			ChnCalibrValues.val_250A=configInfo.ConfigADC.calibrChannel[0].k*(out1.val&0xFFFF)+configInfo.ConfigADC.calibrChannel[0].b;
 			ChnCalibrValues.val_150A=configInfo.ConfigADC.calibrChannel[1].k*(out2.val&0xFFFF)+configInfo.ConfigADC.calibrChannel[1].b;
+			#endif
 			ChnCalibrValues.val_75A	=configInfo.ConfigADC.calibrChannel[2].k*(out3.val&0xFFFF)+configInfo.ConfigADC.calibrChannel[2].b;
 			ChnCalibrValues.val_7_5A=configInfo.ConfigADC.calibrChannel[3].k*(out4.val&0xFFFF)+configInfo.ConfigADC.calibrChannel[3].b;
 						
