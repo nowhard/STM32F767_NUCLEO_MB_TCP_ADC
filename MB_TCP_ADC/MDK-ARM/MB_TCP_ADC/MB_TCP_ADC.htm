@@ -3,7 +3,7 @@
 <title>Static Call Graph - [MB_TCP_ADC\MB_TCP_ADC.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image MB_TCP_ADC\MB_TCP_ADC.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060061: Last Updated: Wed Jun 28 17:33:37 2017
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060061: Last Updated: Tue Jul 04 11:22:08 2017
 <BR><P>
 <H3>Maximum Stack Usage =        776 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -942,22 +942,24 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DiscretOutputs_Init
 </UL>
 
-<P><STRONG><a name="[fc]"></a>DiscretOutputs_Init</STRONG> (Thumb, 20 bytes, Stack size 8 bytes, discret_out.o(i.DiscretOutputs_Init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = DiscretOutputs_Init &rArr; DiscretOutputs_Enable
+<P><STRONG><a name="[fc]"></a>DiscretOutputs_Init</STRONG> (Thumb, 62 bytes, Stack size 16 bytes, discret_out.o(i.DiscretOutputs_Init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 100<LI>Call Chain = DiscretOutputs_Init &rArr; DiscretOutputs_Set &rArr; HAL_SPI_Transmit_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
+<LI><a href="#[fd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DiscretOutputs_Set
 <LI><a href="#[fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DiscretOutputs_Enable
 </UL>
 <BR>[Called By]<UL><LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[fd]"></a>DiscretOutputs_Set</STRONG> (Thumb, 32 bytes, Stack size 16 bytes, discret_out.o(i.DiscretOutputs_Set))
+<P><STRONG><a name="[fd]"></a>DiscretOutputs_Set</STRONG> (Thumb, 48 bytes, Stack size 16 bytes, discret_out.o(i.DiscretOutputs_Set))
 <BR><BR>[Stack]<UL><LI>Max Depth = 84<LI>Call Chain = DiscretOutputs_Set &rArr; HAL_SPI_Transmit_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
 <LI><a href="#[fe]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_SPI_Transmit_DMA
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBRegHoldingCB
+<LI><a href="#[fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DiscretOutputs_Init
 </UL>
 
 <P><STRONG><a name="[5a]"></a>ETH_IRQHandler</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, stm32f7xx_it.o(i.ETH_IRQHandler))
@@ -1510,7 +1512,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[fd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DiscretOutputs_Set
 </UL>
 
-<P><STRONG><a name="[143]"></a>HAL_SPI_TxCpltCallback</STRONG> (Thumb, 16 bytes, Stack size 8 bytes, discret_out.o(i.HAL_SPI_TxCpltCallback))
+<P><STRONG><a name="[143]"></a>HAL_SPI_TxCpltCallback</STRONG> (Thumb, 22 bytes, Stack size 8 bytes, discret_out.o(i.HAL_SPI_TxCpltCallback))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = HAL_SPI_TxCpltCallback
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin

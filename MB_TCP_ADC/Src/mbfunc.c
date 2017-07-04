@@ -184,10 +184,10 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 #define PIR_SET_POT3			59
 #define PIR_SET_POT4			60
 
-static uint16_t outputs_temp_reg_0=0;
-static uint16_t outputs_temp_reg_1=0;
-static uint16_t outputs_temp_reg_2=0;
-static uint16_t outputs_temp_reg_3=0;
+extern uint16_t outputs_temp_reg_0;
+extern uint16_t outputs_temp_reg_1;
+extern uint16_t outputs_temp_reg_2;
+extern uint16_t outputs_temp_reg_3;
 
 static uint16_t adc_started_flag=0;
 
