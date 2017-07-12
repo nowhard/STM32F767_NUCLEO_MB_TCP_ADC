@@ -136,7 +136,7 @@ void UDP_Send_Task( void *pvParameters )
 	while(1)
 	{
 		xSemaphoreTake( xAdcBuf_Send_Semaphore, portMAX_DELAY );
-		ADC_ConvertBuf(ADC_buf_pnt,(ADC_BUF_LEN>>1),currentSPI3_ADC_Buf,currentSPI6_ADC_Buf,(SPI_ADC_BUF_LEN>>1),ADC_resultBuf, &result_buf_len);
+		ADC_ConvertBuf(ADC_buf_pnt,(ADC_BUF_LEN>>1),currentSPI6_ADC_Buf,currentSPI3_ADC_Buf,(SPI_ADC_BUF_LEN>>1),ADC_resultBuf, &result_buf_len);
 		udp_client_send_buf(ADC_resultBuf,result_buf_len);
 //		Set_TestBuf(ADC_resultBuf,TEST_BUF_LEN,TEST_CHANNEL_NUM);
 //		
