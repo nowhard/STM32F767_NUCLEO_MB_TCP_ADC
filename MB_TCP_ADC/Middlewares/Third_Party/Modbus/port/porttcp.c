@@ -12,6 +12,14 @@
 #include "task.h"
 #include "semphr.h"
 
+//#define PTCP_DEBUG
+
+#ifdef PTCP_DEBUG
+#define PTCP_DEBUG_PRINT(fmt, args...)    printf(fmt, ## args)
+#else
+#define PTCP_DEBUG_PRINT(fmt, args...)    /* Don't do anything in release builds */
+#endif
+
 
 SOCKET          xListenSocket;
 static fd_set   allset;
@@ -77,22 +85,22 @@ xMBTCPPortInit( USHORT usTCPPort )
     serveraddr.sin_port = htons( usPort );
     if( ( xListenSocket = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP ) ) == -1 )
     {
-        printf( "Create socket failed.\r\n" );
+        PTCP_DEBUG_PRINT( "Create socket failed.\r\n" );
         return FALSE;
     }
 //		else if(setsockopt( xListenSocket, SOL_SOCKET, SO_RCVTIMEO,&timeoutTimeInMiliSeconds, sizeof(int)) == -1)
 //		{
-//				printf( "Set timeout socket failed.\r\n" );
+//				PTCP_DEBUG_PRINT( "Set timeout socket failed.\r\n" );
 //        return FALSE;
 //		}
     else if( bind( xListenSocket, ( struct sockaddr * )&serveraddr, sizeof( serveraddr ) ) == -1 )
     {
-        printf( "Bind socket failed.\r\n" );
+        PTCP_DEBUG_PRINT( "Bind socket failed.\r\n" );
         return FALSE;
     }
     else if( listen( xListenSocket, 5 ) == -1 )
     {
-        printf( "Listen socket failed.\r\n" );
+        PTCP_DEBUG_PRINT( "Listen socket failed.\r\n" );
         return FALSE;
     }
     FD_ZERO( &allset );
@@ -150,12 +158,11 @@ xMBPortTCPPool( void )
 		{
 			if( MB_TCPClient[clnt_index].xClientSocket == INVALID_SOCKET )
 			{
-
-							if(prvbMBPortAcceptClient( &MB_TCPClient[clnt_index] )==TRUE)
-							{
-								  printf("New client accepted, Socket=%i\n",MB_TCPClient[clnt_index].xClientSocket);
-									taskYIELD();
-							}
+					if(prvbMBPortAcceptClient( &MB_TCPClient[clnt_index] )==TRUE)
+					{
+							PTCP_DEBUG_PRINT("New client accepted, Socket=%i\n",MB_TCPClient[clnt_index].xClientSocket);
+							taskYIELD();
+					}
 			}
 		}	
     return TRUE;
@@ -243,7 +250,7 @@ prvbMBPortAcceptClient( stMB_TCPClient *MB_TCPClient )
 
     if( MB_TCPClient->xClientSocket != INVALID_SOCKET )
     {
-        printf( "can't accept new client %i. all connections in use.\n",MB_TCPClient->xClientSocket );
+        PTCP_DEBUG_PRINT( "can't accept new client %i. all connections in use.\n",MB_TCPClient->xClientSocket );
         bOkay = FALSE;
     }
     else if( ( xNewSocket = accept( xListenSocket, NULL, NULL ) ) == INVALID_SOCKET )
@@ -286,7 +293,7 @@ void xMBTCPPort_HandlingTask( void *pvParameters )
 		stMB_TCPClient *MB_TCPClient;
 		MB_TCPClient=(stMB_TCPClient*)pvParameters;
 	
-		printf("Task of socket %i started\r\n",MB_TCPClient->xClientSocket);
+		PTCP_DEBUG_PRINT("Task of socket %i started\r\n",MB_TCPClient->xClientSocket);
 	
 	  while(1)
     {		
@@ -299,24 +306,24 @@ void xMBTCPPort_HandlingTask( void *pvParameters )
 				
 				FD_ZERO( &fread );
 				FD_SET( MB_TCPClient->xClientSocket, &fread );
-				printf("Wait for Socket %i data... \r\n",MB_TCPClient->xClientSocket);
+				PTCP_DEBUG_PRINT("Wait for Socket %i data... \r\n",MB_TCPClient->xClientSocket);
 			  ret = select( MB_TCPClient->xClientSocket + 1, &fread, NULL, NULL, &tval );
         if(!ret)
         {
-          printf("Continue for Socket %i... \r\n",MB_TCPClient->xClientSocket);  
+          PTCP_DEBUG_PRINT("Continue for Socket %i... \r\n",MB_TCPClient->xClientSocket);  
 					continue;
         }
 				else if(ret == SOCKET_ERROR )
 				{
-						printf("Select return SOCKET_ERROR\r\n");
-						printf("Socket %i closed(select)\r\n",MB_TCPClient->xClientSocket);
+						PTCP_DEBUG_PRINT("Select return SOCKET_ERROR\r\n");
+						PTCP_DEBUG_PRINT("Socket %i closed(select)\r\n",MB_TCPClient->xClientSocket);
 						MB_TCPClient->xClientSocket = INVALID_SOCKET;
 						continue;
            // vTaskDelete(NULL);
 				}
         else if( ret > 0 )
         {
-						printf("Socket %i has new data\r\n",MB_TCPClient->xClientSocket);
+						PTCP_DEBUG_PRINT("Socket %i has new data\r\n",MB_TCPClient->xClientSocket);
 					
             if( FD_ISSET( MB_TCPClient->xClientSocket, &fread ) )
             {
@@ -325,13 +332,13 @@ void xMBTCPPort_HandlingTask( void *pvParameters )
                 {
 										
                     close( MB_TCPClient->xClientSocket );
-									  printf("Socket %i closed\r\n",MB_TCPClient->xClientSocket);
+									  PTCP_DEBUG_PRINT("Socket %i closed\r\n",MB_TCPClient->xClientSocket);
 										MB_TCPClient->xClientSocket = INVALID_SOCKET;
                     //vTaskDelete(NULL);
 										continue;
                 }
 								
-								printf("Task of socket %i receive %i data\r\n",MB_TCPClient->xClientSocket, ret);
+								PTCP_DEBUG_PRINT("Task of socket %i receive %i data\r\n",MB_TCPClient->xClientSocket, ret);
 								
                 MB_TCPClient->usTCPBufPos += ret;
                 MB_TCPClient->usTCPFrameBytesLeft -= ret;
@@ -358,7 +365,7 @@ void xMBTCPPort_HandlingTask( void *pvParameters )
 													
 														( void )xMBPortEventPost( EV_FRAME_RECEIVED );
 														Current_MB_TCPClient=MB_TCPClient;		
-														printf("Task of socket %i send command EV_FRAME_RECEIVED\r\n",MB_TCPClient->xClientSocket);
+														PTCP_DEBUG_PRINT("Task of socket %i send command EV_FRAME_RECEIVED\r\n",MB_TCPClient->xClientSocket);
 //														while(flag_mb_ready==0)
 //														{
 //															__NOP();

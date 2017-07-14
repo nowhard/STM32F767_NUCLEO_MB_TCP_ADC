@@ -27,7 +27,18 @@ Project File Date:  07/12/2017
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 1 (build 61)', folder: 'C:\Program Files\Keil\ARM\ARMCC\Bin'
 Build target 'MB_TCP_ADC'
-"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 0 Warning(s).
+compiling porttcp.c...
+..\Middlewares\Third_Party\Modbus\port\porttcp.c(69): warning:  #177-D: variable "timeoutTimeInMiliSeconds" was declared but never referenced
+  			int timeoutTimeInMiliSeconds=100;
+..\Middlewares\Third_Party\Modbus\port\porttcp.c(155): warning:  #177-D: variable "task_ret" was declared but never referenced
+  		BaseType_t task_ret=pdPASS;
+..\Middlewares\Third_Party\Modbus\port\porttcp.c(397): warning:  #1-D: last line of file ends without a newline
+  }
+..\Middlewares\Third_Party\Modbus\port\porttcp.c: 3 warnings, 0 errors
+linking...
+Program Size: Code=92624 RO-data=2000 RW-data=1640 ZI-data=222928  
+FromELF: creating hex file...
+"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 3 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -45,7 +56,7 @@ Package Vendor: ARM
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.0.1
-Build Time Elapsed:  00:00:02
+Build Time Elapsed:  00:00:07
 </pre>
 </body>
 </html>
