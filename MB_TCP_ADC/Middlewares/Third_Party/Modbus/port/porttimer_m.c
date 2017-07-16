@@ -26,6 +26,7 @@
 #include "mb.h"
 #include "mb_m.h"
 #include "mbport.h"
+#include "mbconfig.h"
 
 #include "stm32f7xx_hal.h"
 

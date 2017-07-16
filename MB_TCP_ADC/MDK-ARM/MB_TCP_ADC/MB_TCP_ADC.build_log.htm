@@ -27,36 +27,22 @@ Project File Date:  07/15/2017
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 1 (build 61)', folder: 'D:\Programs\Keil\ARM\ARMCC\Bin'
 Build target 'MB_TCP_ADC'
-compiling mb.c...
-..\Middlewares\Third_Party\Modbus\include\mbcontext.h(105): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Inc/mbfunc.h(59): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\Middlewares\Third_Party\Modbus\mb.c(196): warning:  #513-D: a value of type "void (*)(stMBContext *)" cannot be assigned to an entity of type "void (*)(void)"
-          pvMBFrameCloseCur = 
-B_PORT_HAS_CLOSE ? vMBTCPPortClose : 
-ULL;
-..\Middlewares\Third_Party\Modbus\mb.c: 3 warnings, 0 errors
+compiling porttcp.c...
+..\Middlewares\Third_Party\Modbus\port\porttcp.c(69): warning:  #177-D: variable "timeoutTimeInMiliSeconds" was declared but never referenced
+  			int timeoutTimeInMiliSeconds=100;
+..\Middlewares\Third_Party\Modbus\port\porttcp.c(117): warning:  #177-D: variable "clnt_index" was declared but never referenced
+  		int	clnt_index=0;
+..\Middlewares\Third_Party\Modbus\port\porttcp.c(152): warning:  #177-D: variable "clnt_index" was declared but never referenced
+  		int	clnt_index=0;
+..\Middlewares\Third_Party\Modbus\port\porttcp.c(154): warning:  #177-D: variable "task_ret" was declared but never referenced
+  		BaseType_t task_ret=pdPASS;
+..\Middlewares\Third_Party\Modbus\port\porttcp.c(393): warning:  #1-D: last line of file ends without a newline
+  }
+..\Middlewares\Third_Party\Modbus\port\porttcp.c: 5 warnings, 0 errors
 linking...
-MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol vMBMasterCBRequestScuuess (referred from mb_m.o).
-MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol vMBMasterErrorCBExecuteFunction (referred from mb_m.o).
-MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol vMBMasterErrorCBReceiveData (referred from mb_m.o).
-MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol vMBMasterErrorCBRespondTimeout (referred from mb_m.o).
-MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol vMBMasterOsResInit (referred from mb_m.o).
-MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol vMBMasterRunResRelease (referred from mb_m.o).
-MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol xMBMasterPortEventGet (referred from mb_m.o).
-MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol xMBMasterPortEventInit (referred from mb_m.o).
-MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol xMBMasterPortEventPost (referred from mb_m.o).
-MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol vMBMasterPortTimersConvertDelayEnable (referred from mbrtu_m.o).
-MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol vMBMasterPortTimersDisable (referred from mbrtu_m.o).
-MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol vMBMasterPortTimersRespondTimeoutEnable (referred from mbrtu_m.o).
-MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol vMBMasterPortTimersT35Enable (referred from mbrtu_m.o).
-MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol xMBMasterPortTimersInit (referred from mbrtu_m.o).
-MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol eMBMasterWaitRequestFinish (referred from mbfunccoils_m.o).
-MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol xMBMasterRunResTake (referred from mbfunccoils_m.o).
-Not enough information to list image symbols.
-Finished: 1 information, 0 warning and 16 error messages.
-"MB_TCP_ADC\MB_TCP_ADC.axf" - 16 Error(s), 3 Warning(s).
+Program Size: Code=91572 RO-data=2000 RW-data=1048 ZI-data=223528  
+FromELF: creating hex file...
+"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 5 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -74,7 +60,6 @@ Package Vendor: ARM
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:4.3.0
-Target not created.
 Build Time Elapsed:  00:00:06
 </pre>
 </body>

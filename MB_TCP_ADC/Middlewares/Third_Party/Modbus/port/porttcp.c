@@ -28,11 +28,11 @@ static fd_set   allset;
 
 //ststTCPContext *Current_stTCPContext;
 
-#define MB_TCP_CLIENT_NUM					2
+
 #define MB_TCP_CLIENT_STACK_SIZE	1024
 #define MB_TCP_POOL_STACK_SIZE		512
 
-//ststTCPContext stTCPContext[MB_TCP_CLIENT_NUM]={{INVALID_SOCKET,{0},0,0} , {INVALID_SOCKET,{0},0,0}};
+
 
 SemaphoreHandle_t xMB_FrameRec_Mutex;
 
@@ -115,10 +115,9 @@ xMBTCPPortInit(stMBContext*	  stTCPContext, USHORT usTCPPort )
 	
 
 		int	clnt_index=0;
-		for(clnt_index=0;clnt_index<MB_TCP_CLIENT_NUM;clnt_index++)
-		{
-				xTaskCreate( xMBTCPPort_HandlingTask, "MBTCP HANDLE", MB_TCP_CLIENT_STACK_SIZE, (void*)&stTCPContext[clnt_index], 3, NULL );
-		}
+
+		xTaskCreate( xMBTCPPort_HandlingTask, "MBTCP HANDLE", MB_TCP_CLIENT_STACK_SIZE, (void*)&stTCPContext, 3, NULL );
+
     return TRUE;
 }
 
@@ -154,17 +153,14 @@ xMBPortTCPPool( stMBContext *stTCPContext )
 	
 		BaseType_t task_ret=pdPASS;
 
-		for(clnt_index=0;clnt_index<MB_TCP_CLIENT_NUM;clnt_index++)
-		{
-			if( stTCPContext[clnt_index].xClientSocket == INVALID_SOCKET )
+			if( stTCPContext->xClientSocket == INVALID_SOCKET )
 			{
-					if(prvbMBPortAcceptClient( &stTCPContext[clnt_index] )==TRUE)
+					if(prvbMBPortAcceptClient(stTCPContext)==TRUE)
 					{
 							PTCP_DEBUG_PRINT("New client accepted, Socket=%i\n",stTCPContext[clnt_index].xClientSocket);
 							taskYIELD();
 					}
-			}
-		}	
+			}	
     return TRUE;
 }
 

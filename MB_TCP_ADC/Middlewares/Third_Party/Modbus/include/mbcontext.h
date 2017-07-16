@@ -99,7 +99,4 @@ typedef struct
 	//stMBPort		  stPort;
 }stMBContext;
 
-
-
-
 #endif

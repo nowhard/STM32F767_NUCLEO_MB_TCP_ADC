@@ -24,6 +24,7 @@
 #include "mb_m.h"
 #include "mbport.h"
 #include "port.h"
+#include "mbconfig.h"
 
 #if MB_MASTER_RTU_ENABLED  || MB_MASTER_ASCII_ENABLED 
 /* ----------------------- Defines ------------------------------------------*/
