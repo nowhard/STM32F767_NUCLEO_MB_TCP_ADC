@@ -67,12 +67,14 @@ static UCHAR    ucMBMasterDestAddress;
 static BOOL     xMBRunInMasterMode = FALSE;
 static eMBMasterErrorEventType eMBMasterCurErrorType;
 
-static enum
-{
-    STATE_ENABLED,
-    STATE_DISABLED,
-    STATE_NOT_INITIALIZED
-} eMBState = STATE_NOT_INITIALIZED;
+//static enum
+//{
+//    STATE_ENABLED,
+//    STATE_DISABLED,
+//    STATE_NOT_INITIALIZED
+//} MBState = STATE_NOT_INITIALIZED;
+
+static eMBState MBState= STATE_NOT_INITIALIZED;
 
 /* Functions pointer which are initialized in eMBInit( ). Depending on the
  * mode (RTU or ASCII) the are set to the correct implementations.
@@ -183,7 +185,7 @@ eMBMasterInit( eMBMode eMode, UCHAR ucPort, ULONG ulBaudRate, eMBParity eParity 
 		}
 		else
 		{
-			eMBState = STATE_DISABLED;
+			MBState = STATE_DISABLED;
 		}
 		/* initialize the OS resource for modbus master. */
 		vMBMasterOsResInit();
@@ -196,7 +198,7 @@ eMBMasterClose( void )
 {
     eMBErrorCode    eStatus = MB_ENOERR;
 
-    if( eMBState == STATE_DISABLED )
+    if( MBState == STATE_DISABLED )
     {
         if( pvMBMasterFrameCloseCur != NULL )
         {
@@ -215,11 +217,11 @@ eMBMasterEnable( void )
 {
     eMBErrorCode    eStatus = MB_ENOERR;
 
-    if( eMBState == STATE_DISABLED )
+    if( MBState == STATE_DISABLED )
     {
         /* Activate the protocol stack. */
         pvMBMasterFrameStartCur(  );
-        eMBState = STATE_ENABLED;
+        MBState = STATE_ENABLED;
     }
     else
     {
@@ -233,13 +235,13 @@ eMBMasterDisable( void )
 {
     eMBErrorCode    eStatus;
 
-    if( eMBState == STATE_ENABLED )
+    if( MBState == STATE_ENABLED )
     {
         pvMBMasterFrameStopCur(  );
-        eMBState = STATE_DISABLED;
+        MBState = STATE_DISABLED;
         eStatus = MB_ENOERR;
     }
-    else if( eMBState == STATE_DISABLED )
+    else if( MBState == STATE_DISABLED )
     {
         eStatus = MB_ENOERR;
     }
@@ -265,7 +267,7 @@ eMBMasterPoll( void )
     eMBMasterErrorEventType errorType;
 
     /* Check if the protocol stack is ready. */
-    if( eMBState != STATE_ENABLED )
+    if( MBState != STATE_ENABLED )
     {
         return MB_EILLSTATE;
     }

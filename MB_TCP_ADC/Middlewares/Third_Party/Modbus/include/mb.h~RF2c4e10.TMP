@@ -31,17 +31,16 @@
 #ifndef _MB_H
 #define _MB_H
 
+#include "port.h"
 
 #ifdef __cplusplus
 PR_BEGIN_EXTERN_C
 #endif
 
-#include "mbcontext.h"
 #include "mbport.h"
 #include "mbproto.h"
-#include "mbframe.h"
-#include "mbtcp.h"
-#include "stm32f7xx_hal.h"
+#include "mbconfig.h"
+
 /*! \defgroup modbus Modbus
  * \code #include "mb.h" \endcode
  *
@@ -84,12 +83,12 @@ PR_BEGIN_EXTERN_C
  * is faster but has more hardware requirements and requires a network with
  * a low jitter. ASCII is slower and more reliable on slower links (E.g. modems)
  */
-//    typedef enum
-//{
-//    MB_RTU,                     /*!< RTU transmission mode. */
-//    MB_ASCII,                   /*!< ASCII transmission mode. */
-//    MB_TCP                      /*!< TCP mode. */
-//} eMBMode;
+    typedef enum
+{
+    MB_RTU,                     /*!< RTU transmission mode. */
+    MB_ASCII,                   /*!< ASCII transmission mode. */
+    MB_TCP                      /*!< TCP mode. */
+} eMBMode;
 
 /*! \ingroup modbus
  * \brief If register should be written or read.
@@ -111,39 +110,17 @@ typedef enum
 /*! \ingroup modbus
  * \brief Errorcodes used by all function in the protocol stack.
  */
-//typedef enum
-//{
-//    MB_ENOERR,                  /*!< no error. */
-//    MB_ENOREG,                  /*!< illegal register address. */
-//    MB_EINVAL,                  /*!< illegal argument. */
-//    MB_EPORTERR,                /*!< porting layer error. */
-//    MB_ENORES,                  /*!< insufficient resources. */
-//    MB_EIO,                     /*!< I/O error. */
-//    MB_EILLSTATE,               /*!< protocol stack in illegal state. */
-//    MB_ETIMEDOUT                /*!< timeout error occurred. */
-//} eMBErrorCode;
-
-
-//typedef enum
-//{
-//    STATE_ENABLED,
-//    STATE_DISABLED,
-//    STATE_NOT_INITIALIZED
-//} eMBState;
-
-//typedef struct
-//{
-//	eMBErrorCode    ( *eMBRegInputCB)( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs );
-//	eMBErrorCode    ( *eMBRegHoldingCB)( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegisterMode eMode );
-//	eMBErrorCode    ( *eMBRegCoilsCB)( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegisterMode eMode );
-//	eMBErrorCode    ( *eMBRegDiscreteCB)( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNDiscrete );
-//
-//
-//}stMBPort;
-
-
-
-
+typedef enum
+{
+    MB_ENOERR,                  /*!< no error. */
+    MB_ENOREG,                  /*!< illegal register address. */
+    MB_EINVAL,                  /*!< illegal argument. */
+    MB_EPORTERR,                /*!< porting layer error. */
+    MB_ENORES,                  /*!< insufficient resources. */
+    MB_EIO,                     /*!< I/O error. */
+    MB_EILLSTATE,               /*!< protocol stack in illegal state. */
+    MB_ETIMEDOUT                /*!< timeout error occurred. */
+} eMBErrorCode;
 
 
 /* ----------------------- Function prototypes ------------------------------*/
@@ -172,7 +149,7 @@ typedef enum
  *        slave addresses are in the range 1 - 247.
  *    - eMBErrorCode::MB_EPORTERR IF the porting layer returned an error.
  */
-eMBErrorCode    eMBInit( stMBContext *stContext,eMBMode eMode, UCHAR ucSlaveAddress,
+eMBErrorCode    eMBInit( eMBMode eMode, UCHAR ucSlaveAddress,
                          UCHAR ucPort, ULONG ulBaudRate, eMBParity eParity );
 
 /*! \ingroup modbus
@@ -189,7 +166,7 @@ eMBErrorCode    eMBInit( stMBContext *stContext,eMBMode eMode, UCHAR ucSlaveAddr
  *        slave addresses are in the range 1 - 247.
  *    - eMBErrorCode::MB_EPORTERR IF the porting layer returned an error.
  */
-eMBErrorCode    eMBTCPInit(stMBContext *stContext, USHORT usTCPPort );
+eMBErrorCode    eMBTCPInit( USHORT usTCPPort );
 
 /*! \ingroup modbus
  * \brief Release resources used by the protocol stack.
@@ -205,7 +182,7 @@ eMBErrorCode    eMBTCPInit(stMBContext *stContext, USHORT usTCPPort );
  *   If the protocol stack is not in the disabled state it returns
  *   eMBErrorCode::MB_EILLSTATE.
  */
-eMBErrorCode    eMBClose(  stMBContext *stContext );
+eMBErrorCode    eMBClose( void );
 
 /*! \ingroup modbus
  * \brief Enable the Modbus protocol stack.
@@ -217,7 +194,7 @@ eMBErrorCode    eMBClose(  stMBContext *stContext );
  *   eMBErrorCode::MB_ENOERR. If it was not in the disabled state it 
  *   return eMBErrorCode::MB_EILLSTATE.
  */
-eMBErrorCode    eMBEnable(  stMBContext *stContext );
+eMBErrorCode    eMBEnable( void );
 
 /*! \ingroup modbus
  * \brief Disable the Modbus protocol stack.
@@ -228,7 +205,7 @@ eMBErrorCode    eMBEnable(  stMBContext *stContext );
  *  eMBErrorCode::MB_ENOERR. If it was not in the enabled state it returns
  *  eMBErrorCode::MB_EILLSTATE.
  */
-eMBErrorCode    eMBDisable(  stMBContext *stContext );
+eMBErrorCode    eMBDisable( void );
 
 /*! \ingroup modbus
  * \brief The main pooling loop of the Modbus protocol stack.
@@ -242,7 +219,7 @@ eMBErrorCode    eMBDisable(  stMBContext *stContext );
  *   returns eMBErrorCode::MB_EILLSTATE. Otherwise it returns 
  *   eMBErrorCode::MB_ENOERR.
  */
-eMBErrorCode    eMBPoll( stMBContext *stContext);
+eMBErrorCode    eMBPoll( void );
 
 /*! \ingroup modbus
  * \brief Configure the slave id of the device.
@@ -434,18 +411,6 @@ eMBErrorCode    eMBRegCoilsCB( UCHAR * pucRegBuffer, USHORT usAddress,
  */
 eMBErrorCode    eMBRegDiscreteCB( UCHAR * pucRegBuffer, USHORT usAddress,
                                   USHORT usNDiscrete );
-
-//eMBErrorCode    eMBFileCB( UCHAR * pucFileBuffer, xMBReadFileRequest* xReadFileRequest,
-//                               USHORT usNFiles );
-
-
-//---------------------------
-//void RS485SerialContextInit(  stMBContext *stContext);
-//void RS485TimerContextInit(  stMBContext *stContext);
-//void RS232SerialContextInit( stMBContext *stContext);
-//void RS232TimerContextInit(  stMBContext *stContext);
-//void USB_CDC_SerialContextInit( stMBContext *stContext);
-//void USB_CDC_TimerContextInit(  stMBContext *stContext);
 
 #ifdef __cplusplus
 PR_END_EXTERN_C

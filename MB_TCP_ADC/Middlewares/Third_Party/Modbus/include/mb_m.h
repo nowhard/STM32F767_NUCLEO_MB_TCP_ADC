@@ -92,6 +92,20 @@ typedef enum
 	MB_TMODE_CONVERT_DELAY          /*!< Master sent broadcast ,then delay sometime.*/
 }eMBMasterTimerMode;
 
+typedef void    ( *pvMBFrameStart ) ( void );
+
+typedef void    ( *pvMBFrameStop ) ( void );
+
+typedef eMBErrorCode( *peMBFrameReceive ) ( UCHAR * pucRcvAddress,
+                                            UCHAR ** pucFrame,
+                                            USHORT * pusLength );
+
+typedef eMBErrorCode( *peMBFrameSend ) ( UCHAR slaveAddress,
+                                         const UCHAR * pucFrame,
+                                         USHORT usLength );
+
+typedef void( *pvMBFrameClose ) ( void );
+
 /* ----------------------- Function prototypes ------------------------------*/
 /*! \ingroup modbus
  * \brief Initialize the Modbus Master protocol stack.

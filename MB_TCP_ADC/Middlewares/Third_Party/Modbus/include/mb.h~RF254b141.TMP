@@ -143,7 +143,11 @@ typedef enum
 
 
 
-
+    void            ( *pvMBFrameStartCur)(stMBContext *stTCPContext);
+    void            ( *pvMBFrameStopCur)( stMBContext *stTCPContext);
+    eMBErrorCode    ( *peMBFrameReceiveCur)( stMBContext *stTCPContext, UCHAR * pucRcvAddress, UCHAR ** ppucFrame, USHORT * pusLength);
+    eMBErrorCode    ( *peMBFrameSendCur)(stMBContext *stTCPContext, UCHAR _unused, const UCHAR * pucFrame, USHORT usLength  );
+    void			( *pvMBFrameCloseCur)(void);
 
 
 /* ----------------------- Function prototypes ------------------------------*/

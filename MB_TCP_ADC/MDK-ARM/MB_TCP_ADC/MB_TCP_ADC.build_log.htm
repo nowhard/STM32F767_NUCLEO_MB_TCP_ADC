@@ -5,11 +5,11 @@
 <h2>Tool Versions:</h2>
 IDE-Version: µVision V5.17.0.0
 Copyright (C) 2015 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: noW noW, GEO, LIC=HF8WF-62X2I-WJ96K-ZARRL-VTY53-2R3MP
+License Information: noW noW, geo, LIC=NHY9U-SL21I-KTI3H-W80HX-ENB0V-57A1N
  
 Tool Versions:
 Toolchain:       MDK-ARM Professional  Version: 5.17
-Toolchain Path:  C:\Program Files\Keil\ARM\ARMCC\Bin
+Toolchain Path:  D:\Programs\Keil\ARM\ARMCC\Bin
 C Compiler:      Armcc.exe V5.06 update 1 (build 61)
 Assembler:       Armasm.exe V5.06 update 1 (build 61)
 Linker/Locator:  ArmLink.exe V5.06 update 1 (build 61)
@@ -21,42 +21,61 @@ Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V2.0.18.0
 Dialog DLL:      TCM.DLL V1.14.6.0
  
 <h2>Project:</h2>
-E:\PROJECTS\GIT_REPOSITORY\STM32\STM32F767_NUCLEO_MB_TCP_ADC\MB_TCP_ADC\MDK-ARM\MB_TCP_ADC.uvprojx
-Project File Date:  07/12/2017
+D:\PROJECTS\STM32F767_NUCLEO_MB_TCP_ADC\STM32F767_NUCLEO_MB_TCP_ADC\MB_TCP_ADC\MDK-ARM\MB_TCP_ADC.uvprojx
+Project File Date:  07/15/2017
 
 <h2>Output:</h2>
-*** Using Compiler 'V5.06 update 1 (build 61)', folder: 'C:\Program Files\Keil\ARM\ARMCC\Bin'
+*** Using Compiler 'V5.06 update 1 (build 61)', folder: 'D:\Programs\Keil\ARM\ARMCC\Bin'
 Build target 'MB_TCP_ADC'
-compiling porttcp.c...
-..\Middlewares\Third_Party\Modbus\port\porttcp.c(69): warning:  #177-D: variable "timeoutTimeInMiliSeconds" was declared but never referenced
-  			int timeoutTimeInMiliSeconds=100;
-..\Middlewares\Third_Party\Modbus\port\porttcp.c(155): warning:  #177-D: variable "task_ret" was declared but never referenced
-  		BaseType_t task_ret=pdPASS;
-..\Middlewares\Third_Party\Modbus\port\porttcp.c(397): warning:  #1-D: last line of file ends without a newline
-  }
-..\Middlewares\Third_Party\Modbus\port\porttcp.c: 3 warnings, 0 errors
+compiling mb.c...
+..\Middlewares\Third_Party\Modbus\include\mbcontext.h(105): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Inc/mbfunc.h(59): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\Middlewares\Third_Party\Modbus\mb.c(196): warning:  #513-D: a value of type "void (*)(stMBContext *)" cannot be assigned to an entity of type "void (*)(void)"
+          pvMBFrameCloseCur = 
+B_PORT_HAS_CLOSE ? vMBTCPPortClose : 
+ULL;
+..\Middlewares\Third_Party\Modbus\mb.c: 3 warnings, 0 errors
 linking...
-Program Size: Code=92624 RO-data=2000 RW-data=1640 ZI-data=222928  
-FromELF: creating hex file...
-"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 3 Warning(s).
+MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol vMBMasterCBRequestScuuess (referred from mb_m.o).
+MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol vMBMasterErrorCBExecuteFunction (referred from mb_m.o).
+MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol vMBMasterErrorCBReceiveData (referred from mb_m.o).
+MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol vMBMasterErrorCBRespondTimeout (referred from mb_m.o).
+MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol vMBMasterOsResInit (referred from mb_m.o).
+MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol vMBMasterRunResRelease (referred from mb_m.o).
+MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol xMBMasterPortEventGet (referred from mb_m.o).
+MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol xMBMasterPortEventInit (referred from mb_m.o).
+MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol xMBMasterPortEventPost (referred from mb_m.o).
+MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol vMBMasterPortTimersConvertDelayEnable (referred from mbrtu_m.o).
+MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol vMBMasterPortTimersDisable (referred from mbrtu_m.o).
+MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol vMBMasterPortTimersRespondTimeoutEnable (referred from mbrtu_m.o).
+MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol vMBMasterPortTimersT35Enable (referred from mbrtu_m.o).
+MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol xMBMasterPortTimersInit (referred from mbrtu_m.o).
+MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol eMBMasterWaitRequestFinish (referred from mbfunccoils_m.o).
+MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol xMBMasterRunResTake (referred from mbfunccoils_m.o).
+Not enough information to list image symbols.
+Finished: 1 information, 0 warning and 16 error messages.
+"MB_TCP_ADC\MB_TCP_ADC.axf" - 16 Error(s), 3 Warning(s).
 
 <h2>Software Packages used:</h2>
 
 Package Vendor: ARM
-                http://www.keil.com/pack/ARM.CMSIS.5.0.1.pack
-                ARM::CMSIS:CORE:5.0.1
+                http://www.keil.com/pack/ARM.CMSIS.4.5.0.pack
+                ARM::CMSIS:CORE:4.3.0
                 CMSIS (Cortex Microcontroller Software Interface Standard)
-   * Component: CORE Version: 5.0.1
+   * Component: CORE Version: 4.3.0
 
 <h2>Collection of Component include folders:</h2>
-  E:\PROJECTS\GIT_REPOSITORY\STM32\STM32F767_NUCLEO_MB_TCP_ADC\MB_TCP_ADC\MDK-ARM\RTE
-  C:\Program Files\Keil\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include
-  C:\Program Files\Keil\ARM\PACK\Keil\STM32F7xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F7xx\Include
+  D:\PROJECTS\STM32F767_NUCLEO_MB_TCP_ADC\STM32F767_NUCLEO_MB_TCP_ADC\MB_TCP_ADC\MDK-ARM\RTE
+  D:\Programs\Keil\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include
+  D:\Programs\Keil\ARM\PACK\Keil\STM32F7xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F7xx\Include
 
 <h2>Collection of Component Files used:</h2>
 
-   * Component: ARM::CMSIS:CORE:5.0.1
-Build Time Elapsed:  00:00:07
+   * Component: ARM::CMSIS:CORE:4.3.0
+Target not created.
+Build Time Elapsed:  00:00:06
 </pre>
 </body>
 </html>

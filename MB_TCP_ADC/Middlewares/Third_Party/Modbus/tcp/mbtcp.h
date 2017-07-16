@@ -35,16 +35,22 @@
 PR_BEGIN_EXTERN_C
 #endif
 
+
+#include "mb.h"
 /* ----------------------- Defines ------------------------------------------*/
 #define MB_TCP_PSEUDO_ADDRESS   1
 
+
+/* ----------------------- Type definitions ---------------------------------*/
+
+
 /* ----------------------- Function prototypes ------------------------------*/
-    eMBErrorCode eMBTCPDoInit( USHORT ucTCPPort );
-void            eMBTCPStart( void );
-void            eMBTCPStop( void );
-eMBErrorCode    eMBTCPReceive( UCHAR * pucRcvAddress, UCHAR ** pucFrame,
+    eMBErrorCode eMBTCPDoInit( stMBContext *stTCPContext,USHORT ucTCPPort );
+void            eMBTCPStart( stMBContext *stTCPContext );
+void            eMBTCPStop( stMBContext *stTCPContext );
+eMBErrorCode    eMBTCPReceive(stMBContext *stTCPContext, UCHAR * pucRcvAddress, UCHAR ** pucFrame,
                                USHORT * pusLength );
-eMBErrorCode    eMBTCPSend( UCHAR _unused, const UCHAR * pucFrame,
+eMBErrorCode    eMBTCPSend(stMBContext *stTCPContext, UCHAR _unused, const UCHAR * pucFrame,
                             USHORT usLength );
 
 #ifdef __cplusplus

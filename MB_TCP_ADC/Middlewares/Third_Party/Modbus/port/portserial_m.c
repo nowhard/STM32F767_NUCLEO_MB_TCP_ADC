@@ -58,7 +58,6 @@ BOOL xMBMasterPortSerialInit(UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits,
   HAL_UART_Init(&huart1);
   return TRUE;
 		
-    return TRUE;
 }
 
 void vMBMasterPortSerialEnable(BOOL xRxEnable, BOOL xTxEnable)

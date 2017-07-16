@@ -35,6 +35,9 @@
 PR_BEGIN_EXTERN_C
 #endif
 
+//#include "mbport.h"
+
+
 /*!
  * Constants which defines the format of a modbus frame. The example is
  * shown for a Modbus RTU/ASCII frame. Note that the Modbus PDU is not
@@ -60,6 +63,19 @@ PR_BEGIN_EXTERN_C
  * </code>
  */
 
+typedef enum
+{
+    MB_ENOERR,                  /*!< no error. */
+    MB_ENOREG,                  /*!< illegal register address. */
+    MB_EINVAL,                  /*!< illegal argument. */
+    MB_EPORTERR,                /*!< porting layer error. */
+    MB_ENORES,                  /*!< insufficient resources. */
+    MB_EIO,                     /*!< I/O error. */
+    MB_EILLSTATE,               /*!< protocol stack in illegal state. */
+    MB_ETIMEDOUT                /*!< timeout error occurred. */
+} eMBErrorCode;
+
+
 /* ----------------------- Defines ------------------------------------------*/
 #define MB_PDU_SIZE_MAX     253 /*!< Maximum size of a PDU. */
 #define MB_PDU_SIZE_MIN     1   /*!< Function Code */
@@ -67,19 +83,20 @@ PR_BEGIN_EXTERN_C
 #define MB_PDU_DATA_OFF     1   /*!< Offset for response data in PDU. */
 
 /* ----------------------- Prototypes  0-------------------------------------*/
-typedef void    ( *pvMBFrameStart ) ( void );
-
-typedef void    ( *pvMBFrameStop ) ( void );
-
-typedef eMBErrorCode( *peMBFrameReceive ) ( UCHAR * pucRcvAddress,
-                                            UCHAR ** pucFrame,
-                                            USHORT * pusLength );
-
-typedef eMBErrorCode( *peMBFrameSend ) ( UCHAR slaveAddress,
-                                         const UCHAR * pucFrame,
-                                         USHORT usLength );
-
-typedef void( *pvMBFrameClose ) ( void );
+//typedef void    ( *pvMBFrameStart ) ( stMBRTUContext *stRTUContext,stMBCommunication *stCommunication,stMBTimer *stTimer );
+//
+//typedef void    ( *pvMBFrameStop ) ( stMBCommunication *stCommunication, stMBTimer *stTimer );
+//
+//typedef eMBErrorCode( *peMBFrameReceive ) ( stMBRTUContext *stRTUContext,
+//											UCHAR * pucRcvAddress,
+//                                            UCHAR ** pucFrame,
+//                                            USHORT * pusLength );
+//
+//typedef eMBErrorCode( *peMBFrameSend ) ( stMBRTUContext *stRTUContext,stMBCommunication *stCommunication,UCHAR slaveAddress,
+//                                         const UCHAR * pucFrame,
+//                                         USHORT usLength );
+//
+//typedef void( *pvMBFrameClose ) ( void );
 
 #ifdef __cplusplus
 PR_END_EXTERN_C

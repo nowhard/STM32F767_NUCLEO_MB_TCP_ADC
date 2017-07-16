@@ -39,15 +39,17 @@ PR_BEGIN_EXTERN_C
 /* ----------------------- Defines ------------------------------------------*/
 #include <socket.h>
 #include "port.h"
+#include "mbcontext.h"
+//#include "mbtcp.h"
 /* ----------------------- Type definitions ---------------------------------*/
 
-typedef enum
-{
-    EV_READY            = 1<<0,         /*!< Startup finished. */
-    EV_FRAME_RECEIVED   = 1<<1,         /*!< Frame received. */
-    EV_EXECUTE          = 1<<2,         /*!< Execute function. */
-    EV_FRAME_SENT       = 1<<3          /*!< Frame sent. */
-} eMBEventType;
+//typedef enum
+//{
+//    EV_READY            = 1<<0,         /*!< Startup finished. */
+//    EV_FRAME_RECEIVED   = 1<<1,         /*!< Frame received. */
+//    EV_EXECUTE          = 1<<2,         /*!< Execute function. */
+//    EV_FRAME_SENT       = 1<<3          /*!< Frame sent. */
+//} eMBEventType;
 
 typedef enum
 {
@@ -96,30 +98,60 @@ typedef enum
 
 #define MB_TCP_DEBUG        1   /* Set to 1 for additional debug output. */
 
-#define MB_TCP_BUF_SIZE     ( 256 + 7 ) /* Must hold a complete Modbus TCP frame. */
+//#define MB_TCP_BUF_SIZE     ( 256 + 7 ) /* Must hold a complete Modbus TCP frame. */
 
 #define EV_CONNECTION       0
 #define EV_CLIENT           1
 #define EV_NEVENTS          EV_CLIENT + 1
 
-#define SOCKET 							int
-#define INVALID_SOCKET			(-1)
-#define SOCKET_ERROR				(-1)
 
 
-typedef struct
-{
-	SOCKET xClientSocket;
-	UCHAR    aucTCPBuf[MB_TCP_BUF_SIZE];
-	USHORT   usTCPBufPos;
-	USHORT   usTCPFrameBytesLeft;	
-}stMB_TCPClient;
+
+//typedef struct
+//{
+//	SOCKET xClientSocket;
+//	UCHAR    aucTCPBuf[MB_TCP_BUF_SIZE];
+//	USHORT   usTCPBufPos;
+//	USHORT   usTCPFrameBytesLeft;	
+//}stMB_TCPClient;
+
+
+
+//typedef struct
+//{
+//	void ( *vMBPortSerialEnable )( BOOL xRxEnable, BOOL xTxEnable );
+//	BOOL ( *xMBPortSerialInit )( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity );
+//	BOOL ( *xMBPortSerialPutByte )( CHAR ucByte );
+//	BOOL ( *xMBPortSerialGetByte )( CHAR * pucByte );
+//	void ( *vMBPortClose)( void );
+//	void ( *xMBPortSerialClose)( void );
+
+//}stMBCommunication;
+
+
+
+//typedef struct
+//{
+//	BOOL            ( *xMBPortTimersInit)( USHORT usTimeOut50us );
+//	void            ( *xMBPortTimersClose)( void );
+//	void            ( *vMBPortTimersEnable)( void );
+//	void            ( *vMBPortTimersDisable)( void );
+//	void            ( *vMBPortTimersDelay)( USHORT usTimeOutMS );
+
+//}stMBTimer;
+
+//typedef struct
+//{
+//	eMBEventType eQueuedEvent;
+//	BOOL     xEventInQueue;
+//}stMBEvent;
+
 /* ----------------------- Supporting functions -----------------------------*/
-BOOL            xMBPortEventInit( void );
+BOOL            xMBPortEventInit( stMBEvent *stEvent );
 
-BOOL            xMBPortEventPost( eMBEventType eEvent );
+BOOL            xMBPortEventPost( stMBEvent *stEvent, eMBEventType eEvent );
 
-BOOL            xMBPortEventGet(  /*@out@ */ eMBEventType * eEvent );
+BOOL            xMBPortEventGet( stMBEvent *stEvent, eMBEventType * eEvent );
 
 BOOL            xMBMasterPortEventInit( void );
 
@@ -221,15 +253,15 @@ extern          BOOL( *pxMBMasterFrameCBTransmitterEmpty ) ( void );
 extern          BOOL( *pxMBMasterPortCBTimerExpired ) ( void );
 
 /* ----------------------- TCP port functions -------------------------------*/
-BOOL            xMBTCPPortInit( USHORT usTCPPort );
+BOOL            xMBTCPPortInit( stMBContext *stTCPContext, USHORT usTCPPort );
 
-void            vMBTCPPortClose( void );
+void            vMBTCPPortClose( stMBContext *stTCPContext );
 
-void            vMBTCPPortDisable( void );
+void            vMBTCPPortDisable( stMBContext *stTCPContext );
 
-BOOL            xMBTCPPortGetRequest( UCHAR **ppucMBTCPFrame, USHORT * usTCPLength );
+BOOL            xMBTCPPortGetRequest(stMBContext *stTCPContext, UCHAR **ppucMBTCPFrame, USHORT * usTCPLength );
 
-BOOL            xMBTCPPortSendResponse( const UCHAR *pucMBTCPFrame, USHORT usTCPLength );
+BOOL            xMBTCPPortSendResponse(stMBContext *stTCPContext, const UCHAR *pucMBTCPFrame, USHORT usTCPLength );
 
 #ifdef __cplusplus
 PR_END_EXTERN_C

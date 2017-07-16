@@ -78,11 +78,11 @@
 
 /* ----------------------- Start implementation -----------------------------*/
 eMBErrorCode
-eMBTCPDoInit( USHORT ucTCPPort )
+eMBTCPDoInit( stMBContext *stTCPContext, USHORT ucTCPPort )
 {
     eMBErrorCode    eStatus = MB_ENOERR;
 
-    if( xMBTCPPortInit( ucTCPPort ) == FALSE )
+    if( xMBTCPPortInit( stTCPContext, ucTCPPort ) == FALSE )
     {
         eStatus = MB_EPORTERR;
     }
@@ -90,26 +90,26 @@ eMBTCPDoInit( USHORT ucTCPPort )
 }
 
 void
-eMBTCPStart( void )
+eMBTCPStart( stMBContext *stTCPContext)
 {
 }
 
 void
-eMBTCPStop( void )
+eMBTCPStop( stMBContext *stTCPContext)
 {
     /* Make sure that no more clients are connected. */
-    vMBTCPPortDisable( );
+    vMBTCPPortDisable(stTCPContext );
 }
 
 eMBErrorCode
-eMBTCPReceive( UCHAR * pucRcvAddress, UCHAR ** ppucFrame, USHORT * pusLength )
+eMBTCPReceive( stMBContext *stTCPContext, UCHAR * pucRcvAddress, UCHAR ** ppucFrame, USHORT * pusLength )
 {
     eMBErrorCode    eStatus = MB_EIO;
     UCHAR          *pucMBTCPFrame;
     USHORT          usLength;
     USHORT          usPID;
 
-    if( xMBTCPPortGetRequest( &pucMBTCPFrame, &usLength ) != FALSE )
+    if( xMBTCPPortGetRequest( stTCPContext,&pucMBTCPFrame, &usLength ) != FALSE )
     {
         usPID = pucMBTCPFrame[MB_TCP_PID] << 8U;
         usPID |= pucMBTCPFrame[MB_TCP_PID + 1];
@@ -134,7 +134,7 @@ eMBTCPReceive( UCHAR * pucRcvAddress, UCHAR ** ppucFrame, USHORT * pusLength )
 }
 
 eMBErrorCode
-eMBTCPSend( UCHAR _unused, const UCHAR * pucFrame, USHORT usLength )
+eMBTCPSend(stMBContext *stTCPContext, UCHAR _unused, const UCHAR * pucFrame, USHORT usLength )
 {
     eMBErrorCode    eStatus = MB_ENOERR;
     UCHAR          *pucMBTCPFrame = ( UCHAR * ) pucFrame - MB_TCP_FUNC;
@@ -148,7 +148,7 @@ eMBTCPSend( UCHAR _unused, const UCHAR * pucFrame, USHORT usLength )
      */
     pucMBTCPFrame[MB_TCP_LEN] = ( usLength + 1 ) >> 8U;
     pucMBTCPFrame[MB_TCP_LEN + 1] = ( usLength + 1 ) & 0xFF;
-    if( xMBTCPPortSendResponse( pucMBTCPFrame, usTCPLength ) == FALSE )
+    if( xMBTCPPortSendResponse(stTCPContext, pucMBTCPFrame, usTCPLength ) == FALSE )
     {
         eStatus = MB_EIO;
     }
