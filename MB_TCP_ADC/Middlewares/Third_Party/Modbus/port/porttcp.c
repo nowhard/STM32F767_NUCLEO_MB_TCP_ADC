@@ -12,7 +12,7 @@
 #include "task.h"
 #include "semphr.h"
 
-//#define PTCP_DEBUG
+#define PTCP_DEBUG
 
 #ifdef PTCP_DEBUG
 #define PTCP_DEBUG_PRINT(fmt, args...)    printf(fmt, ## args)
@@ -21,12 +21,11 @@
 #endif
 
 
-SOCKET          xListenSocket;
+SOCKET          xListenSocket=INVALID_SOCKET;
 static fd_set   allset;
 
 
 
-//ststTCPContext *Current_stTCPContext;
 
 
 #define MB_TCP_CLIENT_STACK_SIZE	1024
@@ -68,55 +67,56 @@ xMBTCPPortInit(stMBContext*	  stTCPContext, USHORT usTCPPort )
 	
 			int timeoutTimeInMiliSeconds=100;
 	
-	
+		stTCPContext->usTCPBufPos=0;
+		stTCPContext->usTCPFrameBytesLeft=0;
+		stTCPContext->xClientSocket=INVALID_SOCKET;
 		
-
-    if( usTCPPort == 0 )
-    {
-        usPort = MB_TCP_DEFAULT_PORT;
-    }
-    else
-    {
-        usPort = ( USHORT ) usTCPPort;
-    }
-    memset( &serveraddr, 0, sizeof( serveraddr ) );
-    serveraddr.sin_family = AF_INET;
-    serveraddr.sin_addr.s_addr = htonl( INADDR_ANY );
-    serveraddr.sin_port = htons( usPort );
-    if( ( xListenSocket = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP ) ) == -1 )
-    {
-        PTCP_DEBUG_PRINT( "Create socket failed.\r\n" );
-        return FALSE;
-    }
-//		else if(setsockopt( xListenSocket, SOL_SOCKET, SO_RCVTIMEO,&timeoutTimeInMiliSeconds, sizeof(int)) == -1)
-//		{
-//				PTCP_DEBUG_PRINT( "Set timeout socket failed.\r\n" );
-//        return FALSE;
-//		}
-    else if( bind( xListenSocket, ( struct sockaddr * )&serveraddr, sizeof( serveraddr ) ) == -1 )
-    {
-        PTCP_DEBUG_PRINT( "Bind socket failed.\r\n" );
-        return FALSE;
-    }
-    else if( listen( xListenSocket, 5 ) == -1 )
-    {
-        PTCP_DEBUG_PRINT( "Listen socket failed.\r\n" );
-        return FALSE;
-    }
-    FD_ZERO( &allset );
-    FD_SET( xListenSocket, &allset );
-		
-		listen(xListenSocket,5);
-		
-
-		xTaskCreate( xMBTCPPort_PoolTask, "MBTCP HANDLE", MB_TCP_POOL_STACK_SIZE, NULL, 2, NULL );
-		
+	  if(xListenSocket==INVALID_SOCKET)
+	  {
+				if( usTCPPort == 0 )
+				{
+						usPort = MB_TCP_DEFAULT_PORT;
+				}
+				else
+				{
+						usPort = ( USHORT ) usTCPPort;
+				}
+				memset( &serveraddr, 0, sizeof( serveraddr ) );
+				serveraddr.sin_family = AF_INET;
+				serveraddr.sin_addr.s_addr = htonl( INADDR_ANY );
+				serveraddr.sin_port = htons( usPort );
+				if( ( xListenSocket = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP ) ) == -1 )
+				{
+						PTCP_DEBUG_PRINT( "Create socket failed.\r\n" );
+						return FALSE;
+				}
+		//		else if(setsockopt( xListenSocket, SOL_SOCKET, SO_RCVTIMEO,&timeoutTimeInMiliSeconds, sizeof(int)) == -1)
+		//		{
+		//				PTCP_DEBUG_PRINT( "Set timeout socket failed.\r\n" );
+		//        return FALSE;
+		//		}
+				else if( bind( xListenSocket, ( struct sockaddr * )&serveraddr, sizeof( serveraddr ) ) == -1 )
+				{
+						PTCP_DEBUG_PRINT( "Bind socket failed.\r\n" );
+						return FALSE;
+				}
+				else if( listen( xListenSocket, 5 ) == -1 )
+				{
+						PTCP_DEBUG_PRINT( "Listen socket failed.\r\n" );
+						return FALSE;
+				}
+				FD_ZERO( &allset );
+				FD_SET( xListenSocket, &allset );
 				
-	
+				listen(xListenSocket,5);
+				
+				xTaskCreate( xMBTCPPort_PoolTask, "MBTCP HANDLE", MB_TCP_POOL_STACK_SIZE, NULL , 2, NULL );
+		
+	 }	
 
-		int	clnt_index=0;
 
-		xTaskCreate( xMBTCPPort_HandlingTask, "MBTCP HANDLE", MB_TCP_CLIENT_STACK_SIZE, (void*)&stTCPContext, 3, NULL );
+
+		xTaskCreate( xMBTCPPort_HandlingTask, "MBTCP HANDLE", MB_TCP_CLIENT_STACK_SIZE, (void*)stTCPContext, 3, NULL );
 
     return TRUE;
 }
@@ -146,23 +146,23 @@ vMBTCPPortDisable( stMBContext *stTCPContext )
     }
 }
 
-BOOL
-xMBPortTCPPool( stMBContext *stTCPContext )
-{
-		int	clnt_index=0;
-	
-		BaseType_t task_ret=pdPASS;
+//BOOL
+//xMBPortTCPPool( stMBContext *stTCPContext )
+//{
+//		int	clnt_index=0;
+//	
+//		BaseType_t task_ret=pdPASS;
 
-			if( stTCPContext->xClientSocket == INVALID_SOCKET )
-			{
-					if(prvbMBPortAcceptClient(stTCPContext)==TRUE)
-					{
-							PTCP_DEBUG_PRINT("New client accepted, Socket=%i\n",stTCPContext[clnt_index].xClientSocket);
-							taskYIELD();
-					}
-			}	
-    return TRUE;
-}
+//			if( stTCPContext->xClientSocket == INVALID_SOCKET )
+//			{
+//					if(prvbMBPortAcceptClient(stTCPContext)==TRUE)
+//					{
+//							PTCP_DEBUG_PRINT("New client accepted, Socket=%i\n",stTCPContext[clnt_index].xClientSocket);
+//							taskYIELD();
+//					}
+//			}	
+//    return TRUE;
+//}
 
 
 BOOL
@@ -263,11 +263,24 @@ prvbMBPortAcceptClient( stMBContext	  *stTCPContext )
     return bOkay;
 }
 
+extern stMBContext stTCPContext[MB_TCP_CLIENT_NUM];
 void xMBTCPPort_PoolTask( void *pvParameters )
 {
+
+	uint8_t context_cnt=0;
 	while(1)
 	{
-			//(void)xMBPortTCPPool(  );
+		for(context_cnt=0;context_cnt<MB_TCP_CLIENT_NUM;context_cnt++)
+		{
+				if(stTCPContext[context_cnt].xClientSocket==INVALID_SOCKET)
+				{				
+					if(prvbMBPortAcceptClient(&stTCPContext[context_cnt])==TRUE)
+					{
+							PTCP_DEBUG_PRINT("New client accepted, Socket=%i\n",stTCPContext[context_cnt].xClientSocket);
+							continue;
+					}
+				}
+		}
 	}
 }
 
@@ -293,101 +306,101 @@ void xMBTCPPort_HandlingTask(void *pvParameters )
 	
 	  while(1)
     {		
-				if(stTCPContext->xClientSocket==INVALID_SOCKET)
-				{
-						vTaskDelay(1);
-						continue;
-				}
-				
-				
-				FD_ZERO( &fread );
-				FD_SET( stTCPContext->xClientSocket, &fread );
-				PTCP_DEBUG_PRINT("Wait for Socket %i data... \r\n",stTCPContext->xClientSocket);
-			  ret = select( stTCPContext->xClientSocket + 1, &fread, NULL, NULL, &tval );
-        if(!ret)
-        {
-          PTCP_DEBUG_PRINT("Continue for Socket %i... \r\n",stTCPContext->xClientSocket);  
-					continue;
-        }
-				else if(ret == SOCKET_ERROR )
-				{
-						PTCP_DEBUG_PRINT("Select return SOCKET_ERROR\r\n");
-						PTCP_DEBUG_PRINT("Socket %i closed(select)\r\n",stTCPContext->xClientSocket);
-						stTCPContext->xClientSocket = INVALID_SOCKET;
-						continue;
-           // vTaskDelete(NULL);
-				}
-        else if( ret > 0 )
-        {
-						PTCP_DEBUG_PRINT("Socket %i has new data\r\n",stTCPContext->xClientSocket);
-					
-            if( FD_ISSET( stTCPContext->xClientSocket, &fread ) )
-            {
-								ret = recv( stTCPContext->xClientSocket, &stTCPContext->aucTCPBuf[stTCPContext->usTCPBufPos], stTCPContext->usTCPFrameBytesLeft,0 );
-                if(( ret == SOCKET_ERROR ) || ( !ret ) )
-                {
+				if(stTCPContext->xClientSocket!=INVALID_SOCKET)
+				{				
+						FD_ZERO( &fread );
+						FD_SET( stTCPContext->xClientSocket, &fread );
+						PTCP_DEBUG_PRINT("Wait for Socket %i data... \r\n",stTCPContext->xClientSocket);
+						ret = select( stTCPContext->xClientSocket + 1, &fread, NULL, NULL, &tval );
+						if(!ret)
+						{
+							PTCP_DEBUG_PRINT("Continue for Socket %i... \r\n",stTCPContext->xClientSocket);  
+							continue;
+						}
+						else if(ret == SOCKET_ERROR )
+						{
+								PTCP_DEBUG_PRINT("Select return SOCKET_ERROR\r\n");
+								PTCP_DEBUG_PRINT("Socket %i closed(select)\r\n",stTCPContext->xClientSocket);
+								stTCPContext->xClientSocket = INVALID_SOCKET;
+								continue;
+							 // vTaskDelete(NULL);
+						}
+						else if( ret > 0 )
+						{
+								PTCP_DEBUG_PRINT("Socket %i has new data\r\n",stTCPContext->xClientSocket);
+							
+								if( FD_ISSET( stTCPContext->xClientSocket, &fread ) )
+								{
+										ret = recv( stTCPContext->xClientSocket, &stTCPContext->aucTCPBuf[stTCPContext->usTCPBufPos], stTCPContext->usTCPFrameBytesLeft,0 );
+										if(( ret == SOCKET_ERROR ) || ( !ret ) )
+										{
+												
+												close( stTCPContext->xClientSocket );
+												PTCP_DEBUG_PRINT("Socket %i closed\r\n",stTCPContext->xClientSocket);
+												stTCPContext->xClientSocket = INVALID_SOCKET;
+												//vTaskDelete(NULL);
+												continue;
+										}
 										
-                    close( stTCPContext->xClientSocket );
-									  PTCP_DEBUG_PRINT("Socket %i closed\r\n",stTCPContext->xClientSocket);
-										stTCPContext->xClientSocket = INVALID_SOCKET;
-                    //vTaskDelete(NULL);
-										continue;
-                }
-								
-								PTCP_DEBUG_PRINT("Task of socket %i receive %i data\r\n",stTCPContext->xClientSocket, ret);
-								
-                stTCPContext->usTCPBufPos += ret;
-                stTCPContext->usTCPFrameBytesLeft -= ret;
-								
-                if( stTCPContext->usTCPBufPos >= MB_TCP_FUNC )
-                {
-                    /* Length is a byte count of Modbus PDU (function code + data) and the
-                     * unit identifier. */
-                    usLength = stTCPContext->aucTCPBuf[MB_TCP_LEN] << 8U;
-                    usLength |= stTCPContext->aucTCPBuf[MB_TCP_LEN + 1];
+										PTCP_DEBUG_PRINT("Task of socket %i receive %i data\r\n",stTCPContext->xClientSocket, ret);
+										
+										stTCPContext->usTCPBufPos += ret;
+										stTCPContext->usTCPFrameBytesLeft -= ret;
+										
+										if( stTCPContext->usTCPBufPos >= MB_TCP_FUNC )
+										{
+												/* Length is a byte count of Modbus PDU (function code + data) and the
+												 * unit identifier. */
+												usLength = stTCPContext->aucTCPBuf[MB_TCP_LEN] << 8U;
+												usLength |= stTCPContext->aucTCPBuf[MB_TCP_LEN + 1];
 
-                    /* Is the frame already complete. */
-                    if( stTCPContext->usTCPBufPos < ( MB_TCP_UID + usLength ) )
-                    {
-                        stTCPContext->usTCPFrameBytesLeft = usLength + MB_TCP_UID - stTCPContext->usTCPBufPos;
-                    }
-                    /* The frame is complete. */
-                    else if( stTCPContext->usTCPBufPos == ( MB_TCP_UID + usLength ) )
-                    {
-											
-												if(xSemaphoreTake( xMB_FrameRec_Mutex, ( TickType_t ) 10 ) == pdTRUE )
+												/* Is the frame already complete. */
+												if( stTCPContext->usTCPBufPos < ( MB_TCP_UID + usLength ) )
 												{
-											
-													
-														( void )xMBPortEventPost(&stTCPContext->stEvent, EV_FRAME_RECEIVED );
-														//Current_stTCPContext=stTCPContext;		
-														PTCP_DEBUG_PRINT("Task of socket %i send command EV_FRAME_RECEIVED\r\n",stTCPContext->xClientSocket);
-//														while(flag_mb_ready==0)
-//														{
-//															__NOP();
-//														}
-
-														flag_mb_ready=0;
-														
-														xSemaphoreGive( xMB_FrameRec_Mutex );
+														stTCPContext->usTCPFrameBytesLeft = usLength + MB_TCP_UID - stTCPContext->usTCPBufPos;
 												}
+												/* The frame is complete. */
+												else if( stTCPContext->usTCPBufPos == ( MB_TCP_UID + usLength ) )
+												{
+													
+														if(xSemaphoreTake( xMB_FrameRec_Mutex, ( TickType_t ) 10 ) == pdTRUE )
+														{
+													
+															
+																( void )xMBPortEventPost(&stTCPContext->stEvent, EV_FRAME_RECEIVED );
+																//Current_stTCPContext=stTCPContext;		
+																PTCP_DEBUG_PRINT("Task of socket %i send command EV_FRAME_RECEIVED\r\n",stTCPContext->xClientSocket);
+		//														while(flag_mb_ready==0)
+		//														{
+		//															__NOP();
+		//														}
+
+																flag_mb_ready=0;
+																
+																xSemaphoreGive( xMB_FrameRec_Mutex );
+														}
+														else
+														{
+															
+																close( stTCPContext->xClientSocket );
+																stTCPContext->xClientSocket = INVALID_SOCKET;
+																//vTaskDelete(NULL);
+																continue;
+														}
+												}
+												/* This can not happend because we always calculate the number of bytes
+												 * to receive. */
 												else
 												{
-													
-													  close( stTCPContext->xClientSocket );
-														stTCPContext->xClientSocket = INVALID_SOCKET;
-														//vTaskDelete(NULL);
-														continue;
+														assert( stTCPContext->usTCPBufPos <= ( MB_TCP_UID + usLength ) );
 												}
-                    }
-                    /* This can not happend because we always calculate the number of bytes
-                     * to receive. */
-                    else
-                    {
-                        assert( stTCPContext->usTCPBufPos <= ( MB_TCP_UID + usLength ) );
-                    }
-                }
-            }
-        }
-    }
+										}
+								}
+						}
+				}
+				else
+				{
+					vTaskDelay(50);
+				}
+	}
 }

@@ -19,20 +19,27 @@ void MB_TCP_Task(void *pvParameters);
 
 void MB_TCP_Init(void)
 {
-	eMBTCPInit(&stTCPContext[0],0);
-	eMBEnable(&stTCPContext[0]);
+	uint8_t context_cnt=0;
+	
+	for(context_cnt=0;context_cnt<MB_TCP_CLIENT_NUM;context_cnt++)
+	{
+	eMBTCPInit(&stTCPContext[context_cnt],0);
+	eMBEnable(&stTCPContext[context_cnt]);
 	//eMBSetSlaveID( MB_TCP_PSEUDO_ADDRESS, TRUE, Vendor, sizeof(Vendor) );
 //	
-	xTaskCreate(MB_TCP_Task, "MB TCP Task", MB_TCP_TASK_STACK_SIZE, NULL, 2, ( TaskHandle_t * ) NULL);
+	xTaskCreate(MB_TCP_Task, "MB TCP Task", MB_TCP_TASK_STACK_SIZE, (void*)&stTCPContext[context_cnt], 2, ( TaskHandle_t * ) NULL);
+	}
 }
 
 
 void MB_TCP_Task(void *pvParameters)
 {
+	 stMBContext *stTCPContext;
+	 stTCPContext=(stMBContext*)pvParameters;
    while(1)
-    {
-			eMBPoll(&stTCPContext[0]);
-    }
+   {
+			eMBPoll(stTCPContext);
+   }
 }
 
 
