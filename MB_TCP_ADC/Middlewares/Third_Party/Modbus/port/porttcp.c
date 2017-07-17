@@ -35,7 +35,7 @@ static fd_set   allset;
 
 SemaphoreHandle_t xMB_FrameRec_Mutex;
 
-uint8_t flag_mb_ready=0;
+//uint8_t flag_mb_ready=0;
 
 /* ----------------------- Static functions ---------------------------------*/
 BOOL            prvMBTCPPortAddressToString( SOCKET xSocket, CHAR * szAddr, USHORT usBufSize );
@@ -121,20 +121,20 @@ xMBTCPPortInit(stMBContext*	  stTCPContext, USHORT usTCPPort )
     return TRUE;
 }
 
-//void
-//vMBTCPPortClose(  )
-//{
-//    // Close all client sockets. 
-//    if( xClientSocket != SOCKET_ERROR )
-//    {
-//        prvvMBPortReleaseClient(  );
-//    }
-//    // Close the listener socket.
-//    if( xListenSocket != SOCKET_ERROR )
-//    {
-//        close( xListenSocket );
-//    }
-//}
+void
+vMBTCPPortClose( stMBContext *stTCPContext  )
+{
+    // Close all client sockets. 
+    if( stTCPContext->xClientSocket != SOCKET_ERROR )
+    {
+        prvvMBPortReleaseClient(stTCPContext);
+    }
+    // Close the listener socket.
+    if( stTCPContext->xClientSocket != SOCKET_ERROR )
+    {
+        close( xListenSocket );
+    }
+}
 
 void
 vMBTCPPortDisable( stMBContext *stTCPContext )
@@ -223,14 +223,13 @@ xMBTCPPortSendResponse( stMBContext*	  stTCPContext, const UCHAR * pucMBTCPFrame
 
     bFrameSent = iBytesSent == usTCPLength ? TRUE : FALSE;
 
-		flag_mb_ready=1;
     return bFrameSent;
 }
 
 void
 prvvMBPortReleaseClient( stMBContext	  *stTCPContext)
 {
-    ( void )recv( stTCPContext->xClientSocket, &stTCPContext->aucTCPBuf[0], MB_TCP_BUF_SIZE, 0 );
+//    ( void )recv( stTCPContext->xClientSocket, &stTCPContext->aucTCPBuf[0], MB_TCP_BUF_SIZE, 0 );
 
     ( void )close( stTCPContext->xClientSocket );
     stTCPContext->xClientSocket = INVALID_SOCKET;
@@ -294,7 +293,7 @@ void xMBTCPPort_HandlingTask(void *pvParameters )
 		USHORT          usLength;
 	  struct timeval  tval;
 
-    tval.tv_sec =  1;
+    tval.tv_sec =  5;
     tval.tv_usec = 0;
 	
 		
@@ -312,20 +311,19 @@ void xMBTCPPort_HandlingTask(void *pvParameters )
 						FD_SET( stTCPContext->xClientSocket, &fread );
 						PTCP_DEBUG_PRINT("Wait for Socket %i data... \r\n",stTCPContext->xClientSocket);
 						ret = select( stTCPContext->xClientSocket + 1, &fread, NULL, NULL, &tval );
-						if(!ret)
+						if(/*!ret*/ret<=0)
 						{
-							PTCP_DEBUG_PRINT("Continue for Socket %i... \r\n",stTCPContext->xClientSocket);  
-							continue;
-						}
-						else if(ret == SOCKET_ERROR )
-						{
+//							PTCP_DEBUG_PRINT("Continue for Socket %i... \r\n",stTCPContext->xClientSocket);  
+//							continue;
+//						}
+//						else if(ret == SOCKET_ERROR )
+//						{
 								PTCP_DEBUG_PRINT("Select return SOCKET_ERROR\r\n");
 								PTCP_DEBUG_PRINT("Socket %i closed(select)\r\n",stTCPContext->xClientSocket);
-								stTCPContext->xClientSocket = INVALID_SOCKET;
+								prvvMBPortReleaseClient( stTCPContext );
 								continue;
-							 // vTaskDelete(NULL);
 						}
-						else if( ret > 0 )
+						else /*if( ret > 0 )*/
 						{
 								PTCP_DEBUG_PRINT("Socket %i has new data\r\n",stTCPContext->xClientSocket);
 							
@@ -337,7 +335,8 @@ void xMBTCPPort_HandlingTask(void *pvParameters )
 												
 												close( stTCPContext->xClientSocket );
 												PTCP_DEBUG_PRINT("Socket %i closed\r\n",stTCPContext->xClientSocket);
-												stTCPContext->xClientSocket = INVALID_SOCKET;
+												prvvMBPortReleaseClient( stTCPContext );
+												//stTCPContext->xClientSocket = INVALID_SOCKET;
 												//vTaskDelete(NULL);
 												continue;
 										}
@@ -363,30 +362,24 @@ void xMBTCPPort_HandlingTask(void *pvParameters )
 												else if( stTCPContext->usTCPBufPos == ( MB_TCP_UID + usLength ) )
 												{
 													
-														if(xSemaphoreTake( xMB_FrameRec_Mutex, ( TickType_t ) 10 ) == pdTRUE )
-														{
-													
+//														if(xSemaphoreTake( xMB_FrameRec_Mutex, ( TickType_t ) 10 ) == pdTRUE )
+//														{
+//													
 															
 																( void )xMBPortEventPost(&stTCPContext->stEvent, EV_FRAME_RECEIVED );
 																//Current_stTCPContext=stTCPContext;		
 																PTCP_DEBUG_PRINT("Task of socket %i send command EV_FRAME_RECEIVED\r\n",stTCPContext->xClientSocket);
-		//														while(flag_mb_ready==0)
-		//														{
-		//															__NOP();
-		//														}
 
-																flag_mb_ready=0;
-																
-																xSemaphoreGive( xMB_FrameRec_Mutex );
-														}
-														else
-														{
-															
-																close( stTCPContext->xClientSocket );
-																stTCPContext->xClientSocket = INVALID_SOCKET;
-																//vTaskDelete(NULL);
-																continue;
-														}
+//																xSemaphoreGive( xMB_FrameRec_Mutex );
+//														}
+//														else
+//														{
+//															
+//																close( stTCPContext->xClientSocket );
+//																stTCPContext->xClientSocket = INVALID_SOCKET;
+//																//vTaskDelete(NULL);
+//																continue;
+//														}
 												}
 												/* This can not happend because we always calculate the number of bytes
 												 * to receive. */

@@ -3,7 +3,7 @@
 <title>Static Call Graph - [MB_TCP_ADC\MB_TCP_ADC.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image MB_TCP_ADC\MB_TCP_ADC.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060061: Last Updated: Mon Jul 17 11:51:51 2017
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060061: Last Updated: Mon Jul 17 14:31:08 2017
 <BR><P>
 <H3>Maximum Stack Usage =        776 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -2469,7 +2469,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> mb.o(i.eMBTCPInit)
 </UL>
 <P><STRONG><a name="[aa]"></a>eMBTCPSend</STRONG> (Thumb, 56 bytes, Stack size 32 bytes, mbtcp.o(i.eMBTCPSend))
-<BR><BR>[Stack]<UL><LI>Max Depth = 488<LI>Call Chain = eMBTCPSend &rArr; xMBTCPPortSendResponse &rArr; prvvMBPortReleaseClient &rArr; lwip_recv &rArr; lwip_recvfrom &rArr; netconn_recv &rArr; netconn_recv_data &rArr; netconn_close_shutdown &rArr; netconn_apimsg &rArr; tcpip_send_msg_wait_sem &rArr; sys_mutex_lock &rArr; osMutexWait &rArr; xQueueGenericReceive &rArr; vTaskPlaceOnEventList &rArr; prvAddCurrentTaskToDelayedList &rArr; vListInsert
+<BR><BR>[Stack]<UL><LI>Max Depth = 344<LI>Call Chain = eMBTCPSend &rArr; xMBTCPPortSendResponse &rArr; lwip_send &rArr;  lwip_sendto (Cycle)
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xMBTCPPortSendResponse
 </UL>
@@ -2479,7 +2479,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> mb.o(i.eMBTCPInit)
 </UL>
 <P><STRONG><a name="[a8]"></a>eMBTCPStop</STRONG> (Thumb, 12 bytes, Stack size 8 bytes, mbtcp.o(i.eMBTCPStop))
-<BR><BR>[Stack]<UL><LI>Max Depth = 432<LI>Call Chain = eMBTCPStop &rArr; vMBTCPPortDisable &rArr; prvvMBPortReleaseClient &rArr; lwip_recv &rArr; lwip_recvfrom &rArr; netconn_recv &rArr; netconn_recv_data &rArr; netconn_close_shutdown &rArr; netconn_apimsg &rArr; tcpip_send_msg_wait_sem &rArr; sys_mutex_lock &rArr; osMutexWait &rArr; xQueueGenericReceive &rArr; vTaskPlaceOnEventList &rArr; prvAddCurrentTaskToDelayedList &rArr; vListInsert
+<BR><BR>[Stack]<UL><LI>Max Depth = 288<LI>Call Chain = eMBTCPStop &rArr; vMBTCPPortDisable &rArr; prvvMBPortReleaseClient &rArr; lwip_close &rArr; free_socket &rArr; netbuf_delete &rArr; pbuf_free &rArr; memp_free &rArr; do_memp_free_pool &rArr; sys_arch_protect &rArr; osMutexWait &rArr; xQueueGenericReceive &rArr; vTaskPlaceOnEventList &rArr; prvAddCurrentTaskToDelayedList &rArr; vListInsert
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vMBTCPPortDisable
 </UL>
@@ -2964,7 +2964,6 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[256]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwip_recvfrom
 </UL>
 <BR>[Called By]<UL><LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xMBTCPPort_HandlingTask
-<LI><a href="#[2bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvvMBPortReleaseClient
 </UL>
 
 <P><STRONG><a name="[256]"></a>lwip_recvfrom</STRONG> (Thumb, 650 bytes, Stack size 96 bytes, sockets.o(i.lwip_recvfrom))
@@ -4905,7 +4904,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[1f2]"></a>vMBTCPPortDisable</STRONG> (Thumb, 18 bytes, Stack size 8 bytes, porttcp.o(i.vMBTCPPortDisable))
-<BR><BR>[Stack]<UL><LI>Max Depth = 424<LI>Call Chain = vMBTCPPortDisable &rArr; prvvMBPortReleaseClient &rArr; lwip_recv &rArr; lwip_recvfrom &rArr; netconn_recv &rArr; netconn_recv_data &rArr; netconn_close_shutdown &rArr; netconn_apimsg &rArr; tcpip_send_msg_wait_sem &rArr; sys_mutex_lock &rArr; osMutexWait &rArr; xQueueGenericReceive &rArr; vTaskPlaceOnEventList &rArr; prvAddCurrentTaskToDelayedList &rArr; vListInsert
+<BR><BR>[Stack]<UL><LI>Max Depth = 280<LI>Call Chain = vMBTCPPortDisable &rArr; prvvMBPortReleaseClient &rArr; lwip_close &rArr; free_socket &rArr; netbuf_delete &rArr; pbuf_free &rArr; memp_free &rArr; do_memp_free_pool &rArr; sys_arch_protect &rArr; osMutexWait &rArr; xQueueGenericReceive &rArr; vTaskPlaceOnEventList &rArr; prvAddCurrentTaskToDelayedList &rArr; vListInsert
 </UL>
 <BR>[Calls]<UL><LI><a href="#[2bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvvMBPortReleaseClient
 </UL>
@@ -5186,8 +5185,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[1ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBTCPDoInit
 </UL>
 
-<P><STRONG><a name="[1f1]"></a>xMBTCPPortSendResponse</STRONG> (Thumb, 138 bytes, Stack size 40 bytes, porttcp.o(i.xMBTCPPortSendResponse))
-<BR><BR>[Stack]<UL><LI>Max Depth = 456<LI>Call Chain = xMBTCPPortSendResponse &rArr; prvvMBPortReleaseClient &rArr; lwip_recv &rArr; lwip_recvfrom &rArr; netconn_recv &rArr; netconn_recv_data &rArr; netconn_close_shutdown &rArr; netconn_apimsg &rArr; tcpip_send_msg_wait_sem &rArr; sys_mutex_lock &rArr; osMutexWait &rArr; xQueueGenericReceive &rArr; vTaskPlaceOnEventList &rArr; prvAddCurrentTaskToDelayedList &rArr; vListInsert
+<P><STRONG><a name="[1f1]"></a>xMBTCPPortSendResponse</STRONG> (Thumb, 132 bytes, Stack size 40 bytes, porttcp.o(i.xMBTCPPortSendResponse))
+<BR><BR>[Stack]<UL><LI>Max Depth = 312<LI>Call Chain = xMBTCPPortSendResponse &rArr; lwip_send &rArr;  lwip_sendto (Cycle)
 </UL>
 <BR>[Calls]<UL><LI><a href="#[25f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwip_send
 <LI><a href="#[305]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;usleep
@@ -5196,16 +5195,15 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBTCPSend
 </UL>
 
-<P><STRONG><a name="[c9]"></a>xMBTCPPort_HandlingTask</STRONG> (Thumb, 438 bytes, Stack size 24 bytes, porttcp.o(i.xMBTCPPort_HandlingTask))
+<P><STRONG><a name="[c9]"></a>xMBTCPPort_HandlingTask</STRONG> (Thumb, 370 bytes, Stack size 24 bytes, porttcp.o(i.xMBTCPPort_HandlingTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 432<LI>Call Chain = xMBTCPPort_HandlingTask &rArr; lwip_recv &rArr; lwip_recvfrom &rArr; netconn_recv &rArr; netconn_recv_data &rArr; netconn_close_shutdown &rArr; netconn_apimsg &rArr; tcpip_send_msg_wait_sem &rArr; sys_mutex_lock &rArr; osMutexWait &rArr; xQueueGenericReceive &rArr; vTaskPlaceOnEventList &rArr; prvAddCurrentTaskToDelayedList &rArr; vListInsert
 </UL>
 <BR>[Calls]<UL><LI><a href="#[27f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
-<LI><a href="#[f0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
-<LI><a href="#[174]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
 <LI><a href="#[1af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
 <LI><a href="#[25a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwip_select
 <LI><a href="#[255]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwip_recv
 <LI><a href="#[235]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwip_close
+<LI><a href="#[2bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvvMBPortReleaseClient
 <LI><a href="#[1eb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xMBPortEventPost
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> porttcp.o(i.xMBTCPPortInit)
@@ -5294,7 +5292,6 @@ Global Symbols
 <LI><a href="#[291]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osMutexWait
 <LI><a href="#[287]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osMessageGet
 <LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UDP_Send_Task
-<LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xMBTCPPort_HandlingTask
 <LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MBMaster_RTU_Poll
 </UL>
 
@@ -5333,7 +5330,6 @@ Global Symbols
 <LI><a href="#[1c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBRegHoldingCB
 <LI><a href="#[170]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MBMaster_RTU_Init
 <LI><a href="#[ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DCMI_ADC_Init
-<LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xMBTCPPort_HandlingTask
 </UL>
 
 <P><STRONG><a name="[28a]"></a>xQueueGenericSendFromISR</STRONG> (Thumb, 264 bytes, Stack size 40 bytes, queue.o(i.xQueueGenericSendFromISR))
@@ -6864,13 +6860,13 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xMBTCPPort_PoolTask
 </UL>
 
-<P><STRONG><a name="[2bc]"></a>prvvMBPortReleaseClient</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, porttcp.o(i.prvvMBPortReleaseClient))
-<BR><BR>[Stack]<UL><LI>Max Depth = 416<LI>Call Chain = prvvMBPortReleaseClient &rArr; lwip_recv &rArr; lwip_recvfrom &rArr; netconn_recv &rArr; netconn_recv_data &rArr; netconn_close_shutdown &rArr; netconn_apimsg &rArr; tcpip_send_msg_wait_sem &rArr; sys_mutex_lock &rArr; osMutexWait &rArr; xQueueGenericReceive &rArr; vTaskPlaceOnEventList &rArr; prvAddCurrentTaskToDelayedList &rArr; vListInsert
+<P><STRONG><a name="[2bc]"></a>prvvMBPortReleaseClient</STRONG> (Thumb, 18 bytes, Stack size 8 bytes, porttcp.o(i.prvvMBPortReleaseClient))
+<BR><BR>[Stack]<UL><LI>Max Depth = 272<LI>Call Chain = prvvMBPortReleaseClient &rArr; lwip_close &rArr; free_socket &rArr; netbuf_delete &rArr; pbuf_free &rArr; memp_free &rArr; do_memp_free_pool &rArr; sys_arch_protect &rArr; osMutexWait &rArr; xQueueGenericReceive &rArr; vTaskPlaceOnEventList &rArr; prvAddCurrentTaskToDelayedList &rArr; vListInsert
 </UL>
-<BR>[Calls]<UL><LI><a href="#[255]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwip_recv
-<LI><a href="#[235]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwip_close
+<BR>[Calls]<UL><LI><a href="#[235]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwip_close
 </UL>
-<BR>[Called By]<UL><LI><a href="#[1f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xMBTCPPortSendResponse
+<BR>[Called By]<UL><LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xMBTCPPort_HandlingTask
+<LI><a href="#[1f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xMBTCPPortSendResponse
 <LI><a href="#[1f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vMBTCPPortDisable
 </UL>
 
