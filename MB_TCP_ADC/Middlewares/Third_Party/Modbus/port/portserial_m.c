@@ -20,7 +20,7 @@
  */
 
 #include "port.h"
-
+#include "main.h"
 /* ----------------------- Modbus includes ----------------------------------*/
 #include "mb.h"
 #include "mbport.h"
@@ -33,16 +33,10 @@ extern UART_HandleTypeDef huart1;
 
 
 /* ----------------------- Defines ------------------------------------------*/
-/* serial transmit event */
-#define EVENT_SERIAL_TRANS_START    (1<<0)
-
-/* ----------------------- static functions ---------------------------------*/
-//static void prvvUARTTxReadyISR(void);
-//static void prvvUARTRxISR(void);
-//static rt_err_t serial_rx_ind(rt_device_t dev, rt_size_t size);
-//static void serial_soft_trans_irq(void* parameter);
 
 /* ----------------------- Start implementation -----------------------------*/
+#define TIMEOUT_BIT_NUM		32
+
 BOOL xMBMasterPortSerialInit(UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits,
         eMBParity eParity)
 {
@@ -56,46 +50,23 @@ BOOL xMBMasterPortSerialInit(UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits,
   huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
   huart1.Init.OverSampling = UART_OVERSAMPLING_16;
   HAL_UART_Init(&huart1);
+	
+	SET_BIT(huart1.Instance->CR1, USART_CR1_RTOIE);//timeout 3.5
+	SET_BIT(huart1.Instance->CR2, USART_CR2_RTOEN);
+	WRITE_REG(huart1.Instance->RTOR,TIMEOUT_BIT_NUM);
+	
+	__HAL_UART_DISABLE_IT(&huart1, UART_IT_RXNE);
+	__HAL_UART_DISABLE_IT(&huart1, UART_IT_TXE);
+	
+	GPIO_InitTypeDef GPIO_InitStruct;
+	GPIO_InitStruct.Pin = DATALED_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(DATALED_GPIO_Port, &GPIO_InitStruct);
+	
   return TRUE;
 		
-}
-
-void vMBMasterPortSerialEnable(BOOL xRxEnable, BOOL xTxEnable)
-{
-	if(TRUE==xRxEnable)
-	{
-			__HAL_UART_ENABLE_IT(&huart1, UART_IT_RXNE);
-	}
-	else
-	{
-			__HAL_UART_DISABLE_IT(&huart1, UART_IT_RXNE);
-	}
-
-	if(TRUE==xTxEnable)
-	{
-			__HAL_UART_ENABLE_IT(&huart1, UART_IT_TXE);
-	}
-	else
-	{
-			__HAL_UART_DISABLE_IT(&huart1, UART_IT_TXE);
-	}
-}
-
-void vMBMasterPortClose(void)
-{
-
-}
-
-BOOL xMBMasterPortSerialPutByte(CHAR ucByte)
-{
-		huart1.Instance->TDR=ucByte;
-	  return TRUE;
-}
-
-BOOL xMBMasterPortSerialGetByte(CHAR * pucByte)
-{
-		*pucByte=huart1.Instance->RDR;
-    return TRUE;
 }
 
 
@@ -104,19 +75,35 @@ BOOL UART_IRQ_Handler(USART_TypeDef * usart)
 {
 	if (usart == huart1.Instance) 
 	{
-		if((__HAL_UART_GET_FLAG(&huart1, UART_FLAG_RXNE) != RESET) && (__HAL_UART_GET_IT_SOURCE(&huart1, UART_IT_RXNE) != RESET)) 
+//		if((__HAL_UART_GET_FLAG(&huart1, UART_FLAG_RXNE) != RESET) && (__HAL_UART_GET_IT_SOURCE(&huart1, UART_IT_RXNE) != RESET)) 
+//		{
+//			//pxMBMasterFrameCBByteReceived();
+//			return TRUE;
+//		}
+//		
+//		if((__HAL_UART_GET_FLAG(&huart1, UART_FLAG_TXE) != RESET) &&(__HAL_UART_GET_IT_SOURCE(&huart1, UART_IT_TXE) != RESET)) 
+//		{
+//			//pxMBMasterFrameCBTransmitterEmpty();
+//			return TRUE;
+//		}
+		
+		if((__HAL_UART_GET_FLAG(&huart1, UART_FLAG_RTOF) != RESET)) 
 		{
+			SET_BIT(huart1.Instance->ICR, USART_ICR_RTOCF);//clear timeout flag
 			pxMBMasterFrameCBByteReceived();
-			//__HAL_UART_SEND_REQ(&huart1, UART_RXDATA_FLUSH_REQUEST);
-			return TRUE;
-		}
-		if((__HAL_UART_GET_FLAG(&huart1, UART_FLAG_TXE) != RESET) &&(__HAL_UART_GET_IT_SOURCE(&huart1, UART_IT_TXE) != RESET)) 
-		{
-			pxMBMasterFrameCBTransmitterEmpty();
+			HAL_GPIO_TogglePin(DATALED_GPIO_Port,DATALED_Pin);
 			return TRUE;
 		}
 	}
 	return FALSE;
+}
+
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+	if(huart->Instance==USART1)
+	{
+			pxMBMasterFrameCBTransmitterEmpty();
+	}
 }
 
 #endif

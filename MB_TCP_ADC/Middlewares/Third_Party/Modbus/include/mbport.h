@@ -185,13 +185,13 @@ BOOL            xMBMasterPortSerialInit( UCHAR ucPort, ULONG ulBaudRate,
 
 void            vMBMasterPortClose( void );
 
-void            xMBMasterPortSerialClose( void );
+//void            xMBMasterPortSerialClose( void );
 
-void            vMBMasterPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable );
+//void            vMBMasterPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable );
 
-INLINE BOOL     xMBMasterPortSerialGetByte( CHAR * pucByte );
+//INLINE BOOL     xMBMasterPortSerialGetByte( CHAR * pucByte );
 
-INLINE BOOL     xMBMasterPortSerialPutByte( CHAR ucByte );
+//INLINE BOOL     xMBMasterPortSerialPutByte( CHAR ucByte );
 
 /* ----------------------- Timers functions ---------------------------------*/
 BOOL            xMBPortTimersInit( USHORT usTimeOut50us );

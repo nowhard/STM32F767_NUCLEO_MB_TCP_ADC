@@ -65,43 +65,6 @@ static BOOL xMBMasterEventGetMasked(eMBMasterEventType * eEvent, uint16_t eventM
 BOOL
 xMBMasterPortEventGet( eMBMasterEventType * eEvent )
 {
-//    uint32_t recvedEvent;
-////    /* waiting forever OS event */
-////    rt_event_recv(&xMasterOsEvent,
-////            EV_MASTER_READY | EV_MASTER_FRAME_RECEIVED | EV_MASTER_EXECUTE |
-////            EV_MASTER_FRAME_SENT | EV_MASTER_ERROR_PROCESS,
-////            RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR, RT_WAITING_FOREVER,
-////            &recvedEvent);
-//    /* the enum type couldn't convert to int type */
-//    switch (recvedEvent)
-//    {
-//    case EV_MASTER_READY:
-//        *eEvent = EV_MASTER_READY;
-//        break;
-//    case EV_MASTER_FRAME_RECEIVED:
-//        *eEvent = EV_MASTER_FRAME_RECEIVED;
-//        break;
-//    case EV_MASTER_EXECUTE:
-//        *eEvent = EV_MASTER_EXECUTE;
-//        break;
-//    case EV_MASTER_FRAME_SENT:
-//        *eEvent = EV_MASTER_FRAME_SENT;
-//        break;
-//    case EV_MASTER_ERROR_PROCESS:
-//        *eEvent = EV_MASTER_ERROR_PROCESS;
-//        break;
-//    }
-//    return TRUE;
-
-//    BOOL            xEventHappened = FALSE;
-
-//    if( xEventInQueue )
-//    {
-//        *eEvent = eQueuedEvent;
-//        xEventInQueue = FALSE;
-//        xEventHappened = TRUE;
-//    }
-//    return xEventHappened;
 	return xMBMasterEventGetMasked(eEvent,EV_MASTER_READY | EV_MASTER_FRAME_RECEIVED | EV_MASTER_EXECUTE | EV_MASTER_FRAME_SENT | EV_MASTER_ERROR_PROCESS);
 }
 /**
@@ -111,7 +74,7 @@ xMBMasterPortEventGet( eMBMasterEventType * eEvent )
  */
 void vMBMasterOsResInit( void )
 {
-//    rt_sem_init(&xMasterRunRes, "master res", 0x01 , RT_IPC_FLAG_PRIO);
+
 }
 
 /**

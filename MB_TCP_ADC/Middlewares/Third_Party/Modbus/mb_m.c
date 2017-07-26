@@ -150,9 +150,9 @@ eMBMasterInit( eMBMode eMode, UCHAR ucPort, ULONG ulBaudRate, eMBParity eParity 
 		peMBMasterFrameSendCur = eMBMasterRTUSend;
 		peMBMasterFrameReceiveCur = eMBMasterRTUReceive;
 		pvMBMasterFrameCloseCur = MB_PORT_HAS_CLOSE ? vMBMasterPortClose : NULL;
-		pxMBMasterFrameCBByteReceived = xMBMasterRTUReceiveFSM;
-		pxMBMasterFrameCBTransmitterEmpty = xMBMasterRTUTransmitFSM;
-		pxMBMasterPortCBTimerExpired = xMBMasterRTUTimerExpired;
+		pxMBMasterFrameCBByteReceived = xMBMasterRTUReceiveDone;//xMBMasterRTUReceiveFSM;
+		pxMBMasterFrameCBTransmitterEmpty = xMBMasterRTUTransmitDone;//xMBMasterRTUTransmitFSM;
+		pxMBMasterPortCBTimerExpired = xMBMasterRTUTimerConvDelayExpired;//xMBMasterRTUTimerExpired;
 
 		eStatus = eMBMasterRTUInit(ucPort, ulBaudRate, eParity);
 		break;
@@ -344,7 +344,8 @@ eMBMasterPoll( void )
         case EV_MASTER_FRAME_SENT:
         	/* Master is busy now. */
         	vMBMasterGetPDUSndBuf( &ucMBFrame );
-			eStatus = peMBMasterFrameSendCur( ucMBMasterGetDestAddress(), ucMBFrame, usMBMasterGetPDUSndLength() );
+					eStatus = peMBMasterFrameSendCur( ucMBMasterGetDestAddress(), ucMBFrame, usMBMasterGetPDUSndLength() );
+				
             break;
 
         case EV_MASTER_ERROR_PROCESS:
