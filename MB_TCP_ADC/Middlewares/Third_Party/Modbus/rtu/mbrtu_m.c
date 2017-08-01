@@ -157,6 +157,7 @@ eMBMasterRTUSend( UCHAR ucSlaveAddress, const UCHAR * pucFrame, USHORT usLength 
 		ucMasterRTUSndBuf[usMasterSndBufferCount++] = ( UCHAR )( usCRC16 & 0xFF );
 		ucMasterRTUSndBuf[usMasterSndBufferCount++] = ( UCHAR )( usCRC16 >> 8 );
 	
+		HAL_UART_Receive_DMA(&huart1,(uint8_t*)ucMasterRTURcvBuf,MB_SER_PDU_SIZE_MAX);
 		HAL_UART_Transmit_DMA(&huart1,(uint8_t*)ucMasterRTUSndBuf,usMasterSndBufferCount);
 		//	HAL_UART_Transmit_IT(&huart1,(uint8_t*)ucMasterRTUSndBuf,usMasterSndBufferCount);
     return eStatus;
@@ -192,7 +193,7 @@ BOOL
 xMBMasterRTUTransmitDone( void )
 {
 		xFrameIsBroadcast = ( ucMasterRTUSndBuf[MB_SER_PDU_ADDR_OFF] == MB_ADDRESS_BROADCAST ) ? TRUE : FALSE;
-		HAL_UART_Receive_DMA(&huart1,(uint8_t*)ucMasterRTURcvBuf,MB_SER_PDU_SIZE_MAX);
+//		HAL_UART_Receive_DMA(&huart1,(uint8_t*)ucMasterRTURcvBuf,MB_SER_PDU_SIZE_MAX);
 		
 	
 	

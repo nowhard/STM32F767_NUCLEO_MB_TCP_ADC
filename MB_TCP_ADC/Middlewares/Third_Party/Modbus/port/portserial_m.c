@@ -58,12 +58,7 @@ BOOL xMBMasterPortSerialInit(UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits,
 	__HAL_UART_DISABLE_IT(&huart1, UART_IT_RXNE);
 	__HAL_UART_DISABLE_IT(&huart1, UART_IT_TXE);
 	
-	GPIO_InitTypeDef GPIO_InitStruct;
-	GPIO_InitStruct.Pin = DATALED_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-  HAL_GPIO_Init(DATALED_GPIO_Port, &GPIO_InitStruct);
+
 	
   return TRUE;
 		
@@ -91,7 +86,6 @@ BOOL UART_IRQ_Handler(USART_TypeDef * usart)
 		{
 			SET_BIT(huart1.Instance->ICR, USART_ICR_RTOCF);//clear timeout flag
 			pxMBMasterFrameCBByteReceived();
-			HAL_GPIO_TogglePin(DATALED_GPIO_Port,DATALED_Pin);
 			return TRUE;
 		}
 	}
