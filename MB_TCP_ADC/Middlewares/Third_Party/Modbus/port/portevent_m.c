@@ -211,7 +211,10 @@ eMBMasterReqErrCode eMBMasterWaitRequestFinish( void ) {
 //            RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR, RT_WAITING_FOREVER,
 //            &recvedEvent);
 	
-		while(xMBMasterEventGetMasked( &recvedEvent,EV_MASTER_PROCESS_SUCESS | EV_MASTER_ERROR_RESPOND_TIMEOUT | EV_MASTER_ERROR_RECEIVE_DATA | EV_MASTER_ERROR_EXECUTE_FUNCTION)==FALSE);
+		while(xMBMasterEventGetMasked( &recvedEvent,EV_MASTER_PROCESS_SUCESS | EV_MASTER_ERROR_RESPOND_TIMEOUT | EV_MASTER_ERROR_RECEIVE_DATA | EV_MASTER_ERROR_EXECUTE_FUNCTION)==FALSE)
+		{
+				taskYIELD();
+		}
 
     switch (recvedEvent)
     {

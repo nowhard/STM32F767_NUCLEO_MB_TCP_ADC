@@ -74,26 +74,13 @@
 /* USER CODE END 1 */
 
 /* Private variables ---------------------------------------------------------*/
-#if defined ( __ICCARM__ ) /*!< IAR Compiler */
-  #pragma data_alignment=4   
-#endif
-__ALIGN_BEGIN ETH_DMADescTypeDef  DMARxDscrTab[ETH_RXBUFNB] __ALIGN_END;/* Ethernet Rx MA Descriptor */
+ETH_DMADescTypeDef  DMARxDscrTab[ETH_RXBUFNB] __attribute__((at(0x20020000)));/* Ethernet Rx DMA Descriptors */
 
-#if defined ( __ICCARM__ ) /*!< IAR Compiler */
-  #pragma data_alignment=4   
-#endif
-__ALIGN_BEGIN ETH_DMADescTypeDef  DMATxDscrTab[ETH_TXBUFNB] __ALIGN_END;/* Ethernet Tx DMA Descriptor */
+ETH_DMADescTypeDef  DMATxDscrTab[ETH_TXBUFNB] __attribute__((at(0x20020080)));/* Ethernet Tx DMA Descriptors */
 
-#if defined ( __ICCARM__ ) /*!< IAR Compiler */
-  #pragma data_alignment=4   
-#endif
-__ALIGN_BEGIN uint8_t Rx_Buff[ETH_RXBUFNB][ETH_RX_BUF_SIZE] __ALIGN_END; /* Ethernet Receive Buffer */
+uint8_t Rx_Buff[ETH_RXBUFNB][ETH_RX_BUF_SIZE] __attribute__((at(0x2007C000))); /* Ethernet Receive Buffers */
 
-#if defined ( __ICCARM__ ) /*!< IAR Compiler */
-  #pragma data_alignment=4   
-#endif
-__ALIGN_BEGIN uint8_t Tx_Buff[ETH_TXBUFNB][ETH_TX_BUF_SIZE] __ALIGN_END; /* Ethernet Transmit Buffer */
-
+uint8_t Tx_Buff[ETH_TXBUFNB][ETH_TX_BUF_SIZE] __attribute__((at(0x2007D7D0))); /* Ethernet Transmit Buffers */
 /* USER CODE BEGIN 2 */
 
 /* USER CODE END 2 */

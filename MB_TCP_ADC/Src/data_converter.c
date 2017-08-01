@@ -212,7 +212,8 @@ void ADC_ConvertBuf(uint8_t *dcmiBuf,uint16_t dcmiBufLen, uint16_t *spiBuf_1, ui
 		
 			dcmiBuf+=16;
 
-			resultBuf+=ANALOG_CHN_NUM;			
+			resultBuf+=ANALOG_CHN_NUM;	
+				
 	}
 	
 	*resultBufLen=cycle_count*ANALOG_CHN_NUM;

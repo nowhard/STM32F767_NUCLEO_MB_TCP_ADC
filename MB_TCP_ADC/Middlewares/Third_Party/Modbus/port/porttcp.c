@@ -12,7 +12,7 @@
 #include "task.h"
 #include "semphr.h"
 
-#define PTCP_DEBUG
+//#define PTCP_DEBUG
 
 #ifdef PTCP_DEBUG
 #define PTCP_DEBUG_PRINT(fmt, args...)    printf(fmt, ## args)

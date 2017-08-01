@@ -96,7 +96,7 @@ typedef enum
 #define MB_TCP_READ_TIMEOUT 1000        /* Maximum timeout to wait for packets. */
 #define MB_TCP_READ_CYCLE   100 /* Time between checking for new data. */
 
-#define MB_TCP_DEBUG        1   /* Set to 1 for additional debug output. */
+#define MB_TCP_DEBUG        0   /* Set to 1 for additional debug output. */
 
 //#define MB_TCP_BUF_SIZE     ( 256 + 7 ) /* Must hold a complete Modbus TCP frame. */
 

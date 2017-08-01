@@ -384,5 +384,9 @@ eMBPoll(stMBContext *stContext)
             break;
         }
     }
+		else
+		{
+				taskYIELD();
+		}
     return MB_ENOERR;
 }

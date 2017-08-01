@@ -42,13 +42,6 @@ extern SemaphoreHandle_t xAdcBuf_Send_Semaphore;
 
 void UDP_Send_Task( void *pvParameters );
 
-#define TEST_BUF_LEN			6000
-#define TEST_CHANNEL_NUM	6
-float test_buf[TEST_BUF_LEN];
-
-void Set_TestBuf(float *buf, uint16_t buf_len, uint8_t chn_num);
-
-
 
 #pragma pack(push,1)
 typedef struct
@@ -101,14 +94,9 @@ void udp_client_init(void)
 	ra.sin_addr.s_addr = DestIPaddr.addr;
 	ra.sin_port = htons(configInfo.IPAdress_Server.port);
 
-
-//	Set_TestBuf(test_buf,TEST_BUF_LEN,TEST_CHANNEL_NUM);
   xTaskCreate( UDP_Send_Task, "UDP Task", 1024, NULL, 4, NULL );
 }
 
-//test
-uint32_t udp_send_counter=0;
-//test
 
 void udp_client_send_buf(float *buf, uint16_t bufSize)
 {
@@ -117,7 +105,7 @@ void udp_client_send_buf(float *buf, uint16_t bufSize)
 		
 		UDPPacket.id=0;
 		UDPPacket.timestamp=DCMI_ADC_GetLastTimestamp();
-		udp_send_counter++;
+
 
 		while(adc_buf_offset<(bufSize*sizeof(float)))
 		{
@@ -132,41 +120,12 @@ void udp_client_send_buf(float *buf, uint16_t bufSize)
 void UDP_Send_Task( void *pvParameters )
 {
 	uint16_t result_buf_len=0;
-	//printf("UDP Send Task started");
 	while(1)
 	{
 		xSemaphoreTake( xAdcBuf_Send_Semaphore, portMAX_DELAY );
 		ADC_ConvertBuf(ADC_buf_pnt,(ADC_BUF_LEN>>1),currentSPI6_ADC_Buf,currentSPI3_ADC_Buf,(SPI_ADC_BUF_LEN>>1),ADC_resultBuf, &result_buf_len);
 		udp_client_send_buf(ADC_resultBuf,result_buf_len);
-//		Set_TestBuf(ADC_resultBuf,TEST_BUF_LEN,TEST_CHANNEL_NUM);
-//		
-//		udp_client_send_buf(ADC_resultBuf,TEST_BUF_LEN);
 	}
 }
 
-
-#define SIGNAL_VALUE_MAX 50000.0
-#define SIGNAL_VALUE_INCREMENT 0.1
-void Set_TestBuf(float *buf, uint16_t buf_len, uint8_t chn_num)
-{
-	uint16_t buf_index=0;
-	uint8_t chn_index=0;
-	
-	static float signal_value=0.0;
-
-	for(buf_index=0;buf_index<buf_len;buf_index+=chn_num)
-	{
-		signal_value+=SIGNAL_VALUE_INCREMENT;
-		
-		if(signal_value>=SIGNAL_VALUE_MAX)
-		{
-				signal_value=0.1;
-		}
-		
-		for(chn_index=0;chn_index<chn_num;chn_index++)
-		{
-				buf[buf_index+chn_index]=signal_value;
-		}
-	}
-}
 

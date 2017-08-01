@@ -44,6 +44,9 @@
 #include "mbproto.h"
 #include "mbfunc.h"
 
+#include "FreeRTOS.h"
+#include "task.h"
+
 #include "mbport.h"
 #if MB_MASTER_RTU_ENABLED == 1
 #include "mbrtu.h"
@@ -370,6 +373,10 @@ eMBMasterPoll( void )
         	break;
         }
     }
+		else
+		{
+			 taskYIELD();
+		}
     return MB_ENOERR;
 }
 
