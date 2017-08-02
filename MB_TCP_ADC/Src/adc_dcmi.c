@@ -20,7 +20,7 @@ extern TIM_HandleTypeDef htim5;
 
 
 #define RX_BUFF_SIZE	ADC_BUF_LEN
-__IO uint8_t DCMIAdcRxBuff[RX_BUFF_SIZE];
+__IO uint8_t DCMIAdcRxBuff[RX_BUFF_SIZE];//__attribute__((at(0x20008000)));
 
 
 uint8_t *ADC_buf_pnt;
@@ -77,8 +77,17 @@ void DCMI_ADC_SetSamplerate(enADCSamplerate sampleRate)
 	
 	switch(sampleRate)
 	{
+		case ADC_SAMPLERATE_1KHz:
+		{
+				htim2.Init.Prescaler = 10;
+				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_1KHz;
+				period=(uint16_t)((108000000/10000)-1);
+		}
+		break;
+		
 		case ADC_SAMPLERATE_10KHz:
 		{
+				htim2.Init.Prescaler = 0;
 				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_10KHz;
 				period=(uint16_t)((108000000/10000)-1);
 		}
@@ -86,13 +95,15 @@ void DCMI_ADC_SetSamplerate(enADCSamplerate sampleRate)
 		
 		case ADC_SAMPLERATE_20KHz:
 		{
-				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_20KHz;
+			htim2.Init.Prescaler = 0;
+			configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_20KHz;
 			period=(uint16_t)((108000000/20000)-1);
 		}
 		break;
 
 		case ADC_SAMPLERATE_50KHz:
 		{
+				htim2.Init.Prescaler = 0;
 				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_50KHz;
 				period=(uint16_t)((108000000/50000)-1);
 		}
@@ -100,6 +111,7 @@ void DCMI_ADC_SetSamplerate(enADCSamplerate sampleRate)
 
 		case ADC_SAMPLERATE_100KHz:
 		{
+				htim2.Init.Prescaler = 0;
 				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_100KHz;
 				period=(uint16_t)((108000000/100000)-1);
 		}
@@ -107,13 +119,14 @@ void DCMI_ADC_SetSamplerate(enADCSamplerate sampleRate)
 		
 		default:
 		{
+				htim2.Init.Prescaler = 0;
 				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_100KHz;
 				period=(uint16_t)((108000000/100000)-1);
 		}
 	}
 	
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 0;
+//  htim2.Init.Prescaler = 0;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim2.Init.Period = period;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;

@@ -94,7 +94,7 @@ void udp_client_init(void)
 	ra.sin_addr.s_addr = DestIPaddr.addr;
 	ra.sin_port = htons(configInfo.IPAdress_Server.port);
 
-  xTaskCreate( UDP_Send_Task, "UDP Task", 1024, NULL, 4, NULL );
+  xTaskCreate( UDP_Send_Task, "UDP Task", 1024, NULL, 3, NULL );
 }
 
 

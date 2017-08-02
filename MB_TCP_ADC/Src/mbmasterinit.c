@@ -80,7 +80,7 @@ void MBMaster_RTU_Poll(void *pvParameters)
 //			errorCode = eMBMasterReqReadHoldingRegister(SLAVE_PYRO_SQUIB_ADDR,M_REG_HOLDING_START,M_REG_HOLDING_NREGS,SLAVE_PYRO_SQUIB_TIMEOUT);	
 //			HAL_GPIO_TogglePin(DATALED_GPIO_Port,DATALED_Pin);	
 
-		 //vTaskDelayUntil( &xLastWakeTime, 1 );
+		vTaskDelayUntil( &xLastWakeTime, 1 );
 	}
 }
 

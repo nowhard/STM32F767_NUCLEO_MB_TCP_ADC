@@ -2,6 +2,8 @@
 #include "data_converter.h"
 #include "spi_adc.h"
 #include "cfg_info.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
 #pragma anon_unions
 
@@ -213,7 +215,6 @@ void ADC_ConvertBuf(uint8_t *dcmiBuf,uint16_t dcmiBufLen, uint16_t *spiBuf_1, ui
 			dcmiBuf+=16;
 
 			resultBuf+=ANALOG_CHN_NUM;	
-				
 	}
 	
 	*resultBufLen=cycle_count*ANALOG_CHN_NUM;
