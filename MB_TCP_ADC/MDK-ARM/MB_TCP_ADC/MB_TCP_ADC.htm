@@ -3,7 +3,7 @@
 <title>Static Call Graph - [MB_TCP_ADC\MB_TCP_ADC.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image MB_TCP_ADC\MB_TCP_ADC.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060061: Last Updated: Wed Aug 02 14:31:56 2017
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060061: Last Updated: Wed Aug 02 16:40:54 2017
 <BR><P>
 <H3>Maximum Stack Usage =        632 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -2132,7 +2132,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> mb_m.o(.data)
 </UL>
 <P><STRONG><a name="[b]"></a>eMBMasterFuncReadHoldingRegister</STRONG> (Thumb, 86 bytes, Stack size 24 bytes, mbfuncholding_m.o(i.eMBMasterFuncReadHoldingRegister))
-<BR><BR>[Stack]<UL><LI>Max Depth = 36<LI>Call Chain = eMBMasterFuncReadHoldingRegister &rArr; eMBMasterRegHoldingCB
+<BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = eMBMasterFuncReadHoldingRegister &rArr; eMBMasterRegHoldingCB
 </UL>
 <BR>[Calls]<UL><LI><a href="#[19c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prveMBError2Exception
 <LI><a href="#[1a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBMasterRegHoldingCB
@@ -2152,7 +2152,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> mb_m.o(.data)
 </UL>
 <P><STRONG><a name="[e]"></a>eMBMasterFuncReadWriteMultipleHoldingRegister</STRONG> (Thumb, 130 bytes, Stack size 32 bytes, mbfuncholding_m.o(i.eMBMasterFuncReadWriteMultipleHoldingRegister))
-<BR><BR>[Stack]<UL><LI>Max Depth = 44<LI>Call Chain = eMBMasterFuncReadWriteMultipleHoldingRegister &rArr; eMBMasterRegHoldingCB
+<BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = eMBMasterFuncReadWriteMultipleHoldingRegister &rArr; eMBMasterRegHoldingCB
 </UL>
 <BR>[Calls]<UL><LI><a href="#[19c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prveMBError2Exception
 <LI><a href="#[1a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBMasterRegHoldingCB
@@ -2170,7 +2170,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> mb_m.o(.data)
 </UL>
 <P><STRONG><a name="[d]"></a>eMBMasterFuncWriteHoldingRegister</STRONG> (Thumb, 52 bytes, Stack size 8 bytes, mbfuncholding_m.o(i.eMBMasterFuncWriteHoldingRegister))
-<BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = eMBMasterFuncWriteHoldingRegister &rArr; eMBMasterRegHoldingCB
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = eMBMasterFuncWriteHoldingRegister &rArr; eMBMasterRegHoldingCB
 </UL>
 <BR>[Calls]<UL><LI><a href="#[19c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prveMBError2Exception
 <LI><a href="#[1a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBMasterRegHoldingCB
@@ -2188,7 +2188,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> mb_m.o(.data)
 </UL>
 <P><STRONG><a name="[c]"></a>eMBMasterFuncWriteMultipleHoldingRegister</STRONG> (Thumb, 90 bytes, Stack size 16 bytes, mbfuncholding_m.o(i.eMBMasterFuncWriteMultipleHoldingRegister))
-<BR><BR>[Stack]<UL><LI>Max Depth = 28<LI>Call Chain = eMBMasterFuncWriteMultipleHoldingRegister &rArr; eMBMasterRegHoldingCB
+<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = eMBMasterFuncWriteMultipleHoldingRegister &rArr; eMBMasterRegHoldingCB
 </UL>
 <BR>[Calls]<UL><LI><a href="#[19c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prveMBError2Exception
 <LI><a href="#[1a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBMasterRegHoldingCB
@@ -2277,8 +2277,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[12]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBMasterFuncReadDiscreteInputs
 </UL>
 
-<P><STRONG><a name="[1a4]"></a>eMBMasterRegHoldingCB</STRONG> (Thumb, 158 bytes, Stack size 12 bytes, mb_master_user.o(i.eMBMasterRegHoldingCB))
-<BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = eMBMasterRegHoldingCB
+<P><STRONG><a name="[1a4]"></a>eMBMasterRegHoldingCB</STRONG> (Thumb, 158 bytes, Stack size 8 bytes, mb_master_user.o(i.eMBMasterRegHoldingCB))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = eMBMasterRegHoldingCB
 </UL>
 <BR>[Called By]<UL><LI><a href="#[c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBMasterFuncWriteMultipleHoldingRegister
 <LI><a href="#[d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBMasterFuncWriteHoldingRegister
@@ -2358,7 +2358,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBFuncReadDiscreteInputs
 </UL>
 
-<P><STRONG><a name="[19e]"></a>eMBRegHoldingCB</STRONG> (Thumb, 1718 bytes, Stack size 40 bytes, mbfunc.o(i.eMBRegHoldingCB))
+<P><STRONG><a name="[19e]"></a>eMBRegHoldingCB</STRONG> (Thumb, 1706 bytes, Stack size 40 bytes, mbfunc.o(i.eMBRegHoldingCB))
 <BR><BR>[Stack]<UL><LI>Max Depth = 176<LI>Call Chain = eMBRegHoldingCB &rArr; StartConfigInfoWrite &rArr; xTaskCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll
 </UL>
 <BR>[Calls]<UL><LI><a href="#[f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend

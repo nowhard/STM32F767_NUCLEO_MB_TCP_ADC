@@ -35,7 +35,7 @@
 #define M_REG_INPUT_START             1000
 #define M_REG_INPUT_NREGS             20//16
 #define M_REG_HOLDING_START           2000
-#define M_REG_HOLDING_NREGS           6
+#define M_REG_HOLDING_NREGS           16
 /* master mode: holding register's all address */
 #define          M_HD_RESERVE                     0
 /* master mode: input register's all address */
