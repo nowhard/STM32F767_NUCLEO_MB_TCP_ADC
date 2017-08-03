@@ -65,7 +65,14 @@ void MBMaster_RTU_Poll(void *pvParameters)
 	{		
 		if(xSemaphoreTake( xSendRTURegSem, ( TickType_t )0 )==TRUE)
 		{
-				errorCode = eMBMasterReqWriteHoldingRegister(SLAVE_PYRO_SQUIB_ADDR,TCPtoRTURegWrite.regAddr,TCPtoRTURegWrite.regBuf[0],SLAVE_PYRO_SQUIB_TIMEOUT);
+				if(TCPtoRTURegWrite.nRegs==1)
+				{
+						errorCode = eMBMasterReqWriteHoldingRegister(SLAVE_PYRO_SQUIB_ADDR,TCPtoRTURegWrite.regAddr,TCPtoRTURegWrite.regBuf[0],SLAVE_PYRO_SQUIB_TIMEOUT);
+				}
+				else if(TCPtoRTURegWrite.nRegs==2)
+				{
+						errorCode = eMBMasterReqWriteMultipleHoldingRegister(SLAVE_PYRO_SQUIB_ADDR,TCPtoRTURegWrite.regAddr,TCPtoRTURegWrite.nRegs,&TCPtoRTURegWrite.regBuf[0],SLAVE_PYRO_SQUIB_TIMEOUT);
+				}
 		}
 
 		errorCode = eMBMasterReqReadInputRegister(SLAVE_PYRO_SQUIB_ADDR,M_REG_INPUT_START,M_REG_INPUT_NREGS,SLAVE_PYRO_SQUIB_TIMEOUT);

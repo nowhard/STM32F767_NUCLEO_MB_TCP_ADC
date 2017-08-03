@@ -35,14 +35,17 @@
 #define ADC_PYRO_SQUIB_6						28
 #define ADC_PYRO_SQUIB_7						30
 
-//--------FAULT SIGNALS-----------
-#define FAULT_OUT_1_SIG							31
-#define FAULT_OUT_7_SIG							32
+#define PYRO_SQUIB_PIR_STATE				32
+#define PYRO_SQUIB_PIR_ERROR				33
 
-#define FAULT_250A_SIG							33
-#define FAULT_150A_SIG							34
-#define FAULT_75A_SIG								35
-#define FAULT_7_5A_SIG							36
+//--------FAULT SIGNALS-----------
+#define FAULT_OUT_1_SIG							34
+#define FAULT_OUT_7_SIG							35
+
+#define FAULT_250A_SIG							36
+#define FAULT_150A_SIG							37
+#define FAULT_75A_SIG								38
+#define FAULT_7_5A_SIG							39
 
 /* ----------------------- Static variables ---------------------------------*/
 static USHORT   usRegInputStart = REG_INPUT_START;
@@ -91,7 +94,7 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 			*((float*)&usRegInputBuf[ADC_CHANNEL_5_RESULT])=ChnCalibrValues.val_voltage_2;
 			*((uint64_t*)&usRegInputBuf[TIMESTAMP_CURRENT])=DCMI_ADC_GetLastTimestamp();
 			
-			memcpy((void *)&usRegInputBuf[ADC_PYRO_SQUIB_0],(const void*)&usMRegInBuf[0][0],M_REG_INPUT_NREGS);
+			memcpy((void *)&usRegInputBuf[ADC_PYRO_SQUIB_0],(const void*)&usMRegInBuf[0][0],M_REG_INPUT_NREGS*sizeof(uint16_t));
 			
 			usRegInputBuf[FAULT_OUT_1_SIG]=HAL_GPIO_ReadPin(FAULT_OUT_1_GPIO_Port,FAULT_OUT_1_Pin);
 			usRegInputBuf[FAULT_OUT_7_SIG]=HAL_GPIO_ReadPin(FAULT_OUT_7_GPIO_Port,FAULT_OUT_7_Pin);
@@ -167,22 +170,17 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 #define DEV_ENABLE_AIR				47
 //--------SYNC DEV REGS--------------------
 #define DEV_RESET_TIMESTAMP		48
-#define DEV_RESET_CONTROLLER	61
+#define DEV_RESET_CONTROLLER	49
 //--------REGS STM32F100DISCOVERY----------
-#define PIR_EN_PYRO_SQUIB_0		49
-#define PIR_EN_PYRO_SQUIB_1		50
-#define PIR_EN_PYRO_SQUIB_2		51
-#define PIR_EN_PYRO_SQUIB_3		52
-#define PIR_EN_PYRO_SQUIB_4		53
-#define PIR_EN_PYRO_SQUIB_5		54
-#define PIR_EN_PYRO_SQUIB_6		55
-#define PIR_EN_PYRO_SQUIB_7		56
 
-//--DIGITAL POTENTIOMETERS-----------------
-#define PIR_SET_POT1			57
-#define PIR_SET_POT2			58
-#define PIR_SET_POT3			59
-#define PIR_SET_POT4			60
+#define PYRO_SQUIB_PIR_SET_TIME					50
+#define PYRO_SQUIB_PIR_1_SET_CURRENT		51
+#define PYRO_SQUIB_PIR_2_SET_CURRENT		53
+#define PYRO_SQUIB_PIR_3_SET_CURRENT		55
+#define PYRO_SQUIB_PIR_4_SET_CURRENT		57
+#define PYRO_SQUIB_PIR_SET_MASK					59
+#define PYRO_SQUIB_PIR_START						60
+
 
 extern uint16_t outputs_temp_reg_0;
 extern uint16_t outputs_temp_reg_1;
@@ -200,485 +198,457 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
     if( ( usAddress >= REG_HOLDING_START ) &&
         ( usAddress + usNRegs <= REG_HOLDING_START + REG_HOLDING_NREGS ) )
     {
-        iRegIndex = ( int )( usAddress - usRegHoldingStart );
+       
+				iRegIndex = ( int )( usAddress - usRegHoldingStart );
+			
         switch ( eMode )
         {
             /* Pass current register values to the protocol stack. */
-        case MB_REG_READ:
-        {
-        	usRegHoldingBuf[SERVER_IP_REG_0]=configInfo.IPAdress_Server.ip_addr_0;
-        	usRegHoldingBuf[SERVER_IP_REG_1]=configInfo.IPAdress_Server.ip_addr_1;
-        	usRegHoldingBuf[SERVER_IP_REG_2]=configInfo.IPAdress_Server.ip_addr_2;
-        	usRegHoldingBuf[SERVER_IP_REG_3]=configInfo.IPAdress_Server.ip_addr_3;
+					
+					//-----------case READ-----------------------------------------------------
+							case MB_REG_READ:
+							{
+								usRegHoldingBuf[SERVER_IP_REG_0]=configInfo.IPAdress_Server.ip_addr_0;
+								usRegHoldingBuf[SERVER_IP_REG_1]=configInfo.IPAdress_Server.ip_addr_1;
+								usRegHoldingBuf[SERVER_IP_REG_2]=configInfo.IPAdress_Server.ip_addr_2;
+								usRegHoldingBuf[SERVER_IP_REG_3]=configInfo.IPAdress_Server.ip_addr_3;
 
-        	usRegHoldingBuf[SERVER_PORT_REG_0]=configInfo.IPAdress_Server.port;
+								usRegHoldingBuf[SERVER_PORT_REG_0]=configInfo.IPAdress_Server.port;
 
-        	usRegHoldingBuf[CLIENT_IP_REG_0]=configInfo.IPAdress_Client.ip_addr_0;
-        	usRegHoldingBuf[CLIENT_IP_REG_1]=configInfo.IPAdress_Client.ip_addr_1;
-        	usRegHoldingBuf[CLIENT_IP_REG_2]=configInfo.IPAdress_Client.ip_addr_2;
-        	usRegHoldingBuf[CLIENT_IP_REG_3]=configInfo.IPAdress_Client.ip_addr_3;
-					
-					usRegHoldingBuf[ADC_CHANNEL_MASK_REG]=(uint16_t)configInfo.ConfigADC.channelMask;
-					
-					*((float*)&usRegHoldingBuf[ADC_CHANNEL_0_K])=configInfo.ConfigADC.calibrChannel[0].k;
-					*((float*)&usRegHoldingBuf[ADC_CHANNEL_0_B])=configInfo.ConfigADC.calibrChannel[0].b;
-					
-					*((float*)&usRegHoldingBuf[ADC_CHANNEL_1_K])=configInfo.ConfigADC.calibrChannel[1].k;
-					*((float*)&usRegHoldingBuf[ADC_CHANNEL_1_B])=configInfo.ConfigADC.calibrChannel[1].b;
-					
-					*((float*)&usRegHoldingBuf[ADC_CHANNEL_2_K])=configInfo.ConfigADC.calibrChannel[2].k;
-					*((float*)&usRegHoldingBuf[ADC_CHANNEL_2_B])=configInfo.ConfigADC.calibrChannel[2].b;
-					
-					*((float*)&usRegHoldingBuf[ADC_CHANNEL_3_K])=configInfo.ConfigADC.calibrChannel[3].k;
-					*((float*)&usRegHoldingBuf[ADC_CHANNEL_3_B])=configInfo.ConfigADC.calibrChannel[3].b;
-					
-					*((float*)&usRegHoldingBuf[ADC_CHANNEL_4_K])=configInfo.ConfigADC.calibrChannel[4].k;
-					*((float*)&usRegHoldingBuf[ADC_CHANNEL_4_B])=configInfo.ConfigADC.calibrChannel[4].b;
-					
-					*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_K])=configInfo.ConfigADC.calibrChannel[5].k;
-					*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_B])=configInfo.ConfigADC.calibrChannel[5].b;
-					
-					usRegHoldingBuf[ADC_SAMPLERATE]=(uint16_t)configInfo.ConfigADC.sampleRate;
-					
-					usRegHoldingBuf[ADC_STARTED]=adc_started_flag;
-					usRegHoldingBuf[DEV_SET_OUTPUTS_0] = outputs_temp_reg_0;
-					usRegHoldingBuf[DEV_SET_OUTPUTS_1] = outputs_temp_reg_1;
-					usRegHoldingBuf[DEV_SET_OUTPUTS_2] = outputs_temp_reg_2;
-					usRegHoldingBuf[DEV_SET_OUTPUTS_3] = outputs_temp_reg_3;
-					
-					usRegHoldingBuf[DEV_ENABLE_OUT_1]=HAL_GPIO_ReadPin(ENABLE_OUT_1_GPIO_Port,ENABLE_OUT_1_Pin);
-					usRegHoldingBuf[DEV_ENABLE_OUT_7]=HAL_GPIO_ReadPin(ENABLE_OUT_7_GPIO_Port,ENABLE_OUT_7_Pin);
-					
-					usRegHoldingBuf[DEV_EN_VCC_250]=HAL_GPIO_ReadPin(EN_VCC_250_GPIO_Port,EN_VCC_250_Pin);
-					usRegHoldingBuf[DEV_EN_VCC_150]=HAL_GPIO_ReadPin(EN_VCC_150_GPIO_Port,EN_VCC_150_Pin);
-					usRegHoldingBuf[DEV_EN_VCC_75]=HAL_GPIO_ReadPin(EN_VCC_75_GPIO_Port,EN_VCC_75_Pin);
-					usRegHoldingBuf[DEV_EN_VCC_7_5]=HAL_GPIO_ReadPin(EN_VCC_7_5_GPIO_Port,EN_VCC_7_5_Pin);
-					
-					usRegHoldingBuf[DEV_ENABLE_AIR]=HAL_GPIO_ReadPin(ENABLE_AIR_GPIO_Port,ENABLE_AIR_Pin);
-					
+								usRegHoldingBuf[CLIENT_IP_REG_0]=configInfo.IPAdress_Client.ip_addr_0;
+								usRegHoldingBuf[CLIENT_IP_REG_1]=configInfo.IPAdress_Client.ip_addr_1;
+								usRegHoldingBuf[CLIENT_IP_REG_2]=configInfo.IPAdress_Client.ip_addr_2;
+								usRegHoldingBuf[CLIENT_IP_REG_3]=configInfo.IPAdress_Client.ip_addr_3;
+								
+								usRegHoldingBuf[ADC_CHANNEL_MASK_REG]=(uint16_t)configInfo.ConfigADC.channelMask;
+								
+								*((float*)&usRegHoldingBuf[ADC_CHANNEL_0_K])=configInfo.ConfigADC.calibrChannel[0].k;
+								*((float*)&usRegHoldingBuf[ADC_CHANNEL_0_B])=configInfo.ConfigADC.calibrChannel[0].b;
+								
+								*((float*)&usRegHoldingBuf[ADC_CHANNEL_1_K])=configInfo.ConfigADC.calibrChannel[1].k;
+								*((float*)&usRegHoldingBuf[ADC_CHANNEL_1_B])=configInfo.ConfigADC.calibrChannel[1].b;
+								
+								*((float*)&usRegHoldingBuf[ADC_CHANNEL_2_K])=configInfo.ConfigADC.calibrChannel[2].k;
+								*((float*)&usRegHoldingBuf[ADC_CHANNEL_2_B])=configInfo.ConfigADC.calibrChannel[2].b;
+								
+								*((float*)&usRegHoldingBuf[ADC_CHANNEL_3_K])=configInfo.ConfigADC.calibrChannel[3].k;
+								*((float*)&usRegHoldingBuf[ADC_CHANNEL_3_B])=configInfo.ConfigADC.calibrChannel[3].b;
+								
+								*((float*)&usRegHoldingBuf[ADC_CHANNEL_4_K])=configInfo.ConfigADC.calibrChannel[4].k;
+								*((float*)&usRegHoldingBuf[ADC_CHANNEL_4_B])=configInfo.ConfigADC.calibrChannel[4].b;
+								
+								*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_K])=configInfo.ConfigADC.calibrChannel[5].k;
+								*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_B])=configInfo.ConfigADC.calibrChannel[5].b;
+								
+								usRegHoldingBuf[ADC_SAMPLERATE]=(uint16_t)configInfo.ConfigADC.sampleRate;
+								
+								usRegHoldingBuf[ADC_STARTED]=adc_started_flag;
+								usRegHoldingBuf[DEV_SET_OUTPUTS_0] = outputs_temp_reg_0;
+								usRegHoldingBuf[DEV_SET_OUTPUTS_1] = outputs_temp_reg_1;
+								usRegHoldingBuf[DEV_SET_OUTPUTS_2] = outputs_temp_reg_2;
+								usRegHoldingBuf[DEV_SET_OUTPUTS_3] = outputs_temp_reg_3;
+								
+								usRegHoldingBuf[DEV_ENABLE_OUT_1]=HAL_GPIO_ReadPin(ENABLE_OUT_1_GPIO_Port,ENABLE_OUT_1_Pin);
+								usRegHoldingBuf[DEV_ENABLE_OUT_7]=HAL_GPIO_ReadPin(ENABLE_OUT_7_GPIO_Port,ENABLE_OUT_7_Pin);
+								
+								usRegHoldingBuf[DEV_EN_VCC_250]=HAL_GPIO_ReadPin(EN_VCC_250_GPIO_Port,EN_VCC_250_Pin);
+								usRegHoldingBuf[DEV_EN_VCC_150]=HAL_GPIO_ReadPin(EN_VCC_150_GPIO_Port,EN_VCC_150_Pin);
+								usRegHoldingBuf[DEV_EN_VCC_75]=HAL_GPIO_ReadPin(EN_VCC_75_GPIO_Port,EN_VCC_75_Pin);
+								usRegHoldingBuf[DEV_EN_VCC_7_5]=HAL_GPIO_ReadPin(EN_VCC_7_5_GPIO_Port,EN_VCC_7_5_Pin);
+								
+								usRegHoldingBuf[DEV_ENABLE_AIR]=HAL_GPIO_ReadPin(ENABLE_AIR_GPIO_Port,ENABLE_AIR_Pin);
+								
 
-					memcpy((void *)&usRegHoldingBuf[PIR_EN_PYRO_SQUIB_0],(const void*)&usMRegHoldBuf[0][0],M_REG_HOLDING_NREGS);
+								memcpy((void *)&usRegHoldingBuf[PYRO_SQUIB_PIR_SET_TIME],(const void*)&usMRegHoldBuf[0][0],M_REG_HOLDING_NREGS*sizeof(uint16_t));
 
-            while( usNRegs > 0 )
-            {
-                *pucRegBuffer++ = ( UCHAR ) ( usRegHoldingBuf[iRegIndex] >> 8 );
-                *pucRegBuffer++ = ( UCHAR ) ( usRegHoldingBuf[iRegIndex] & 0xFF );
-                iRegIndex++;
-                usNRegs--;
-            }
-            break;
-        }
+									while( usNRegs > 0 )
+									{
+											*pucRegBuffer++ = ( UCHAR ) ( usRegHoldingBuf[iRegIndex] >> 8 );
+											*pucRegBuffer++ = ( UCHAR ) ( usRegHoldingBuf[iRegIndex] & 0xFF );
+											iRegIndex++;
+											usNRegs--;
+									}            
+							}
+							break;
+							//-----------case READ end-----------------------------------------------------
             /* Update current register values with new values from the
              * protocol stack. */
-        case MB_REG_WRITE:
-        {
-						uint8_t settings_need_write=0;
-            while( usNRegs > 0 )
-            {
-                usRegHoldingBuf[iRegIndex] = *pucRegBuffer++ << 8;
-                usRegHoldingBuf[iRegIndex] |= *pucRegBuffer++;
-                
-								switch(iRegIndex)
+							
+							//-----------case WRITE-----------------------------------------------------
+							case MB_REG_WRITE:
+							{
+									uint8_t settings_need_write=0;
+									while( usNRegs > 0 )
+									{
+											usRegHoldingBuf[iRegIndex] = *pucRegBuffer++ << 8;
+											usRegHoldingBuf[iRegIndex] |= *pucRegBuffer++;
+											
+											switch(iRegIndex)
+											{
+												case SERVER_IP_REG_0:
+												{
+														configInfo.IPAdress_Server.ip_addr_0=usRegHoldingBuf[SERVER_IP_REG_0];
+														settings_need_write=1;
+												}
+												break;
+												
+												case SERVER_IP_REG_1:
+												{
+														configInfo.IPAdress_Server.ip_addr_1=usRegHoldingBuf[SERVER_IP_REG_1];
+														settings_need_write=1;
+												}
+												break;
+												
+												case SERVER_IP_REG_2:
+												{
+														configInfo.IPAdress_Server.ip_addr_2=usRegHoldingBuf[SERVER_IP_REG_2];
+														settings_need_write=1;
+												}
+												break;	
+
+												case SERVER_IP_REG_3:
+												{
+														configInfo.IPAdress_Server.ip_addr_3=usRegHoldingBuf[SERVER_IP_REG_3];
+														settings_need_write=1;
+												}
+												break;
+
+												case SERVER_PORT_REG_0:
+												{
+														configInfo.IPAdress_Server.port=usRegHoldingBuf[SERVER_PORT_REG_0];
+														settings_need_write=1;
+												}
+												break;
+
+												case CLIENT_IP_REG_0:
+												{
+														configInfo.IPAdress_Client.ip_addr_0=usRegHoldingBuf[CLIENT_IP_REG_0];
+														settings_need_write=1;
+												}
+												break;	
+
+												case CLIENT_IP_REG_1:
+												{
+														configInfo.IPAdress_Client.ip_addr_1=usRegHoldingBuf[CLIENT_IP_REG_1];
+														settings_need_write=1;
+												}
+												break;		
+												
+												case CLIENT_IP_REG_2:
+												{
+														configInfo.IPAdress_Client.ip_addr_2=usRegHoldingBuf[CLIENT_IP_REG_2];
+														settings_need_write=1;
+												}
+												break;	
+
+												case CLIENT_IP_REG_3:
+												{
+														configInfo.IPAdress_Client.ip_addr_3=usRegHoldingBuf[CLIENT_IP_REG_3];
+														settings_need_write=1;
+												}
+												break;	
+
+												case ADC_CHANNEL_MASK_REG:
+												{
+														(uint16_t)configInfo.ConfigADC.channelMask=usRegHoldingBuf[ADC_CHANNEL_MASK_REG];
+														settings_need_write=1;
+												}
+												break;	
+
+												case ADC_CHANNEL_0_K+(1):
+												{
+														configInfo.ConfigADC.calibrChannel[0].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_0_K]);
+														settings_need_write=1;
+												}
+												break;
+
+												case ADC_CHANNEL_0_B+(1):
+												{
+														configInfo.ConfigADC.calibrChannel[0].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_0_B]);	
+														settings_need_write=1;
+												}
+												break;
+
+												case ADC_CHANNEL_1_K+(1):
+												{
+														configInfo.ConfigADC.calibrChannel[1].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_1_K]);
+														settings_need_write=1;										
+												}
+												break;
+
+												case ADC_CHANNEL_1_B+(1):
+												{
+														configInfo.ConfigADC.calibrChannel[1].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_1_B]);	
+														settings_need_write=1;										
+												}
+												break;	
+
+												case ADC_CHANNEL_2_K+(1):
+												{
+														configInfo.ConfigADC.calibrChannel[2].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_2_K]);
+														settings_need_write=1;										
+												}
+												break;
+
+												case ADC_CHANNEL_2_B+(1):
+												{
+														configInfo.ConfigADC.calibrChannel[2].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_2_B]);
+														settings_need_write=1;										
+												}
+												break;	
+
+												case ADC_CHANNEL_3_K+(1):
+												{
+														configInfo.ConfigADC.calibrChannel[3].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_3_K]);
+														settings_need_write=1;										
+												}
+												break;
+
+												case ADC_CHANNEL_3_B+(1):
+												{
+														configInfo.ConfigADC.calibrChannel[3].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_3_B]);	
+														settings_need_write=1;										
+												}
+												break;	
+
+												case ADC_CHANNEL_4_K+(1):
+												{
+														configInfo.ConfigADC.calibrChannel[4].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_4_K]);
+														settings_need_write=1;										
+												}
+												break;
+
+												case ADC_CHANNEL_4_B+(1):
+												{
+														configInfo.ConfigADC.calibrChannel[4].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_4_B]);
+														settings_need_write=1;										
+												}
+												break;	
+
+												case ADC_CHANNEL_5_K+(1):
+												{
+														configInfo.ConfigADC.calibrChannel[5].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_K]);
+														settings_need_write=1;										
+												}
+												break;
+
+												case ADC_CHANNEL_5_B+(1):
+												{
+														configInfo.ConfigADC.calibrChannel[5].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_B]);
+														settings_need_write=1;
+												}
+												break;
+
+												case ADC_SAMPLERATE:
+												{
+														DCMI_ADC_SetSamplerate(usRegHoldingBuf[ADC_SAMPLERATE]);
+														settings_need_write=1;										
+												}
+												break;	
+												
+												case ADC_STARTED:
+												{
+														if(usRegHoldingBuf[ADC_STARTED])
+														{
+																DCMI_ADC_Clock_Start();
+																adc_started_flag=1;
+														}
+														else
+														{
+																DCMI_ADC_Clock_Stop();
+																adc_started_flag=0;
+														}
+														usRegHoldingBuf[ADC_STARTED]=0;
+												}
+												break;	
+												
+			//									case DEV_SET_OUTPUTS+3:
+			//									{
+			//											DiscretOutputs_Set(*(uint64_t*)&usRegHoldingBuf[DEV_SET_OUTPUTS]);
+			//									}
+			//									break;		
+
+													
+												case DEV_SET_OUTPUTS_0:
+												{											
+														outputs_temp_reg_0=0x0;
+														outputs_temp_reg_0|=usRegHoldingBuf[DEV_SET_OUTPUTS_0];
+														DiscretOutputs_Set((((uint64_t)outputs_temp_reg_0))|(((uint64_t)outputs_temp_reg_1)<<16)|(((uint64_t)outputs_temp_reg_2)<<32)|(((uint64_t)outputs_temp_reg_3)<<48));
+												}
+												break;
+
+												case DEV_SET_OUTPUTS_1:
+												{											
+														outputs_temp_reg_1=0x0;
+														outputs_temp_reg_1|=usRegHoldingBuf[DEV_SET_OUTPUTS_1];
+														DiscretOutputs_Set((((uint64_t)outputs_temp_reg_0))|(((uint64_t)outputs_temp_reg_1)<<16)|(((uint64_t)outputs_temp_reg_2)<<32)|(((uint64_t)outputs_temp_reg_3)<<48));
+												}
+												break;	
+
+												case DEV_SET_OUTPUTS_2:
+												{											
+														outputs_temp_reg_2=0x0;
+														outputs_temp_reg_2|=usRegHoldingBuf[DEV_SET_OUTPUTS_2];
+														DiscretOutputs_Set((((uint64_t)outputs_temp_reg_0))|(((uint64_t)outputs_temp_reg_1)<<16)|(((uint64_t)outputs_temp_reg_2)<<32)|(((uint64_t)outputs_temp_reg_3)<<48));
+												}
+												break;		
+
+												case DEV_SET_OUTPUTS_3:
+												{											
+														outputs_temp_reg_3=0x0;
+														outputs_temp_reg_3|=usRegHoldingBuf[DEV_SET_OUTPUTS_3];
+														DiscretOutputs_Set((((uint64_t)outputs_temp_reg_0))|(((uint64_t)outputs_temp_reg_1)<<16)|(((uint64_t)outputs_temp_reg_2)<<32)|(((uint64_t)outputs_temp_reg_3)<<48));
+												}
+												break;		
+
+												case DEV_ENABLE_OUT_1:
+												{
+														HAL_GPIO_WritePin(ENABLE_OUT_1_GPIO_Port,ENABLE_OUT_1_Pin,usRegHoldingBuf[DEV_ENABLE_OUT_1]);
+												}
+												break;
+												
+												case DEV_ENABLE_OUT_7:
+												{
+														HAL_GPIO_WritePin(ENABLE_OUT_7_GPIO_Port,ENABLE_OUT_7_Pin,usRegHoldingBuf[DEV_ENABLE_OUT_7]);
+												}
+												break;				
+
+												case DEV_EN_VCC_250:
+												{
+														HAL_GPIO_WritePin(EN_VCC_250_GPIO_Port,EN_VCC_250_Pin,usRegHoldingBuf[DEV_EN_VCC_250]);
+												}
+												break;
+												
+												case DEV_EN_VCC_150:
+												{
+														HAL_GPIO_WritePin(EN_VCC_150_GPIO_Port,EN_VCC_150_Pin,usRegHoldingBuf[DEV_EN_VCC_150]);
+												}
+												break;		
+
+												case DEV_EN_VCC_75:
+												{
+														HAL_GPIO_WritePin(EN_VCC_75_GPIO_Port,EN_VCC_75_Pin,usRegHoldingBuf[DEV_EN_VCC_75]);
+												}
+												break;	
+
+												case DEV_EN_VCC_7_5:
+												{
+														HAL_GPIO_WritePin(EN_VCC_7_5_GPIO_Port,EN_VCC_7_5_Pin,usRegHoldingBuf[DEV_EN_VCC_7_5]);
+												}
+												break;	
+
+												case DEV_ENABLE_AIR:
+												{
+														HAL_GPIO_WritePin(ENABLE_AIR_GPIO_Port,ENABLE_AIR_Pin,usRegHoldingBuf[DEV_ENABLE_AIR]);
+												}
+												break;										
+
+												case DEV_RESET_TIMESTAMP:
+												{
+														if(usRegHoldingBuf[DEV_RESET_TIMESTAMP])//reset timestamp
+														{
+																DCMI_ADC_ResetTimestamp();
+																usRegHoldingBuf[DEV_RESET_TIMESTAMP]=0;
+														}	
+												}
+												break;	
+												
+												case DEV_RESET_CONTROLLER:
+												{
+														if(usRegHoldingBuf[DEV_RESET_CONTROLLER])//reset timestamp
+														{
+																//DCMI_ADC_ResetTimestamp();
+																usRegHoldingBuf[DEV_RESET_CONTROLLER]=0;
+																NVIC_SystemReset();
+														}	
+												}
+												break;	
+
+												case PYRO_SQUIB_PIR_SET_TIME:
+												{
+														TCPtoRTURegWrite.nRegs=1;
+														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+0;
+														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_SET_TIME];
+														xSemaphoreGive(xSendRTURegSem);
+												}
+												break;
+												
+												case PYRO_SQUIB_PIR_1_SET_CURRENT +(1) :
+												{
+														TCPtoRTURegWrite.nRegs=2;
+														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+1;
+														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_1_SET_CURRENT];
+														xSemaphoreGive(xSendRTURegSem);	
+												}
+												break;
+												
+												case PYRO_SQUIB_PIR_2_SET_CURRENT +(1):
+												{
+														TCPtoRTURegWrite.nRegs=2;
+														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+3;
+														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_2_SET_CURRENT];
+														xSemaphoreGive(xSendRTURegSem);	
+												}
+												break;
+												
+												case PYRO_SQUIB_PIR_3_SET_CURRENT +(1):
+												{
+														TCPtoRTURegWrite.nRegs=2;
+														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+5;
+														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_3_SET_CURRENT];
+														xSemaphoreGive(xSendRTURegSem);	
+												}
+												break;
+
+												case PYRO_SQUIB_PIR_4_SET_CURRENT +(1):
+												{
+														TCPtoRTURegWrite.nRegs=2;
+														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+7;
+														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_4_SET_CURRENT];
+														xSemaphoreGive(xSendRTURegSem);	
+												}
+												break;
+												
+												case PYRO_SQUIB_PIR_SET_MASK:
+												{
+														TCPtoRTURegWrite.nRegs=1;
+														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+9;
+														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_SET_MASK];
+														xSemaphoreGive(xSendRTURegSem);											
+												}
+												break;
+												
+												case PYRO_SQUIB_PIR_START:
+												{
+														TCPtoRTURegWrite.nRegs=1;
+														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+10;
+														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_START];
+														xSemaphoreGive(xSendRTURegSem);											
+												}
+												break;
+												
+												default:
+												{
+												}
+												
+						
+									}//switch(iRegIndex)
+									iRegIndex++;
+									usNRegs--;	
+								}//while( usNRegs > 0 )
+									
+								if(settings_need_write)
 								{
-									case SERVER_IP_REG_0:
-									{
-											configInfo.IPAdress_Server.ip_addr_0=usRegHoldingBuf[SERVER_IP_REG_0];
-											settings_need_write=1;
-									}
-									break;
-									
-									case SERVER_IP_REG_1:
-									{
-										  configInfo.IPAdress_Server.ip_addr_1=usRegHoldingBuf[SERVER_IP_REG_1];
-											settings_need_write=1;
-									}
-									break;
-									
-									case SERVER_IP_REG_2:
-									{
-											configInfo.IPAdress_Server.ip_addr_2=usRegHoldingBuf[SERVER_IP_REG_2];
-											settings_need_write=1;
-									}
-									break;	
-
-									case SERVER_IP_REG_3:
-									{
-											configInfo.IPAdress_Server.ip_addr_3=usRegHoldingBuf[SERVER_IP_REG_3];
-											settings_need_write=1;
-									}
-									break;
-
-									case SERVER_PORT_REG_0:
-									{
-											configInfo.IPAdress_Server.port=usRegHoldingBuf[SERVER_PORT_REG_0];
-											settings_need_write=1;
-									}
-									break;
-
-									case CLIENT_IP_REG_0:
-									{
-											configInfo.IPAdress_Client.ip_addr_0=usRegHoldingBuf[CLIENT_IP_REG_0];
-											settings_need_write=1;
-									}
-									break;	
-
-									case CLIENT_IP_REG_1:
-									{
-											configInfo.IPAdress_Client.ip_addr_1=usRegHoldingBuf[CLIENT_IP_REG_1];
-											settings_need_write=1;
-									}
-									break;		
-									
-									case CLIENT_IP_REG_2:
-									{
-											configInfo.IPAdress_Client.ip_addr_2=usRegHoldingBuf[CLIENT_IP_REG_2];
-											settings_need_write=1;
-									}
-									break;	
-
-									case CLIENT_IP_REG_3:
-									{
-											configInfo.IPAdress_Client.ip_addr_3=usRegHoldingBuf[CLIENT_IP_REG_3];
-											settings_need_write=1;
-									}
-									break;	
-
-									case ADC_CHANNEL_MASK_REG:
-									{
-											(uint16_t)configInfo.ConfigADC.channelMask=usRegHoldingBuf[ADC_CHANNEL_MASK_REG];
-											settings_need_write=1;
-									}
-									break;	
-
-									case ADC_CHANNEL_0_K+(1):
-									{
-											configInfo.ConfigADC.calibrChannel[0].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_0_K]);
-											settings_need_write=1;
-									}
-									break;
-
-									case ADC_CHANNEL_0_B+(1):
-									{
-											configInfo.ConfigADC.calibrChannel[0].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_0_B]);	
-											settings_need_write=1;
-									}
-									break;
-
-									case ADC_CHANNEL_1_K+(1):
-									{
-											configInfo.ConfigADC.calibrChannel[1].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_1_K]);
-											settings_need_write=1;										
-									}
-									break;
-
-									case ADC_CHANNEL_1_B+(1):
-									{
-											configInfo.ConfigADC.calibrChannel[1].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_1_B]);	
-											settings_need_write=1;										
-									}
-									break;	
-
-									case ADC_CHANNEL_2_K+(1):
-									{
-											configInfo.ConfigADC.calibrChannel[2].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_2_K]);
-											settings_need_write=1;										
-									}
-									break;
-
-									case ADC_CHANNEL_2_B+(1):
-									{
-											configInfo.ConfigADC.calibrChannel[2].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_2_B]);
-											settings_need_write=1;										
-									}
-									break;	
-
-									case ADC_CHANNEL_3_K+(1):
-									{
-											configInfo.ConfigADC.calibrChannel[3].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_3_K]);
-											settings_need_write=1;										
-									}
-									break;
-
-									case ADC_CHANNEL_3_B+(1):
-									{
-											configInfo.ConfigADC.calibrChannel[3].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_3_B]);	
-											settings_need_write=1;										
-									}
-									break;	
-
-									case ADC_CHANNEL_4_K+(1):
-									{
-											configInfo.ConfigADC.calibrChannel[4].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_4_K]);
-											settings_need_write=1;										
-									}
-									break;
-
-									case ADC_CHANNEL_4_B+(1):
-									{
-											configInfo.ConfigADC.calibrChannel[4].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_4_B]);
-											settings_need_write=1;										
-									}
-									break;	
-
-									case ADC_CHANNEL_5_K+(1):
-									{
-											configInfo.ConfigADC.calibrChannel[5].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_K]);
-											settings_need_write=1;										
-									}
-									break;
-
-									case ADC_CHANNEL_5_B+(1):
-									{
-											configInfo.ConfigADC.calibrChannel[5].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_B]);
-											settings_need_write=1;
-									}
-									break;
-
-									case ADC_SAMPLERATE:
-									{
-											DCMI_ADC_SetSamplerate(usRegHoldingBuf[ADC_SAMPLERATE]);
-											settings_need_write=1;										
-									}
-									break;	
-									
-									case ADC_STARTED:
-									{
-											if(usRegHoldingBuf[ADC_STARTED])
-											{
-													DCMI_ADC_Clock_Start();
-													adc_started_flag=1;
-											}
-											else
-											{
-													DCMI_ADC_Clock_Stop();
-													adc_started_flag=0;
-											}
-											usRegHoldingBuf[ADC_STARTED]=0;
-									}
-									break;	
-									
-//									case DEV_SET_OUTPUTS+3:
-//									{
-//											DiscretOutputs_Set(*(uint64_t*)&usRegHoldingBuf[DEV_SET_OUTPUTS]);
-//									}
-//									break;		
-
-										
-									case DEV_SET_OUTPUTS_0:
-									{											
-											outputs_temp_reg_0=0x0;
-											outputs_temp_reg_0|=usRegHoldingBuf[DEV_SET_OUTPUTS_0];
-											DiscretOutputs_Set((((uint64_t)outputs_temp_reg_0))|(((uint64_t)outputs_temp_reg_1)<<16)|(((uint64_t)outputs_temp_reg_2)<<32)|(((uint64_t)outputs_temp_reg_3)<<48));
-									}
-									break;
-
-									case DEV_SET_OUTPUTS_1:
-									{											
-											outputs_temp_reg_1=0x0;
-											outputs_temp_reg_1|=usRegHoldingBuf[DEV_SET_OUTPUTS_1];
-											DiscretOutputs_Set((((uint64_t)outputs_temp_reg_0))|(((uint64_t)outputs_temp_reg_1)<<16)|(((uint64_t)outputs_temp_reg_2)<<32)|(((uint64_t)outputs_temp_reg_3)<<48));
-									}
-									break;	
-
-									case DEV_SET_OUTPUTS_2:
-									{											
-											outputs_temp_reg_2=0x0;
-											outputs_temp_reg_2|=usRegHoldingBuf[DEV_SET_OUTPUTS_2];
-											DiscretOutputs_Set((((uint64_t)outputs_temp_reg_0))|(((uint64_t)outputs_temp_reg_1)<<16)|(((uint64_t)outputs_temp_reg_2)<<32)|(((uint64_t)outputs_temp_reg_3)<<48));
-									}
-									break;		
-
-									case DEV_SET_OUTPUTS_3:
-									{											
-											outputs_temp_reg_3=0x0;
-											outputs_temp_reg_3|=usRegHoldingBuf[DEV_SET_OUTPUTS_3];
-											DiscretOutputs_Set((((uint64_t)outputs_temp_reg_0))|(((uint64_t)outputs_temp_reg_1)<<16)|(((uint64_t)outputs_temp_reg_2)<<32)|(((uint64_t)outputs_temp_reg_3)<<48));
-									}
-									break;		
-
-									case DEV_ENABLE_OUT_1:
-									{
-											HAL_GPIO_WritePin(ENABLE_OUT_1_GPIO_Port,ENABLE_OUT_1_Pin,usRegHoldingBuf[DEV_ENABLE_OUT_1]);
-									}
-									break;
-									
-									case DEV_ENABLE_OUT_7:
-									{
-											HAL_GPIO_WritePin(ENABLE_OUT_7_GPIO_Port,ENABLE_OUT_7_Pin,usRegHoldingBuf[DEV_ENABLE_OUT_7]);
-									}
-									break;				
-
-									case DEV_EN_VCC_250:
-									{
-											HAL_GPIO_WritePin(EN_VCC_250_GPIO_Port,EN_VCC_250_Pin,usRegHoldingBuf[DEV_EN_VCC_250]);
-									}
-									break;
-									
-									case DEV_EN_VCC_150:
-									{
-											HAL_GPIO_WritePin(EN_VCC_150_GPIO_Port,EN_VCC_150_Pin,usRegHoldingBuf[DEV_EN_VCC_150]);
-									}
-									break;		
-
-									case DEV_EN_VCC_75:
-									{
-											HAL_GPIO_WritePin(EN_VCC_75_GPIO_Port,EN_VCC_75_Pin,usRegHoldingBuf[DEV_EN_VCC_75]);
-									}
-									break;	
-
-									case DEV_EN_VCC_7_5:
-									{
-											HAL_GPIO_WritePin(EN_VCC_7_5_GPIO_Port,EN_VCC_7_5_Pin,usRegHoldingBuf[DEV_EN_VCC_7_5]);
-									}
-									break;	
-
-									case DEV_ENABLE_AIR:
-									{
-											HAL_GPIO_WritePin(ENABLE_AIR_GPIO_Port,ENABLE_AIR_Pin,usRegHoldingBuf[DEV_ENABLE_AIR]);
-									}
-									break;										
-
-									case DEV_RESET_TIMESTAMP:
-									{
-											if(usRegHoldingBuf[DEV_RESET_TIMESTAMP])//reset timestamp
-											{
-													DCMI_ADC_ResetTimestamp();
-													usRegHoldingBuf[DEV_RESET_TIMESTAMP]=0;
-											}	
-									}
-									break;	
-									
-									case DEV_RESET_CONTROLLER:
-									{
-											if(usRegHoldingBuf[DEV_RESET_CONTROLLER])//reset timestamp
-											{
-													//DCMI_ADC_ResetTimestamp();
-													usRegHoldingBuf[DEV_RESET_CONTROLLER]=0;
-													NVIC_SystemReset();
-											}	
-									}
-									break;	
-
-									case PIR_EN_PYRO_SQUIB_0:
-									{
-											TCPtoRTURegWrite.nRegs=1;
-											TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+0;
-											TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PIR_EN_PYRO_SQUIB_0];
-											xSemaphoreGive(xSendRTURegSem);
-									}
-									break;
-									
-									case PIR_EN_PYRO_SQUIB_1:
-									{
-											TCPtoRTURegWrite.nRegs=1;
-											TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+1;
-											TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PIR_EN_PYRO_SQUIB_1];
-											xSemaphoreGive(xSendRTURegSem);	
-									}
-									break;
-									
-									case PIR_EN_PYRO_SQUIB_2:
-									{
-											TCPtoRTURegWrite.nRegs=1;
-											TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+2;
-											TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PIR_EN_PYRO_SQUIB_2];
-											xSemaphoreGive(xSendRTURegSem);										
-									}
-									break;
-									
-									case PIR_EN_PYRO_SQUIB_3:
-									{
-											TCPtoRTURegWrite.nRegs=1;
-											TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+3;
-											TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PIR_EN_PYRO_SQUIB_3];
-											xSemaphoreGive(xSendRTURegSem);											
-									}
-									break;	
-
-									case PIR_EN_PYRO_SQUIB_4:
-									{
-											TCPtoRTURegWrite.nRegs=1;
-											TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+4;
-											TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PIR_EN_PYRO_SQUIB_4];
-											xSemaphoreGive(xSendRTURegSem);											
-									}
-									break;
-									
-									case PIR_EN_PYRO_SQUIB_5:
-									{
-											TCPtoRTURegWrite.nRegs=1;
-											TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+5;
-											TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PIR_EN_PYRO_SQUIB_5];
-											xSemaphoreGive(xSendRTURegSem);											
-									}
-									break;
-									
-									case PIR_EN_PYRO_SQUIB_6:
-									{
-											TCPtoRTURegWrite.nRegs=1;
-											TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+6;
-											TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PIR_EN_PYRO_SQUIB_6];
-											xSemaphoreGive(xSendRTURegSem);											
-									}
-									break;
-									
-									case PIR_EN_PYRO_SQUIB_7:
-									{
-											TCPtoRTURegWrite.nRegs=1;
-											TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+7;
-											TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PIR_EN_PYRO_SQUIB_7];
-											xSemaphoreGive(xSendRTURegSem);											
-									}
-									break;	
-
-									case PIR_SET_POT1:
-									{
-											TCPtoRTURegWrite.nRegs=1;
-											TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+8;
-											TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PIR_SET_POT1];
-											xSemaphoreGive(xSendRTURegSem);		
-									}
-									break;
-									
-									case PIR_SET_POT2:
-									{
-											TCPtoRTURegWrite.nRegs=1;
-											TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+9;
-											TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PIR_SET_POT2];
-											xSemaphoreGive(xSendRTURegSem);		
-									}
-									break;
-									
-									case PIR_SET_POT3:
-									{
-											TCPtoRTURegWrite.nRegs=1;
-											TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+10;
-											TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PIR_SET_POT3];
-											xSemaphoreGive(xSendRTURegSem);		
-									}
-									break;
-									
-									case PIR_SET_POT4:
-									{
-											TCPtoRTURegWrite.nRegs=1;
-											TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+11;
-											TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PIR_SET_POT4];
-											xSemaphoreGive(xSendRTURegSem);		
-									}
-									break;																																	
+										StartConfigInfoWrite();
 								}
-														
-								iRegIndex++;
-                usNRegs--;							
-            }
+							}
+							//-----------case WRITE end-----------------------------------------------------							
+						
 
-						if(settings_need_write)
-						{
-								StartConfigInfoWrite();
-						}
-        }
-      }
-    }
+							
+						}//switch ( eMode )
+
+		}// if( ( usAddress >= REG_HOLDING_START ) &&.....
     else
     {
         eStatus = MB_ENOREG;
