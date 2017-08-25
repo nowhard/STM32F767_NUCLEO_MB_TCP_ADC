@@ -16,10 +16,12 @@ typedef enum
 	DISCR_OUT_TRANSFER_COMPLETE,
 }enDiscrOutTransferState;
 
-uint16_t outputs_temp_reg_0=0xFFFF;
-uint16_t outputs_temp_reg_1=0xFFFF;
-uint16_t outputs_temp_reg_2=0xFFFF;
-uint16_t outputs_temp_reg_3=0xFFFF;
+//uint16_t outputs_temp_reg_0=0xFFFF;
+//uint16_t outputs_temp_reg_1=0xFFFF;
+//uint16_t outputs_temp_reg_2=0xFFFF;
+//uint16_t outputs_temp_reg_3=0xFFFF;
+	
+uint64_t	outputs_temp_reg=0xFFFFFFFFFFFFFFFF; 
 
 #define SPI_OUT_REG_NUM	8
 

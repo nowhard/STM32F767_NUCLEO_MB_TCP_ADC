@@ -22,12 +22,86 @@ Dialog DLL:      TCM.DLL V1.14.6.0
  
 <h2>Project:</h2>
 E:\PROJECTS\GIT_REPOSITORY\STM32\STM32F767_NUCLEO_MB_TCP_ADC\MB_TCP_ADC\MDK-ARM\MB_TCP_ADC.uvprojx
-Project File Date:  08/01/2017
+Project File Date:  08/25/2017
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 1 (build 61)', folder: 'C:\Program Files\Keil\ARM\ARMCC\Bin'
 Build target 'MB_TCP_ADC'
-"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 0 Warning(s).
+compiling mbmasterinit.c...
+../Inc/mbfunc.h(59): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Inc/adc_pyro_buf.h(24): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\Src\mbmasterinit.c: 2 warnings, 0 errors
+compiling udp_send.c...
+../Inc/adc_pyro_buf.h(24): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Inc/spi_adc.h(16): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\Src\udp_send.c(61): warning:  #513-D: a value of type "volatile uint8_t *" cannot be assigned to an entity of type "uint8_t *"
+  	ADC_buf_pnt=DCMIAdcRxBuff;
+..\Src\udp_send.c(96): warning:  #177-D: variable "err" was declared but never referenced
+  		err_t err;
+..\Src\udp_send.c: 4 warnings, 0 errors
+compiling mbfunc.c...
+../Inc/mbfunc.h(59): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Inc/discret_out.h(11): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Inc/adc_pyro_buf.h(24): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\Src\mbfunc.c(117): warning:  #223-D: function "memcpy" declared implicitly
+  			memcpy((void *)&usRegInputBuf[ADC_PYRO_SQUIB_0],(const void*)&usMRegInBuf[0][0],M_REG_INPUT_NREGS*sizeof(uint16_t));
+..\Src\mbfunc.c(86): warning:  #177-D: variable "i" was declared but never referenced
+      uint8_t i=0;
+..\Src\mbfunc.c(272): warning:  #223-D: function "memcpy" declared implicitly
+  								memcpy((void *)&usRegHoldingBuf[PYRO_SQUIB_PIR_SET_TIME],(const void*)&usMRegHoldBuf[0][0],M_REG_HOLDING_NREGS*sizeof(uint16_t));
+..\Src\mbfunc.c(419): warning:  #188-D: enumerated type mixed with another type
+  														DCMI_ADC_SetSamplerate(usRegHoldingBuf[
+DC_SAMPLERATE]);
+..\Src\mbfunc.c(487): warning:  #188-D: enumerated type mixed with another type
+  														HAL_GPIO_WritePin(
+NABLE_OUT_7_GPIO_Port,
+NABLE_OUT_7_Pin,usRegHoldingBuf[
+EV_ENABLE_OUT_7]);
+..\Src\mbfunc.c(493): warning:  #188-D: enumerated type mixed with another type
+  														HAL_GPIO_WritePin(
+N_VCC_250_GPIO_Port,
+N_VCC_250_Pin,usRegHoldingBuf[
+EV_EN_VCC_250]);
+..\Src\mbfunc.c(499): warning:  #188-D: enumerated type mixed with another type
+  														HAL_GPIO_WritePin(
+N_VCC_150_GPIO_Port,
+N_VCC_150_Pin,usRegHoldingBuf[
+EV_EN_VCC_150]);
+..\Src\mbfunc.c(505): warning:  #188-D: enumerated type mixed with another type
+  														HAL_GPIO_WritePin(
+N_VCC_75_GPIO_Port,
+N_VCC_75_Pin,usRegHoldingBuf[
+EV_EN_VCC_75]);
+..\Src\mbfunc.c(511): warning:  #188-D: enumerated type mixed with another type
+  														HAL_GPIO_WritePin(
+N_VCC_7_5_GPIO_Port,
+N_VCC_7_5_Pin,usRegHoldingBuf[
+EV_EN_VCC_7_5]);
+..\Src\mbfunc.c(517): warning:  #188-D: enumerated type mixed with another type
+  														HAL_GPIO_WritePin(
+NABLE_AIR_GPIO_Port,
+NABLE_AIR_Pin,usRegHoldingBuf[
+EV_ENABLE_AIR]);
+..\Src\mbfunc.c: 14 warnings, 0 errors
+compiling adc_pyro_buf.c...
+../Inc/adc_pyro_buf.h(24): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Inc/fifo.h(52): warning:  #1-D: last line of file ends without a newline
+  #endif //FIFO__H
+..\Src\adc_pyro_buf.c(30): warning:  #1-D: last line of file ends without a newline
+  }
+..\Src\adc_pyro_buf.c: 3 warnings, 0 errors
+linking...
+Program Size: Code=77012 RO-data=1804 RW-data=1016 ZI-data=220208  
+FromELF: creating hex file...
+"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 22 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -45,7 +119,7 @@ Package Vendor: ARM
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.0.1
-Build Time Elapsed:  00:00:02
+Build Time Elapsed:  00:00:17
 </pre>
 </body>
 </html>

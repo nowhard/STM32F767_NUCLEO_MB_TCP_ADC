@@ -11,6 +11,13 @@ typedef struct
 
 typedef struct
 {
+	uint16_t val_chn0_raw;
+	uint16_t val_chn1_raw;
+	uint16_t val_chn2_raw;
+	uint16_t val_chn3_raw;
+	uint16_t val_chn4_raw;
+	uint16_t val_chn5_raw;
+	
 	float val_250A;
 	float val_150A;
 	float val_75A;

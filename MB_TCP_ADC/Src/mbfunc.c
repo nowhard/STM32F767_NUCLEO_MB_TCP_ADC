@@ -7,6 +7,7 @@
 #include "discret_out.h"
 #include "mb_master_user.h"
 #include "data_converter.h"
+#include "adc_pyro_buf.h"
 //#include "main.h"
 
 
@@ -18,34 +19,44 @@
 
 
 //-------ADC RESULT REGS--------
-#define ADC_CHANNEL_0_RESULT				0
-#define ADC_CHANNEL_1_RESULT				2
-#define ADC_CHANNEL_2_RESULT				4
-#define ADC_CHANNEL_3_RESULT				6
-#define ADC_CHANNEL_4_RESULT				8
-#define ADC_CHANNEL_5_RESULT				10
-#define TIMESTAMP_CURRENT						12
+#define ADC_CHANNEL_0_RAW						0
+#define ADC_CHANNEL_1_RAW						1
+#define ADC_CHANNEL_2_RAW						2
+#define ADC_CHANNEL_3_RAW						3
+#define ADC_CHANNEL_4_RAW						4
+#define ADC_CHANNEL_5_RAW						5
 
-#define ADC_PYRO_SQUIB_0						16
-#define ADC_PYRO_SQUIB_1						18
-#define ADC_PYRO_SQUIB_2						20
-#define ADC_PYRO_SQUIB_3						22
-#define ADC_PYRO_SQUIB_4						24
-#define ADC_PYRO_SQUIB_5						26
-#define ADC_PYRO_SQUIB_6						28
-#define ADC_PYRO_SQUIB_7						30
+#define ADC_CHANNEL_0_RESULT				6
+#define ADC_CHANNEL_1_RESULT				8
+#define ADC_CHANNEL_2_RESULT				10
+#define ADC_CHANNEL_3_RESULT				12
+#define ADC_CHANNEL_4_RESULT				14
+#define ADC_CHANNEL_5_RESULT				16
 
-#define PYRO_SQUIB_PIR_STATE				32
-#define PYRO_SQUIB_PIR_ERROR				33
+#define	ADC_CHANNEL_CONV						18
+
+#define TIMESTAMP_CURRENT						20
+
+#define ADC_PYRO_SQUIB_0						24
+#define ADC_PYRO_SQUIB_1						26
+#define ADC_PYRO_SQUIB_2						28
+#define ADC_PYRO_SQUIB_3						30
+#define ADC_PYRO_SQUIB_4						32
+#define ADC_PYRO_SQUIB_5						34
+#define ADC_PYRO_SQUIB_6						36
+#define ADC_PYRO_SQUIB_7						38
+
+#define PYRO_SQUIB_PIR_STATE				40
+#define PYRO_SQUIB_PIR_ERROR				41
 
 //--------FAULT SIGNALS-----------
-#define FAULT_OUT_1_SIG							34
-#define FAULT_OUT_7_SIG							35
+#define FAULT_OUT_1_SIG							42
+#define FAULT_OUT_7_SIG							43
 
-#define FAULT_250A_SIG							36
-#define FAULT_150A_SIG							37
-#define FAULT_75A_SIG								38
-#define FAULT_7_5A_SIG							39
+#define FAULT_250A_SIG							44
+#define FAULT_150A_SIG							45
+#define FAULT_75A_SIG								46
+#define FAULT_7_5A_SIG							47
 
 /* ----------------------- Static variables ---------------------------------*/
 static USHORT   usRegInputStart = REG_INPUT_START;
@@ -84,7 +95,13 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
     {
         iRegIndex = ( int )( usAddress - usRegInputStart );
 			
-
+			usRegInputBuf[ADC_CHANNEL_0_RAW]=ChnCalibrValues.val_chn0_raw;
+			usRegInputBuf[ADC_CHANNEL_1_RAW]=ChnCalibrValues.val_chn1_raw;
+			usRegInputBuf[ADC_CHANNEL_2_RAW]=ChnCalibrValues.val_chn2_raw;
+			usRegInputBuf[ADC_CHANNEL_3_RAW]=ChnCalibrValues.val_chn3_raw;
+			usRegInputBuf[ADC_CHANNEL_4_RAW]=ChnCalibrValues.val_chn4_raw;
+			usRegInputBuf[ADC_CHANNEL_5_RAW]=ChnCalibrValues.val_chn5_raw;
+			
 			
 			*((float*)&usRegInputBuf[ADC_CHANNEL_0_RESULT])=ChnCalibrValues.val_250A;
 			*((float*)&usRegInputBuf[ADC_CHANNEL_1_RESULT])=ChnCalibrValues.val_150A;
@@ -92,6 +109,9 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 			*((float*)&usRegInputBuf[ADC_CHANNEL_3_RESULT])=ChnCalibrValues.val_7_5A;
 			*((float*)&usRegInputBuf[ADC_CHANNEL_4_RESULT])=ChnCalibrValues.val_voltage_1;
 			*((float*)&usRegInputBuf[ADC_CHANNEL_5_RESULT])=ChnCalibrValues.val_voltage_2;
+			
+			*((float*)&usRegInputBuf[ADC_CHANNEL_CONV])=ChnCalibrValues.val_current;
+			
 			*((uint64_t*)&usRegInputBuf[TIMESTAMP_CURRENT])=DCMI_ADC_GetLastTimestamp();
 			
 			memcpy((void *)&usRegInputBuf[ADC_PYRO_SQUIB_0],(const void*)&usMRegInBuf[0][0],M_REG_INPUT_NREGS*sizeof(uint16_t));
@@ -128,64 +148,58 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 
 #define SERVER_PORT_REG_0	4
 
-#define CLIENT_IP_REG_0		5
-#define CLIENT_IP_REG_1		6
-#define CLIENT_IP_REG_2		7
-#define CLIENT_IP_REG_3		8
+
 //-------ADC UDP DATA SETTINGS REGS--------
-#define ADC_CHANNEL_MASK_REG	9
 
-#define ADC_CHANNEL_0_K				10
-#define ADC_CHANNEL_0_B				12
-#define ADC_CHANNEL_1_K				14
-#define ADC_CHANNEL_1_B				16
-#define ADC_CHANNEL_2_K				18
-#define ADC_CHANNEL_2_B				20
-#define ADC_CHANNEL_3_K				22
-#define ADC_CHANNEL_3_B				24
-#define ADC_CHANNEL_4_K				26
-#define ADC_CHANNEL_4_B				28
-#define ADC_CHANNEL_5_K				30
-#define ADC_CHANNEL_5_B				32
+#define ADC_CHANNEL_0_K				5
+#define ADC_CHANNEL_0_B				7
+#define ADC_CHANNEL_1_K				9
+#define ADC_CHANNEL_1_B				11
+#define ADC_CHANNEL_2_K				13
+#define ADC_CHANNEL_2_B				15
+#define ADC_CHANNEL_3_K				17
+#define ADC_CHANNEL_3_B				19
+#define ADC_CHANNEL_4_K				21
+#define ADC_CHANNEL_4_B				23
+#define ADC_CHANNEL_5_K				25
+#define ADC_CHANNEL_5_B				27
 
-#define ADC_SAMPLERATE				34 
-#define ADC_STARTED						36
+#define ADC_SAMPLERATE				29 
+#define ADC_STARTED						30
 
 //--------BITFIELDS------------------------
-//#define DEV_SET_OUTPUTS				37
+#define DEV_SET_OUTPUTS_0			31
+#define DEV_SET_OUTPUTS_1			32
+#define DEV_SET_OUTPUTS_2			33
+#define DEV_SET_OUTPUTS_3			34
 
-#define DEV_SET_OUTPUTS_0			37
-#define DEV_SET_OUTPUTS_1			38
-#define DEV_SET_OUTPUTS_2			39
-#define DEV_SET_OUTPUTS_3			40
+#define DEV_SET_OUTPUTS_ALL		35
 
-#define DEV_ENABLE_OUT_1			41
-#define DEV_ENABLE_OUT_7			42
+#define DEV_ENABLE_OUT_1			39
+#define DEV_ENABLE_OUT_7			40
 
-#define DEV_EN_VCC_250				43
-#define DEV_EN_VCC_150				44
-#define DEV_EN_VCC_75					45
-#define DEV_EN_VCC_7_5				46
+#define DEV_EN_VCC_250				41
+#define DEV_EN_VCC_150				42
+#define DEV_EN_VCC_75					43
+#define DEV_EN_VCC_7_5				44
 
-#define DEV_ENABLE_AIR				47
+#define DEV_ENABLE_AIR				45
 //--------SYNC DEV REGS--------------------
-#define DEV_RESET_TIMESTAMP		48
-#define DEV_RESET_CONTROLLER	49
+#define DEV_RESET_TIMESTAMP		46
+#define DEV_RESET_CONTROLLER	47
 //--------REGS STM32F100DISCOVERY----------
 
-#define PYRO_SQUIB_PIR_SET_TIME					50
-#define PYRO_SQUIB_PIR_1_SET_CURRENT		51
-#define PYRO_SQUIB_PIR_2_SET_CURRENT		53
-#define PYRO_SQUIB_PIR_3_SET_CURRENT		55
-#define PYRO_SQUIB_PIR_4_SET_CURRENT		57
-#define PYRO_SQUIB_PIR_SET_MASK					59
-#define PYRO_SQUIB_PIR_START						60
+#define PYRO_SQUIB_PIR_SET_TIME					48
+#define PYRO_SQUIB_PIR_1_SET_CURRENT		49
+#define PYRO_SQUIB_PIR_2_SET_CURRENT		51
+#define PYRO_SQUIB_PIR_3_SET_CURRENT		53
+#define PYRO_SQUIB_PIR_4_SET_CURRENT		55
+#define PYRO_SQUIB_PIR_SET_MASK					57
+#define PYRO_SQUIB_PIR_START						58
 
 
-extern uint16_t outputs_temp_reg_0;
-extern uint16_t outputs_temp_reg_1;
-extern uint16_t outputs_temp_reg_2;
-extern uint16_t outputs_temp_reg_3;
+extern uint64_t	outputs_temp_reg;
+extern stADCPyroBuf ADCPyroBuf;
 
 static uint16_t adc_started_flag=0;
 
@@ -215,38 +229,34 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 								usRegHoldingBuf[SERVER_PORT_REG_0]=configInfo.IPAdress_Server.port;
 
-								usRegHoldingBuf[CLIENT_IP_REG_0]=configInfo.IPAdress_Client.ip_addr_0;
-								usRegHoldingBuf[CLIENT_IP_REG_1]=configInfo.IPAdress_Client.ip_addr_1;
-								usRegHoldingBuf[CLIENT_IP_REG_2]=configInfo.IPAdress_Client.ip_addr_2;
-								usRegHoldingBuf[CLIENT_IP_REG_3]=configInfo.IPAdress_Client.ip_addr_3;
 								
-								usRegHoldingBuf[ADC_CHANNEL_MASK_REG]=(uint16_t)configInfo.ConfigADC.channelMask;
-								
-								*((float*)&usRegHoldingBuf[ADC_CHANNEL_0_K])=configInfo.ConfigADC.calibrChannel[0].k;
-								*((float*)&usRegHoldingBuf[ADC_CHANNEL_0_B])=configInfo.ConfigADC.calibrChannel[0].b;
-								
-								*((float*)&usRegHoldingBuf[ADC_CHANNEL_1_K])=configInfo.ConfigADC.calibrChannel[1].k;
-								*((float*)&usRegHoldingBuf[ADC_CHANNEL_1_B])=configInfo.ConfigADC.calibrChannel[1].b;
-								
-								*((float*)&usRegHoldingBuf[ADC_CHANNEL_2_K])=configInfo.ConfigADC.calibrChannel[2].k;
-								*((float*)&usRegHoldingBuf[ADC_CHANNEL_2_B])=configInfo.ConfigADC.calibrChannel[2].b;
-								
-								*((float*)&usRegHoldingBuf[ADC_CHANNEL_3_K])=configInfo.ConfigADC.calibrChannel[3].k;
-								*((float*)&usRegHoldingBuf[ADC_CHANNEL_3_B])=configInfo.ConfigADC.calibrChannel[3].b;
-								
-								*((float*)&usRegHoldingBuf[ADC_CHANNEL_4_K])=configInfo.ConfigADC.calibrChannel[4].k;
-								*((float*)&usRegHoldingBuf[ADC_CHANNEL_4_B])=configInfo.ConfigADC.calibrChannel[4].b;
-								
-								*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_K])=configInfo.ConfigADC.calibrChannel[5].k;
-								*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_B])=configInfo.ConfigADC.calibrChannel[5].b;
-								
+//								*((float*)&usRegHoldingBuf[ADC_CHANNEL_0_K])=configInfo.ConfigADC.calibrChannel[0].k;
+//								*((float*)&usRegHoldingBuf[ADC_CHANNEL_0_B])=configInfo.ConfigADC.calibrChannel[0].b;
+//								
+//								*((float*)&usRegHoldingBuf[ADC_CHANNEL_1_K])=configInfo.ConfigADC.calibrChannel[1].k;
+//								*((float*)&usRegHoldingBuf[ADC_CHANNEL_1_B])=configInfo.ConfigADC.calibrChannel[1].b;
+//								
+//								*((float*)&usRegHoldingBuf[ADC_CHANNEL_2_K])=configInfo.ConfigADC.calibrChannel[2].k;
+//								*((float*)&usRegHoldingBuf[ADC_CHANNEL_2_B])=configInfo.ConfigADC.calibrChannel[2].b;
+//								
+//								*((float*)&usRegHoldingBuf[ADC_CHANNEL_3_K])=configInfo.ConfigADC.calibrChannel[3].k;
+//								*((float*)&usRegHoldingBuf[ADC_CHANNEL_3_B])=configInfo.ConfigADC.calibrChannel[3].b;
+//								
+//								*((float*)&usRegHoldingBuf[ADC_CHANNEL_4_K])=configInfo.ConfigADC.calibrChannel[4].k;
+//								*((float*)&usRegHoldingBuf[ADC_CHANNEL_4_B])=configInfo.ConfigADC.calibrChannel[4].b;
+//								
+//								*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_K])=configInfo.ConfigADC.calibrChannel[5].k;
+//								*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_B])=configInfo.ConfigADC.calibrChannel[5].b;
+//								
 								usRegHoldingBuf[ADC_SAMPLERATE]=(uint16_t)configInfo.ConfigADC.sampleRate;
 								
 								usRegHoldingBuf[ADC_STARTED]=adc_started_flag;
-								usRegHoldingBuf[DEV_SET_OUTPUTS_0] = outputs_temp_reg_0;
-								usRegHoldingBuf[DEV_SET_OUTPUTS_1] = outputs_temp_reg_1;
-								usRegHoldingBuf[DEV_SET_OUTPUTS_2] = outputs_temp_reg_2;
-								usRegHoldingBuf[DEV_SET_OUTPUTS_3] = outputs_temp_reg_3;
+								usRegHoldingBuf[DEV_SET_OUTPUTS_0] = outputs_temp_reg&0xFFFF;
+								usRegHoldingBuf[DEV_SET_OUTPUTS_1] = (outputs_temp_reg>>16)&0xFFFF;
+								usRegHoldingBuf[DEV_SET_OUTPUTS_2] = (outputs_temp_reg>>32)&0xFFFF;
+								usRegHoldingBuf[DEV_SET_OUTPUTS_3] = (outputs_temp_reg>>48)&0xFFFF;
+								
+								*(uint64_t*)&usRegHoldingBuf[DEV_SET_OUTPUTS_ALL]=outputs_temp_reg;
 								
 								usRegHoldingBuf[DEV_ENABLE_OUT_1]=HAL_GPIO_ReadPin(ENABLE_OUT_1_GPIO_Port,ENABLE_OUT_1_Pin);
 								usRegHoldingBuf[DEV_ENABLE_OUT_7]=HAL_GPIO_ReadPin(ENABLE_OUT_7_GPIO_Port,ENABLE_OUT_7_Pin);
@@ -319,41 +329,6 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 														settings_need_write=1;
 												}
 												break;
-
-												case CLIENT_IP_REG_0:
-												{
-														configInfo.IPAdress_Client.ip_addr_0=usRegHoldingBuf[CLIENT_IP_REG_0];
-														settings_need_write=1;
-												}
-												break;	
-
-												case CLIENT_IP_REG_1:
-												{
-														configInfo.IPAdress_Client.ip_addr_1=usRegHoldingBuf[CLIENT_IP_REG_1];
-														settings_need_write=1;
-												}
-												break;		
-												
-												case CLIENT_IP_REG_2:
-												{
-														configInfo.IPAdress_Client.ip_addr_2=usRegHoldingBuf[CLIENT_IP_REG_2];
-														settings_need_write=1;
-												}
-												break;	
-
-												case CLIENT_IP_REG_3:
-												{
-														configInfo.IPAdress_Client.ip_addr_3=usRegHoldingBuf[CLIENT_IP_REG_3];
-														settings_need_write=1;
-												}
-												break;	
-
-												case ADC_CHANNEL_MASK_REG:
-												{
-														(uint16_t)configInfo.ConfigADC.channelMask=usRegHoldingBuf[ADC_CHANNEL_MASK_REG];
-														settings_need_write=1;
-												}
-												break;	
 
 												case ADC_CHANNEL_0_K+(1):
 												{
@@ -462,44 +437,44 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												}
 												break;	
 												
-			//									case DEV_SET_OUTPUTS+3:
-			//									{
-			//											DiscretOutputs_Set(*(uint64_t*)&usRegHoldingBuf[DEV_SET_OUTPUTS]);
-			//									}
-			//									break;		
-
 													
 												case DEV_SET_OUTPUTS_0:
 												{											
-														outputs_temp_reg_0=0x0;
-														outputs_temp_reg_0|=usRegHoldingBuf[DEV_SET_OUTPUTS_0];
-														DiscretOutputs_Set((((uint64_t)outputs_temp_reg_0))|(((uint64_t)outputs_temp_reg_1)<<16)|(((uint64_t)outputs_temp_reg_2)<<32)|(((uint64_t)outputs_temp_reg_3)<<48));
+														outputs_temp_reg&=(~((uint64_t)0xFFFF));
+														outputs_temp_reg|=(uint64_t)usRegHoldingBuf[DEV_SET_OUTPUTS_0];
+														DiscretOutputs_Set(outputs_temp_reg);
 												}
 												break;
 
 												case DEV_SET_OUTPUTS_1:
 												{											
-														outputs_temp_reg_1=0x0;
-														outputs_temp_reg_1|=usRegHoldingBuf[DEV_SET_OUTPUTS_1];
-														DiscretOutputs_Set((((uint64_t)outputs_temp_reg_0))|(((uint64_t)outputs_temp_reg_1)<<16)|(((uint64_t)outputs_temp_reg_2)<<32)|(((uint64_t)outputs_temp_reg_3)<<48));
+														outputs_temp_reg&=(~((uint64_t)0xFFFF<<16));
+														outputs_temp_reg|=(uint64_t)usRegHoldingBuf[DEV_SET_OUTPUTS_1]<<16;
+														DiscretOutputs_Set(outputs_temp_reg);
 												}
 												break;	
 
 												case DEV_SET_OUTPUTS_2:
 												{											
-														outputs_temp_reg_2=0x0;
-														outputs_temp_reg_2|=usRegHoldingBuf[DEV_SET_OUTPUTS_2];
-														DiscretOutputs_Set((((uint64_t)outputs_temp_reg_0))|(((uint64_t)outputs_temp_reg_1)<<16)|(((uint64_t)outputs_temp_reg_2)<<32)|(((uint64_t)outputs_temp_reg_3)<<48));
+														outputs_temp_reg&=(~((uint64_t)0xFFFF<<32));
+														outputs_temp_reg|=(uint64_t)usRegHoldingBuf[DEV_SET_OUTPUTS_1]<<32;
+														DiscretOutputs_Set(outputs_temp_reg);
 												}
 												break;		
 
 												case DEV_SET_OUTPUTS_3:
 												{											
-														outputs_temp_reg_3=0x0;
-														outputs_temp_reg_3|=usRegHoldingBuf[DEV_SET_OUTPUTS_3];
-														DiscretOutputs_Set((((uint64_t)outputs_temp_reg_0))|(((uint64_t)outputs_temp_reg_1)<<16)|(((uint64_t)outputs_temp_reg_2)<<32)|(((uint64_t)outputs_temp_reg_3)<<48));
+														outputs_temp_reg&=(~((uint64_t)0xFFFF<<48));
+														outputs_temp_reg|=(uint64_t)usRegHoldingBuf[DEV_SET_OUTPUTS_1]<<48;
+														DiscretOutputs_Set(outputs_temp_reg);
 												}
 												break;		
+												
+												case DEV_SET_OUTPUTS_ALL+3:
+												{
+														DiscretOutputs_Set(*(uint64_t*)&usRegHoldingBuf[DEV_SET_OUTPUTS_ALL]);								
+												}
+												break;													
 
 												case DEV_ENABLE_OUT_1:
 												{
@@ -623,7 +598,8 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 														TCPtoRTURegWrite.nRegs=1;
 														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+10;
 														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_START];
-														xSemaphoreGive(xSendRTURegSem);											
+														xSemaphoreGive(xSendRTURegSem);		
+
 												}
 												break;
 												

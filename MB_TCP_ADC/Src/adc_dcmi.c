@@ -143,6 +143,12 @@ uint64_t DCMI_ADC_GetLastTimestamp(void)
 	return timestamp;
 }
 
+uint64_t DCMI_ADC_GetCurrentTimestamp(void)
+{
+	return ((((uint64_t)(TIM5->CNT))<<16)|TIM4->CNT);
+}
+
+
 void DCMI_ADC_ResetTimestamp(void)
 {
 		__HAL_DMA_DISABLE(&hdma_dcmi);  

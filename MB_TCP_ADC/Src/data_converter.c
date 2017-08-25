@@ -175,6 +175,11 @@ void ADC_ConvertBuf(uint8_t *dcmiBuf,uint16_t dcmiBufLen, uint16_t *spiBuf_1, ui
 
 		  uint8_t offset=0;
 			
+			ChnCalibrValues.val_chn0_raw=out1.val;
+			ChnCalibrValues.val_chn1_raw=out2.val;
+			ChnCalibrValues.val_chn2_raw=out3.val;
+			ChnCalibrValues.val_chn3_raw=out4.val;
+			
 			ChnCalibrValues.val_250A=configInfo.ConfigADC.calibrChannel[0].k*(out1.val&0xFFFF)+configInfo.ConfigADC.calibrChannel[0].b;
 			ChnCalibrValues.val_150A=configInfo.ConfigADC.calibrChannel[1].k*(out2.val&0xFFFF)+configInfo.ConfigADC.calibrChannel[1].b;
 			ChnCalibrValues.val_75A	=configInfo.ConfigADC.calibrChannel[2].k*(out3.val&0xFFFF)+configInfo.ConfigADC.calibrChannel[2].b;
@@ -206,6 +211,8 @@ void ADC_ConvertBuf(uint8_t *dcmiBuf,uint16_t dcmiBufLen, uint16_t *spiBuf_1, ui
 			*(resultBuf+offset)=ChnCalibrValues.val_current;
 			offset++;
 						
+			ChnCalibrValues.val_chn4_raw=spiBuf_1[cycle_count/SPI_ADC_FREQ_DIV]&0xFFFF;
+			ChnCalibrValues.val_chn5_raw=spiBuf_2[cycle_count/SPI_ADC_FREQ_DIV]&0xFFFF;
 			
 			ChnCalibrValues.val_voltage_1=*(resultBuf+offset)=configInfo.ConfigADC.calibrChannel[4].k*(spiBuf_1[cycle_count/SPI_ADC_FREQ_DIV]&0xFFFF)+configInfo.ConfigADC.calibrChannel[4].b;
 			offset++;

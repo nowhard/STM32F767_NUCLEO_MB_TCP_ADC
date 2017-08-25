@@ -122,6 +122,7 @@
 "mb_tcp_adc\jumpers.o"
 "mb_tcp_adc\mb_master_user.o"
 "mb_tcp_adc\mbmasterinit.o"
+"mb_tcp_adc\adc_pyro_buf.o"
 "mb_tcp_adc\mb.o"
 "mb_tcp_adc\mbtcp.o"
 "mb_tcp_adc\portevent.o"

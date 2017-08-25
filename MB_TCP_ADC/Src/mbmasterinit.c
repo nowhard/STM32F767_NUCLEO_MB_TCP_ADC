@@ -6,6 +6,9 @@
 #include "mbrtu.h"
 #include "mb_master_user.h"
 #include "mbfunc.h"
+#include "adc_pyro_buf.h"
+#include "adc_dcmi.h"
+#include "udp_send.h"
 
 
 #define MB_RTU_TASK_STACK_SIZE	2048
@@ -19,6 +22,8 @@
 
 xSemaphoreHandle xSendRTURegSem;
 extern stTCPtoRTURegWrite TCPtoRTURegWrite;
+extern stPacket UDPPacket;
+extern enADCPyroBufState ADCPyroBufState;
 
 void MBMaster_RTU_Task(void *pvParameters);
 void MBMaster_RTU_Poll(void *pvParameters);
@@ -54,7 +59,19 @@ void MBMaster_RTU_Task(void *pvParameters)
 
 
 #define HOLDING_REG_POLL_PERIOD		200
+#define REG_ADC_0									0
+#define REG_PIR_STATE							16
+enum
+{
+  PYRO_SQUIB_STOP=0,
+	PYRO_SQUIB_RUN,
+}
+;
+
 eMBMasterReqErrCode    errorCode = MB_MRE_NO_ERR;
+
+extern USHORT   usMRegInBuf[MB_MASTER_TOTAL_SLAVE_NUM][M_REG_INPUT_NREGS];
+
 void MBMaster_RTU_Poll(void *pvParameters)
 {
 	static uint16_t tick_counter=0;
@@ -76,6 +93,19 @@ void MBMaster_RTU_Poll(void *pvParameters)
 		}
 
 		errorCode = eMBMasterReqReadInputRegister(SLAVE_PYRO_SQUIB_ADDR,M_REG_INPUT_START,M_REG_INPUT_NREGS,SLAVE_PYRO_SQUIB_TIMEOUT);
+		
+		//проверяем состояние пиропатрона, если включен-заполняем буфер
+		
+		if((usMRegInBuf[0][REG_PIR_STATE]!=PYRO_SQUIB_STOP) && (errorCode == MB_MRE_NO_ERR))
+		{
+				ADC_PyroBuf_Add((float*)&usMRegInBuf[0][REG_PIR_STATE]);
+				UDPPacket.ADCPyroPacket.timestamp=DCMI_ADC_GetCurrentTimestamp();
+				ADCPyroBufState=ADC_PYRO_BUF_FILL_START;
+		}
+		else
+		{
+				ADCPyroBufState=ADC_PYRO_BUF_FILL_STOP;
+		}
 		
 		if(tick_counter>=HOLDING_REG_POLL_PERIOD)
 		{

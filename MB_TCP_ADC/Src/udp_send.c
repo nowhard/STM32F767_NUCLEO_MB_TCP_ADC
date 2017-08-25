@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "socket.h"
+#include "udp_send.h"
 
 
 
@@ -16,14 +17,11 @@
 #include "semphr.h"
 #include "data_converter.h"
 #include "adc_dcmi.h"
+#include "adc_pyro_buf.h"
 #include "spi_adc.h"
 #include "cfg_info.h"
 
 
-#define UDP_ADC_PACKET_SIZE		1000
-#define UDP_PACKET_SEND_DELAY 1000
-
-#define SENDER_PORT_NUM				1001
 
 ip_addr_t DestIPaddr;
 extern ip4_addr_t ipaddr;
@@ -36,25 +34,15 @@ extern uint16_t *currentSPI3_ADC_Buf;
 extern uint16_t *currentSPI6_ADC_Buf;
 
 
-
 extern SemaphoreHandle_t xAdcBuf_Send_Semaphore;
+extern enADCPyroBufState ADCPyroBufState;
 
 
 void UDP_Send_Task( void *pvParameters );
-
-
-#pragma pack(push,1)
-typedef struct
-{
-	uint8_t 	id;
-	uint64_t 	timestamp;
-	uint8_t 	data[UDP_ADC_PACKET_SIZE];
-}stPacket;
-#pragma pack(pop)
+void udp_client_send_base_buf(float *buf, uint16_t bufSize);
+void udp_client_send_pyro_buf(void);
 
 stPacket UDPPacket;
-
-
 
 float ADC_resultBuf[ADC_RESULT_BUF_LEN];
 
@@ -98,24 +86,36 @@ void udp_client_init(void)
 }
 
 
-void udp_client_send_buf(float *buf, uint16_t bufSize)
+void udp_client_send_base_buf(float *buf, uint16_t bufSize)
 {
 		err_t err;
 		uint16_t adc_buf_offset=0;
 		
-		UDPPacket.id=0;
-		UDPPacket.timestamp=DCMI_ADC_GetLastTimestamp();
+		UDPPacket.BasePacket.id=0;
+		UDPPacket.BasePacket.timestamp=DCMI_ADC_GetLastTimestamp();
 
 
 		while(adc_buf_offset<(bufSize*sizeof(float)))
 		{
-			memcpy(&UDPPacket.data,((uint8_t*)buf+adc_buf_offset),UDP_ADC_PACKET_SIZE);			
-			sendto(socket_fd, &UDPPacket,sizeof(UDPPacket),0,(struct sockaddr*)&ra,sizeof(ra));			
+			memcpy(&UDPPacket.BasePacket.data,((uint8_t*)buf+adc_buf_offset),UDP_ADC_PACKET_SIZE);			
+			sendto(socket_fd, &UDPPacket,sizeof(enUDPPacketType)+sizeof(stBasePacket),0,(struct sockaddr*)&ra,sizeof(ra));			
 			adc_buf_offset+=UDP_ADC_PACKET_SIZE;
-			UDPPacket.id++;
+			UDPPacket.BasePacket.id++;
 		}
+
 }
 
+void udp_client_send_pyro_buf(void)
+{
+	if(ADCPyroBufState==ADC_PYRO_BUF_FILL_STOP)//передача данных ацп пиропатрона закончена
+	{
+		UDPPacket.ADCPyroPacket.id=0;
+		while(ADC_PyroBuf_GetCurrentLength())
+		{
+				
+		}
+	}
+}
 
 void UDP_Send_Task( void *pvParameters )
 {
@@ -124,7 +124,7 @@ void UDP_Send_Task( void *pvParameters )
 	{
 		xSemaphoreTake( xAdcBuf_Send_Semaphore, portMAX_DELAY );
 		ADC_ConvertBuf(ADC_buf_pnt,(ADC_BUF_LEN>>1),currentSPI6_ADC_Buf,currentSPI3_ADC_Buf,(SPI_ADC_BUF_LEN>>1),ADC_resultBuf, &result_buf_len);
-		udp_client_send_buf(ADC_resultBuf,result_buf_len);
+		udp_client_send_base_buf(ADC_resultBuf,result_buf_len);
 	}
 }
 

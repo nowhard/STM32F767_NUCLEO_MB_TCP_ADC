@@ -145,34 +145,41 @@
           <Name>-U066EFF535752877167071331 -O2254 -S0 -C0 -A0 -N00("ARM CoreSight SW-DP") -D00(5BA02477) -L00(0) -TO19 -TC216000000 -TP21 -TDS806B -TDT0 -TDC1F -TIE1 -TIP0 -FO7 -FD20000000 -FC1000 -FN2 -FF0STM32F7x_2048.FLM -FS08000000 -FL0200000 -FP0($$Device:STM32F767ZI$Flash\STM32F7x_2048.FLM) -FF1STM32F7xTCM_2048.FLM -FS1200000 -FL1200000 -FP1($$Device:STM32F767ZI$Flash\STM32F7xTCM_2048.FLM)</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
-      <Breakpoint/>
+      <Breakpoint>
+        <Bp>
+          <Number>0</Number>
+          <Type>0</Type>
+          <LineNumber>233</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>0</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>0</BreakIfRCount>
+          <Filename>..\Src\mbfunc.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression></Expression>
+        </Bp>
+      </Breakpoint>
       <WatchWindow1>
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>ucMasterRTURcvBuf</ItemText>
+          <ItemText>usMRegHoldBuf</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>usMasterRcvBufferPos</ItemText>
-        </Ww>
-        <Ww>
-          <count>2</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>ucMasterRTUSndBuf</ItemText>
-        </Ww>
-        <Ww>
-          <count>3</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>timestamp,0x0A</ItemText>
+          <ItemText>ADCPyroFIFO</ItemText>
         </Ww>
       </WatchWindow1>
       <MemoryWindow1>
         <Mm>
           <WinNumber>1</WinNumber>
           <SubType>0</SubType>
-          <ItemText>pcb-&gt;next</ItemText>
+          <ItemText>0x20000000</ItemText>
           <AccSizeX>0</AccSizeX>
         </Mm>
       </MemoryWindow1>
@@ -182,7 +189,7 @@
       <DebugFlag>
         <trace>0</trace>
         <periodic>1</periodic>
-        <aLwin>0</aLwin>
+        <aLwin>1</aLwin>
         <aCover>0</aCover>
         <aSer1>0</aSer1>
         <aSer2>0</aSer2>
@@ -218,6 +225,10 @@
           <WinId>35905</WinId>
         </Entry>
         <Entry>
+          <Name>System Viewer\RCC</Name>
+          <WinId>35902</WinId>
+        </Entry>
+        <Entry>
           <Name>System Viewer\USART1</Name>
           <WinId>35903</WinId>
         </Entry>
@@ -233,7 +244,7 @@
 
   <Group>
     <GroupName>Middlewares/FreeRTOS</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -253,7 +264,7 @@
       <GroupNumber>1</GroupNumber>
       <FileNumber>2</FileNumber>
       <FileType>1</FileType>
-      <tvExp>0</tvExp>
+      <tvExp>1</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>../Middlewares/Third_Party/FreeRTOS/Source/tasks.c</PathWithFileName>
@@ -1712,18 +1723,6 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Src\tcp_send.c</PathWithFileName>
-      <FilenameWithoutPath>tcp_send.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>6</GroupNumber>
-      <FileNumber>121</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
       <PathWithFileName>..\Src\cfg_info.c</PathWithFileName>
       <FilenameWithoutPath>cfg_info.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
@@ -1731,7 +1730,7 @@
     </File>
     <File>
       <GroupNumber>6</GroupNumber>
-      <FileNumber>122</FileNumber>
+      <FileNumber>121</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1743,7 +1742,7 @@
     </File>
     <File>
       <GroupNumber>6</GroupNumber>
-      <FileNumber>123</FileNumber>
+      <FileNumber>122</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1755,7 +1754,7 @@
     </File>
     <File>
       <GroupNumber>6</GroupNumber>
-      <FileNumber>124</FileNumber>
+      <FileNumber>123</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1767,13 +1766,25 @@
     </File>
     <File>
       <GroupNumber>6</GroupNumber>
-      <FileNumber>125</FileNumber>
+      <FileNumber>124</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Src\mbmasterinit.c</PathWithFileName>
       <FilenameWithoutPath>mbmasterinit.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>6</GroupNumber>
+      <FileNumber>125</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\Src\adc_pyro_buf.c</PathWithFileName>
+      <FilenameWithoutPath>adc_pyro_buf.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
