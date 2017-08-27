@@ -2056,6 +2056,8 @@ Section Cross References
     udp_send.o(i.udp_client_send_base_buf) refers to udp_send.o(.bss) for .bss
     udp_send.o(i.udp_client_send_base_buf) refers to udp_send.o(.data) for .data
     udp_send.o(i.udp_client_send_pyro_buf) refers to adc_pyro_buf.o(i.ADC_PyroBuf_GetCurrentLength) for ADC_PyroBuf_GetCurrentLength
+    udp_send.o(i.udp_client_send_pyro_buf) refers to adc_pyro_buf.o(.data) for ADCPyroBufState
+    udp_send.o(i.udp_client_send_pyro_buf) refers to udp_send.o(.bss) for .bss
     data_converter.o(i.ADC_ConvertBuf) refers to data_converter.o(.bss) for .bss
     data_converter.o(i.ADC_ConvertBuf) refers to cfg_info.o(.bss) for configInfo
     spi_adc.o(i.HAL_SPI_RxCpltCallback) refers to stm32f7xx_hal_gpio.o(i.HAL_GPIO_WritePin) for HAL_GPIO_WritePin
@@ -2167,6 +2169,7 @@ Section Cross References
     mbmasterinit.o(i.MBMaster_RTU_Poll) refers to mbmasterinit.o(.data) for .data
     mbmasterinit.o(i.MBMaster_RTU_Task) refers to mb_m.o(i.eMBMasterPoll) for eMBMasterPoll
     adc_pyro_buf.o(i.ADC_PyroBuf_Add) refers to adc_pyro_buf.o(.bss) for .bss
+    adc_pyro_buf.o(i.ADC_PyroBuf_Copy) refers to adc_pyro_buf.o(.data) for .data
     adc_pyro_buf.o(i.ADC_PyroBuf_Copy) refers to adc_pyro_buf.o(.bss) for .bss
     adc_pyro_buf.o(i.ADC_PyroBuf_GetCurrentLength) refers to adc_pyro_buf.o(.bss) for .bss
     mb.o(i.eMBClose) refers to mb.o(.data) for .data
@@ -3567,7 +3570,7 @@ Removing Unused input sections from the image.
     Removing udp_send.o(.revsh_text), (4 bytes).
     Removing udp_send.o(.rrx_text), (6 bytes).
     Removing udp_send.o(i.udp_client_send_base_buf), (128 bytes).
-    Removing udp_send.o(i.udp_client_send_pyro_buf), (14 bytes).
+    Removing udp_send.o(i.udp_client_send_pyro_buf), (40 bytes).
     Removing data_converter.o(.rev16_text), (4 bytes).
     Removing data_converter.o(.revsh_text), (4 bytes).
     Removing data_converter.o(.rrx_text), (6 bytes).
@@ -3599,7 +3602,7 @@ Removing Unused input sections from the image.
     Removing adc_pyro_buf.o(.rev16_text), (4 bytes).
     Removing adc_pyro_buf.o(.revsh_text), (4 bytes).
     Removing adc_pyro_buf.o(.rrx_text), (6 bytes).
-    Removing adc_pyro_buf.o(i.ADC_PyroBuf_Copy), (80 bytes).
+    Removing adc_pyro_buf.o(i.ADC_PyroBuf_Copy), (144 bytes).
     Removing adc_pyro_buf.o(i.ADC_PyroBuf_GetCurrentLength), (16 bytes).
     Removing mb.o(.rev16_text), (4 bytes).
     Removing mb.o(.revsh_text), (4 bytes).
@@ -3695,7 +3698,7 @@ Removing Unused input sections from the image.
     Removing mbfuncinput_m.o(.revsh_text), (4 bytes).
     Removing mbfuncinput_m.o(.rrx_text), (6 bytes).
 
-987 unused section(s) (total 64502 bytes) removed from the image.
+987 unused section(s) (total 64592 bytes) removed from the image.
 
 ==============================================================================
 
@@ -6546,98 +6549,98 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
-       664        148          0         32      32000       6670   adc_dcmi.o
-        60          6          0          1      16392       1384   adc_pyro_buf.o
-      1068         46          0          0          0     970123   api_lib.o
-      3538         80          0          1          0      29790   api_msg.o
-       548         74         80        164         80       5313   cfg_info.o
-       832         30          0          0          0      31105   cmsis_os.o
-       880         22          0          0         40       3255   data_converter.o
-         8          0          0          0          0       1170   def.o
-        96         28          0         16          0       2776   discret_out.o
-        28          6         68          0          0       1303   err.o
-      1952         74          0          1        240      12185   etharp.o
-       258          6         12          0          0       2858   ethernet.o
-       964         78         26          4      12520      10496   ethernetif.o
-         0          0          0          0          0      18900   event_groups.o
-       596         22          0         24      65536       6927   heap_4.o
-       480          6          0          0          0       3838   icmp.o
-         0          0          0          0          0       7148   inet_chksum.o
-        34          0          0          0          0        600   init.o
-         0          0          0          0         24       3074   ip.o
-       908         34          0          2          0      15363   ip4.o
-        54          0          4          0          0       7244   ip4_addr.o
-      1602         16          0          8          0       9034   ip4_frag.o
-       108         12          0          1          0        858   jumpers.o
-       148          0          0          0          0       9122   list.o
-       200         20          0         24         48      14544   lwip.o
-      2092        166         84         16       1452      41869   main.o
-       368         38          0        148          0       3647   mb.o
-       536         70          0        176          0       7548   mb_m.o
-       568         36          0          8       1088       5887   mb_master_user.o
-        64          4        512          0          0       1540   mbcrc.o
-      1728        182          0         16        256      41860   mbfunc.o
-       320          0          0          0          0       4170   mbfunccoils.o
-       296          0          0          0          0       4624   mbfunccoils_m.o
-       126          0          0          0          0       1780   mbfuncdisc.o
-       100          0          0          0          0       1886   mbfuncdisc_m.o
-       400          0          0          0          0       5655   mbfuncholding.o
-       648          0          0          0          0       9471   mbfuncholding_m.o
-       100          0          0          0          0       1747   mbfuncinput.o
-       162          0          0          0          0       2873   mbfuncinput_m.o
-        36         10          0          2         32       1615   mbfuncother.o
-       106         22          0          0        600       2027   mbinit.o
-       366         68          0          8          0       2171   mbmasterinit.o
-       446         86          0         12        509      10133   mbrtu_m.o
-       126          0          0          0          0       4371   mbtcp.o
-        82          0          0          0          0       2197   mbutils.o
-       672         36          0         16       4115       5277   mem.o
-       176         14        208         52      29287      15536   memp.o
-       132          0          0          0          0       3627   netbuf.o
-       364         18          0         12          0       8293   netif.o
-      1458         32          0          1          0      14936   pbuf.o
-       758         76          0         12          0      11865   port.o
-        42          0          0          0          0       2448   portevent.o
-       268         42          0          4          0       8528   portevent_m.o
-       168         22          0          0          0       2672   portserial_m.o
-       762         38          0         12          0       6892   porttcp.o
-       192         22          0          0          0       2749   porttimer_m.o
-      2550         18          0          0         64      19033   queue.o
-      3412        118          0          8         80      37830   sockets.o
-       252         48          0         16       2004       2387   spi_adc.o
-        36          8        504          0      16384        836   startup_stm32f767xx.o
-       126         22          0          4          0       4011   stm32f7xx_hal.o
-       218         14          0          0          0      35765   stm32f7xx_hal_cortex.o
-       602         16          0          0          0       4514   stm32f7xx_hal_dcmi.o
-      1306         30          8          0          0       7137   stm32f7xx_hal_dma.o
-      2006        112          0          0          0       2525   stm32f7xx_hal_dma_ex.o
-      2358         60          0          0          0      13298   stm32f7xx_hal_eth.o
-       468         40          0          0         28       4538   stm32f7xx_hal_flash.o
-       300          8          0          0          0       2928   stm32f7xx_hal_flash_ex.o
-       638         24          0          0          0       4523   stm32f7xx_hal_gpio.o
-      1324        136          0          0          0       5864   stm32f7xx_hal_msp.o
-       124          8          0          0          0       1324   stm32f7xx_hal_pwr_ex.o
-      1976        124          0          0          0       7198   stm32f7xx_hal_rcc.o
-      1940         44          0          0          0       2440   stm32f7xx_hal_rcc_ex.o
-      1998         50          0          0          0      15695   stm32f7xx_hal_spi.o
-      2240         28          0          0          0      19907   stm32f7xx_hal_tim.o
-       558         10          0          0          0       4278   stm32f7xx_hal_tim_ex.o
-      2504         68          0          0          0      16206   stm32f7xx_hal_uart.o
-       198         68          0          0          0      13804   stm32f7xx_it.o
-       500         26         12          8          0      19912   sys_arch.o
-        96         20         24          4          0       1327   system_stm32f7xx.o
-      2760        218          0         60        240      25771   tasks.o
-      3590        114        201         32          0      38993   tcp.o
-      4816         90          0         36         16      18883   tcp_in.o
-      3112         10          0          0          0      17311   tcp_out.o
-       464         68          0         16          0       9591   tcpip.o
-       480         66         24         12          0       6468   timeouts.o
-         0          0          0          0          0       2884   timers.o
-      1000         26          0          8          0      11855   udp.o
-       432         76          0         12      37164      11343   udp_send.o
+       664        148          0         32      32000       6746   adc_dcmi.o
+        60          6          0          1      16392       1412   adc_pyro_buf.o
+      1068         46          0          0          0     970443   api_lib.o
+      3538         80          0          1          0      29942   api_msg.o
+       548         74         80        164         80       5345   cfg_info.o
+       832         30          0          0          0      31257   cmsis_os.o
+       880         22          0          0         40       3279   data_converter.o
+         8          0          0          0          0       1186   def.o
+        96         28          0         16          0       2812   discret_out.o
+        28          6         68          0          0       1327   err.o
+      1952         74          0          1        240      12257   etharp.o
+       258          6         12          0          0       2886   ethernet.o
+       964         78         26          4      12520      10544   ethernetif.o
+         0          0          0          0          0      18920   event_groups.o
+       596         22          0         24      65536       6959   heap_4.o
+       480          6          0          0          0       3866   icmp.o
+         0          0          0          0          0       7156   inet_chksum.o
+        34          0          0          0          0        604   init.o
+         0          0          0          0         24       3082   ip.o
+       908         34          0          2          0      15423   ip4.o
+        54          0          4          0          0       7276   ip4_addr.o
+      1602         16          0          8          0       9074   ip4_frag.o
+       108         12          0          1          0        870   jumpers.o
+       148          0          0          0          0       9162   list.o
+       200         20          0         24         48      14596   lwip.o
+      2092        166         84         16       1452      41953   main.o
+       368         38          0        148          0       3679   mb.o
+       536         70          0        176          0       7600   mb_m.o
+       568         36          0          8       1088       5931   mb_master_user.o
+        64          4        512          0          0       1564   mbcrc.o
+      1728        182          0         16        256      41928   mbfunc.o
+       320          0          0          0          0       4194   mbfunccoils.o
+       296          0          0          0          0       4652   mbfunccoils_m.o
+       126          0          0          0          0       1788   mbfuncdisc.o
+       100          0          0          0          0       1890   mbfuncdisc_m.o
+       400          0          0          0          0       5687   mbfuncholding.o
+       648          0          0          0          0       9519   mbfuncholding_m.o
+       100          0          0          0          0       1759   mbfuncinput.o
+       162          0          0          0          0       2889   mbfuncinput_m.o
+        36         10          0          2         32       1631   mbfuncother.o
+       106         22          0          0        600       2055   mbinit.o
+       366         68          0          8          0       2195   mbmasterinit.o
+       446         86          0         12        509      10237   mbrtu_m.o
+       126          0          0          0          0       4411   mbtcp.o
+        82          0          0          0          0       2217   mbutils.o
+       672         36          0         16       4115       5317   mem.o
+       176         14        208         52      29287      15588   memp.o
+       132          0          0          0          0       3655   netbuf.o
+       364         18          0         12          0       8357   netif.o
+      1458         32          0          1          0      15044   pbuf.o
+       758         76          0         12          0      11941   port.o
+        42          0          0          0          0       2476   portevent.o
+       268         42          0          4          0       8616   portevent_m.o
+       168         22          0          0          0       2700   portserial_m.o
+       762         38          0         12          0       6952   porttcp.o
+       192         22          0          0          0       2777   porttimer_m.o
+      2550         18          0          0         64      19093   queue.o
+      3412        118          0          8         80      37946   sockets.o
+       252         48          0         16       2004       2407   spi_adc.o
+        36          8        504          0      16384        844   startup_stm32f767xx.o
+       126         22          0          4          0       4067   stm32f7xx_hal.o
+       218         14          0          0          0      35801   stm32f7xx_hal_cortex.o
+       602         16          0          0          0       4554   stm32f7xx_hal_dcmi.o
+      1306         30          8          0          0       7189   stm32f7xx_hal_dma.o
+      2006        112          0          0          0       2549   stm32f7xx_hal_dma_ex.o
+      2358         60          0          0          0      13370   stm32f7xx_hal_eth.o
+       468         40          0          0         28       4586   stm32f7xx_hal_flash.o
+       300          8          0          0          0       2940   stm32f7xx_hal_flash_ex.o
+       638         24          0          0          0       4559   stm32f7xx_hal_gpio.o
+      1324        136          0          0          0       5916   stm32f7xx_hal_msp.o
+       124          8          0          0          0       1336   stm32f7xx_hal_pwr_ex.o
+      1976        124          0          0          0       7250   stm32f7xx_hal_rcc.o
+      1940         44          0          0          0       2452   stm32f7xx_hal_rcc_ex.o
+      1998         50          0          0          0      15835   stm32f7xx_hal_spi.o
+      2240         28          0          0          0      20083   stm32f7xx_hal_tim.o
+       558         10          0          0          0       4310   stm32f7xx_hal_tim_ex.o
+      2504         68          0          0          0      16354   stm32f7xx_hal_uart.o
+       198         68          0          0          0      13924   stm32f7xx_it.o
+       500         26         12          8          0      20072   sys_arch.o
+        96         20         24          4          0       1351   system_stm32f7xx.o
+      2760        218          0         60        240      25943   tasks.o
+      3590        114        201         32          0      39245   tcp.o
+      4816         90          0         36         16      18943   tcp_in.o
+      3112         10          0          0          0      17383   tcp_out.o
+       464         68          0         16          0       9671   tcpip.o
+       480         66         24         12          0       6536   timeouts.o
+         0          0          0          0          0       2892   timers.o
+      1000         26          0          8          0      11951   udp.o
+       432         76          0         12      37164      11375   udp_send.o
 
     ----------------------------------------------------------------------
-     73176       3458       1804       1012     220208    1805353   Object Totals
+     73176       3458       1804       1012     220208    1810353   Object Totals
          0          0         32          0          0          0   (incl. Generated)
        104          0          5         23          9          0   (incl. Padding)
 
@@ -6696,8 +6699,8 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-     77012       3564       1804       1016     220208    1755425   Grand Totals
-     77012       3564       1804        304     220208    1755425   ELF Image Totals (compressed)
+     77012       3564       1804       1016     220208    1760425   Grand Totals
+     77012       3564       1804        304     220208    1760425   ELF Image Totals (compressed)
      77012       3564       1804        304          0          0   ROM Totals
 
 ==============================================================================
