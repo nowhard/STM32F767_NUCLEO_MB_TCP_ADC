@@ -6,7 +6,7 @@
 
 
 #define UDP_ADC_PACKET_SIZE						1000
-#define UDP_ADC_PYRO_MAX_PACKET_SIZE	1280
+#define UDP_ADC_PYRO_MAX_PACKET_SIZE	1024
 #define UDP_PACKET_SEND_DELAY 				1000
 
 #define SENDER_PORT_NUM								1001
@@ -30,7 +30,7 @@ typedef struct
 	uint8_t 	id;
 	uint64_t 	timestamp;
 	uint16_t  size;
-	float			data[UDP_ADC_PYRO_MAX_PACKET_SIZE];
+	uint8_t			data[UDP_ADC_PYRO_MAX_PACKET_SIZE];
 }stADCPyroPacket;
 
 typedef struct

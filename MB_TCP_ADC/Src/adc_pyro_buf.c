@@ -15,7 +15,7 @@ uint16_t ADC_PyroBuf_Copy(void *dst_buf, uint16_t max_size)
 		return 0;
 	}
 	
-	if(FIFO_COUNT(ADCPyroFIFO)>max_size)
+	if(FIFO_COUNT(ADCPyroFIFO)*sizeof(stADCPyroBuf)>max_size)
 	{
 			buf_len=max_size;
 	}
@@ -45,6 +45,7 @@ uint16_t ADC_PyroBuf_GetCurrentLength(void)
 void ADC_PyroBuf_Add(float *mb_regs)
 {
 	stADCPyroBuf temp_buf;	
-	memcpy(&temp_buf.buf, mb_regs, ADC_PYRO_CHN_NUM);
+	memcpy(temp_buf.buf, mb_regs, ADC_PYRO_CHN_NUM*sizeof(float));
+//	temp_buf=*(stADCPyroBuf*)mb_regs;
 	FIFO_PUSH(ADCPyroFIFO,temp_buf);
 }

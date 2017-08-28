@@ -92,6 +92,7 @@ void udp_client_send_base_buf(float *buf, uint16_t bufSize)
 		uint16_t adc_buf_offset=0;
 		
 		UDPPacket.BasePacket.id=0;
+		UDPPacket.type=UDP_PACKET_TYPE_BASE;
 		UDPPacket.BasePacket.timestamp=DCMI_ADC_GetLastTimestamp();
 
 
@@ -107,12 +108,16 @@ void udp_client_send_base_buf(float *buf, uint16_t bufSize)
 
 void udp_client_send_pyro_buf(void)
 {
+	uint16_t data_size=0;
 	if(ADCPyroBufState==ADC_PYRO_BUF_FILL_STOP)//передача данных ацп пиропатрона закончена
 	{
 		UDPPacket.ADCPyroPacket.id=0;
-		while(ADC_PyroBuf_GetCurrentLength())
+		UDPPacket.type=UDP_PACKET_TYPE_ADC_PYRO;
+		while(data_size=ADC_PyroBuf_Copy((void *)UDPPacket.ADCPyroPacket.data,UDP_ADC_PYRO_MAX_PACKET_SIZE))
 		{
-				
+			UDPPacket.ADCPyroPacket.size=data_size;
+			sendto(socket_fd, &UDPPacket,sizeof(enUDPPacketType)+sizeof(UDPPacket.ADCPyroPacket.id)+sizeof(UDPPacket.ADCPyroPacket.size)+sizeof(UDPPacket.ADCPyroPacket.timestamp)+data_size,0,(struct sockaddr*)&ra,sizeof(ra));				
+			UDPPacket.ADCPyroPacket.id++;
 		}
 	}
 }
@@ -125,6 +130,7 @@ void UDP_Send_Task( void *pvParameters )
 		xSemaphoreTake( xAdcBuf_Send_Semaphore, portMAX_DELAY );
 		ADC_ConvertBuf(ADC_buf_pnt,(ADC_BUF_LEN>>1),currentSPI6_ADC_Buf,currentSPI3_ADC_Buf,(SPI_ADC_BUF_LEN>>1),ADC_resultBuf, &result_buf_len);
 		udp_client_send_base_buf(ADC_resultBuf,result_buf_len);
+		udp_client_send_pyro_buf();
 	}
 }
 

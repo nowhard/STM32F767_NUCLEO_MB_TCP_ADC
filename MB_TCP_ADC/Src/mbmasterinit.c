@@ -98,7 +98,7 @@ void MBMaster_RTU_Poll(void *pvParameters)
 		
 		if((usMRegInBuf[0][REG_PIR_STATE]!=PYRO_SQUIB_STOP) && (errorCode == MB_MRE_NO_ERR))
 		{
-				ADC_PyroBuf_Add((float*)&usMRegInBuf[0][REG_PIR_STATE]);
+				ADC_PyroBuf_Add((float*)&usMRegInBuf[0][REG_ADC_0]);
 				UDPPacket.ADCPyroPacket.timestamp=DCMI_ADC_GetCurrentTimestamp();
 				ADCPyroBufState=ADC_PYRO_BUF_FILL_START;
 		}
