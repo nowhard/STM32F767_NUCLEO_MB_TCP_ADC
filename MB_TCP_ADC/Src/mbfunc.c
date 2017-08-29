@@ -201,7 +201,7 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 extern uint64_t	outputs_temp_reg;
 extern stADCPyroBuf ADCPyroBuf;
 
-static uint16_t adc_started_flag=0;
+uint16_t BaseADC_Started_Flag=0;
 
 eMBErrorCode
 eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegisterMode eMode )
@@ -229,7 +229,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 								usRegHoldingBuf[SERVER_PORT_REG_0]=configInfo.IPAdress_Server.port;
 
-								
+//								
 //								*((float*)&usRegHoldingBuf[ADC_CHANNEL_0_K])=configInfo.ConfigADC.calibrChannel[0].k;
 //								*((float*)&usRegHoldingBuf[ADC_CHANNEL_0_B])=configInfo.ConfigADC.calibrChannel[0].b;
 //								
@@ -250,7 +250,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 //								
 								usRegHoldingBuf[ADC_SAMPLERATE]=(uint16_t)configInfo.ConfigADC.sampleRate;
 								
-								usRegHoldingBuf[ADC_STARTED]=adc_started_flag;
+								usRegHoldingBuf[ADC_STARTED]=BaseADC_Started_Flag;
 								usRegHoldingBuf[DEV_SET_OUTPUTS_0] = outputs_temp_reg&0xFFFF;
 								usRegHoldingBuf[DEV_SET_OUTPUTS_1] = (outputs_temp_reg>>16)&0xFFFF;
 								usRegHoldingBuf[DEV_SET_OUTPUTS_2] = (outputs_temp_reg>>32)&0xFFFF;
@@ -271,13 +271,13 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 								memcpy((void *)&usRegHoldingBuf[PYRO_SQUIB_PIR_SET_TIME],(const void*)&usMRegHoldBuf[0][0],M_REG_HOLDING_NREGS*sizeof(uint16_t));
 
-									while( usNRegs > 0 )
-									{
-											*pucRegBuffer++ = ( UCHAR ) ( usRegHoldingBuf[iRegIndex] >> 8 );
-											*pucRegBuffer++ = ( UCHAR ) ( usRegHoldingBuf[iRegIndex] & 0xFF );
-											iRegIndex++;
-											usNRegs--;
-									}            
+								while( usNRegs > 0 )
+								{
+										*pucRegBuffer++ = ( UCHAR ) ( usRegHoldingBuf[iRegIndex] >> 8 );
+										*pucRegBuffer++ = ( UCHAR ) ( usRegHoldingBuf[iRegIndex] & 0xFF );
+										iRegIndex++;
+										usNRegs--;
+								}            
 							}
 							break;
 							//-----------case READ end-----------------------------------------------------
@@ -426,12 +426,12 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 														if(usRegHoldingBuf[ADC_STARTED])
 														{
 																DCMI_ADC_Clock_Start();
-																adc_started_flag=1;
+																BaseADC_Started_Flag=1;
 														}
 														else
 														{
 																DCMI_ADC_Clock_Stop();
-																adc_started_flag=0;
+																BaseADC_Started_Flag=0;
 														}
 														usRegHoldingBuf[ADC_STARTED]=0;
 												}

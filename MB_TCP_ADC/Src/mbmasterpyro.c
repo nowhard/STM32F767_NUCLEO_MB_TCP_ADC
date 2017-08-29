@@ -1,4 +1,4 @@
-#include "mbmasterinit.h"
+#include "mbmasterpyro.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "mb.h"
@@ -24,6 +24,8 @@ xSemaphoreHandle xSendRTURegSem;
 extern stTCPtoRTURegWrite TCPtoRTURegWrite;
 extern stPacket UDPPacket;
 extern enADCPyroBufState ADCPyroBufState;
+extern uint64_t ADC_Pyro_Timestamp;
+extern uint16_t BaseADC_Started_Flag;
 
 void MBMaster_RTU_Task(void *pvParameters);
 void MBMaster_RTU_Poll(void *pvParameters);
@@ -96,10 +98,10 @@ void MBMaster_RTU_Poll(void *pvParameters)
 		
 		//проверяем состояние пиропатрона, если включен-заполняем буфер
 		
-		if((usMRegInBuf[0][REG_PIR_STATE]!=PYRO_SQUIB_STOP) && (errorCode == MB_MRE_NO_ERR))
+		if((usMRegInBuf[0][REG_PIR_STATE]!=PYRO_SQUIB_STOP) && (errorCode == MB_MRE_NO_ERR) && (BaseADC_Started_Flag))
 		{
 				ADC_PyroBuf_Add((float*)&usMRegInBuf[0][REG_ADC_0]);
-				UDPPacket.ADCPyroPacket.timestamp=DCMI_ADC_GetCurrentTimestamp();
+				ADC_Pyro_Timestamp=DCMI_ADC_GetCurrentTimestamp();
 				ADCPyroBufState=ADC_PYRO_BUF_FILL_START;
 		}
 		else

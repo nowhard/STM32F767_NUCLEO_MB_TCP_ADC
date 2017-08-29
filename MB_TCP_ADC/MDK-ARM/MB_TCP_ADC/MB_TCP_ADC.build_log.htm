@@ -27,27 +27,10 @@ Project File Date:  08/28/2017
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 1 (build 61)', folder: 'C:\Program Files\Keil\ARM\ARMCC\Bin'
 Build target 'MB_TCP_ADC'
-compiling udp_send.c...
-../Inc/adc_pyro_buf.h(24): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Inc/spi_adc.h(16): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\Src\udp_send.c(56): warning:  #513-D: a value of type "volatile uint8_t *" cannot be assigned to an entity of type "uint8_t *"
-  	ADC_buf_pnt=DCMIAdcRxBuff;
-..\Src\udp_send.c(91): warning:  #177-D: variable "err" was declared but never referenced
-  		err_t err;
-..\Src\udp_send.c(116): warning:  #1293-D: assignment in condition
-  		while(data_size=ADC_PyroBuf_Copy((void *)UDPPacket.ADCPyroPacket.data,
-DP_ADC_PYRO_MAX_PACKET_SIZE))
-..\Src\udp_send.c: 5 warnings, 0 errors
-compiling mbmasterinit.c...
-../Inc/mbfunc.h(59): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Inc/adc_pyro_buf.h(24): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\Src\mbmasterinit.c: 2 warnings, 0 errors
 compiling mbfunc.c...
 ../Inc/mbfunc.h(59): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Inc/discret_out.h(11): warning:  #1-D: last line of file ends without a newline
   #endif
 ../Inc/adc_pyro_buf.h(24): warning:  #1-D: last line of file ends without a newline
   #endif
@@ -96,46 +79,10 @@ NABLE_AIR_GPIO_Port,
 NABLE_AIR_Pin,usRegHoldingBuf[
 EV_ENABLE_AIR]);
 ..\Src\mbfunc.c: 14 warnings, 0 errors
-compiling adc_pyro_buf.c...
-../Inc/adc_pyro_buf.h(24): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Inc/fifo.h(52): warning:  #1-D: last line of file ends without a newline
-  #endif //FIFO__H
-..\Src\adc_pyro_buf.c(51): warning:  #1-D: last line of file ends without a newline
-  }
-..\Src\adc_pyro_buf.c(38): warning: C4488E: write to variable 'dst_buf' with offset out of bounds
-}
-..\Src\adc_pyro_buf.c(38): warning: C4488E: write to variable 'dst_buf' with offset out of bounds
-}
-..\Src\adc_pyro_buf.c(38): warning: C4488E: write to variable 'dst_buf' with offset out of bounds
-}
-..\Src\adc_pyro_buf.c(38): warning: C4488E: write to variable 'dst_buf' with offset out of bounds
-}
-..\Src\adc_pyro_buf.c(38): warning: C4488E: write to variable 'dst_buf' with offset out of bounds
-}
-..\Src\adc_pyro_buf.c(38): warning: C4488E: write to variable 'dst_buf' with offset out of bounds
-}
-..\Src\adc_pyro_buf.c(38): warning: C4488E: write to variable 'dst_buf' with offset out of bounds
-}
-..\Src\adc_pyro_buf.c(38): warning: C4488E: write to variable 'dst_buf' with offset out of bounds
-}
-..\Src\adc_pyro_buf.c(38): warning: C4488E: write to variable 'dst_buf' with offset out of bounds
-}
-..\Src\adc_pyro_buf.c(38): warning: C4488E: write to variable 'dst_buf' with offset out of bounds
-}
-..\Src\adc_pyro_buf.c(38): warning: C4488E: write to variable 'dst_buf' with offset out of bounds
-}
-..\Src\adc_pyro_buf.c(38): warning: C4488E: write to variable 'dst_buf' with offset out of bounds
-}
-..\Src\adc_pyro_buf.c(38): warning: C4488E: write to variable 'dst_buf' with offset out of bounds
-}
-..\Src\adc_pyro_buf.c(38): warning: C4488E: write to variable 'dst_buf' with offset out of bounds
-}
-..\Src\adc_pyro_buf.c: 17 warnings, 0 errors
 linking...
-Program Size: Code=77236 RO-data=1804 RW-data=1016 ZI-data=216112  
+Program Size: Code=91872 RO-data=1804 RW-data=1060 ZI-data=216108  
 FromELF: creating hex file...
-"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 37 Warning(s).
+"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 14 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -153,7 +100,7 @@ Package Vendor: ARM
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.0.1
-Build Time Elapsed:  00:00:17
+Build Time Elapsed:  00:00:06
 </pre>
 </body>
 </html>

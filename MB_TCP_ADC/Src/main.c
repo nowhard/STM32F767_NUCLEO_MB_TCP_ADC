@@ -54,7 +54,7 @@
 #include "cfg_info.h"
 #include "discret_out.h"
 #include "jumpers.h"
-#include "mbmasterinit.h"
+#include "mbmasterpyro.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/

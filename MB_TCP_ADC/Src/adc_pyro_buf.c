@@ -4,6 +4,7 @@
 
 FIFO(ADC_PYRO_FIFO_LEN) ADCPyroFIFO;
 enADCPyroBufState ADCPyroBufState=ADC_PYRO_BUF_FILL_STOP;
+uint64_t ADC_Pyro_Timestamp=0;
 
 uint16_t ADC_PyroBuf_Copy(void *dst_buf, uint16_t max_size)
 {
@@ -24,10 +25,6 @@ uint16_t ADC_PyroBuf_Copy(void *dst_buf, uint16_t max_size)
 			buf_len=FIFO_COUNT(ADCPyroFIFO)*sizeof(stADCPyroBuf);
 	}
 
-	//memcpy(dst_buf, (const void*)&FIFO_FRONT(ADCPyroFIFO), buf_len);
-	
-	//POP???
-
 	for(buf_cnt=0;buf_cnt<(buf_len/sizeof(stADCPyroBuf));buf_cnt++)
 	{
 		*(stADCPyroBuf*)&dst_buf =	FIFO_FRONT(ADCPyroFIFO);
@@ -45,7 +42,7 @@ uint16_t ADC_PyroBuf_GetCurrentLength(void)
 void ADC_PyroBuf_Add(float *mb_regs)
 {
 	stADCPyroBuf temp_buf;	
-	memcpy(temp_buf.buf, mb_regs, ADC_PYRO_CHN_NUM*sizeof(float));
-//	temp_buf=*(stADCPyroBuf*)mb_regs;
+	//memcpy(temp_buf.buf, mb_regs, ADC_PYRO_CHN_NUM*sizeof(float));
+ 	temp_buf=*(stADCPyroBuf*)mb_regs;
 	FIFO_PUSH(ADCPyroFIFO,temp_buf);
 }

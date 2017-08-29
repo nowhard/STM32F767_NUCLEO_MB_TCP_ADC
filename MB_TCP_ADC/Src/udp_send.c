@@ -36,6 +36,8 @@ extern uint16_t *currentSPI6_ADC_Buf;
 
 extern SemaphoreHandle_t xAdcBuf_Send_Semaphore;
 extern enADCPyroBufState ADCPyroBufState;
+extern uint64_t ADC_Pyro_Timestamp;
+
 
 
 void UDP_Send_Task( void *pvParameters );
@@ -91,17 +93,15 @@ void udp_client_send_base_buf(float *buf, uint16_t bufSize)
 		err_t err;
 		uint16_t adc_buf_offset=0;
 		
-		UDPPacket.BasePacket.id=0;
+		UDPPacket.id=0;
 		UDPPacket.type=UDP_PACKET_TYPE_BASE;
-		UDPPacket.BasePacket.timestamp=DCMI_ADC_GetLastTimestamp();
-
-
+		UDPPacket.timestamp=DCMI_ADC_GetLastTimestamp();
 		while(adc_buf_offset<(bufSize*sizeof(float)))
 		{
-			memcpy(&UDPPacket.BasePacket.data,((uint8_t*)buf+adc_buf_offset),UDP_ADC_PACKET_SIZE);			
-			sendto(socket_fd, &UDPPacket,sizeof(enUDPPacketType)+sizeof(stBasePacket),0,(struct sockaddr*)&ra,sizeof(ra));			
-			adc_buf_offset+=UDP_ADC_PACKET_SIZE;
-			UDPPacket.BasePacket.id++;
+			memcpy(&UDPPacket.BasePacket.data,((uint8_t*)buf+adc_buf_offset),UDP_BASE_DATA_SIZE);			
+			sendto(socket_fd, &UDPPacket,UDP_BASE_PACKET_SIZE,0,(struct sockaddr*)&ra,sizeof(ra));			
+			adc_buf_offset+=UDP_BASE_DATA_SIZE;
+			UDPPacket.id++;
 		}
 
 }
@@ -109,16 +109,18 @@ void udp_client_send_base_buf(float *buf, uint16_t bufSize)
 void udp_client_send_pyro_buf(void)
 {
 	uint16_t data_size=0;
-	if(ADCPyroBufState==ADC_PYRO_BUF_FILL_STOP)//передача данных ацп пиропатрона закончена
+	if((ADCPyroBufState==ADC_PYRO_BUF_FILL_STOP)&&ADC_PyroBuf_GetCurrentLength())//передача данных ацп пиропатрона закончена
 	{
-		UDPPacket.ADCPyroPacket.id=0;
+		UDPPacket.id=0;
 		UDPPacket.type=UDP_PACKET_TYPE_ADC_PYRO;
-		while(data_size=ADC_PyroBuf_Copy((void *)UDPPacket.ADCPyroPacket.data,UDP_ADC_PYRO_MAX_PACKET_SIZE))
+		UDPPacket.timestamp=ADC_Pyro_Timestamp;
+		while(data_size=ADC_PyroBuf_Copy((void *)UDPPacket.ADCPyroPacket.data,UDP_PYRO_DATA_SIZE))
 		{
 			UDPPacket.ADCPyroPacket.size=data_size;
-			sendto(socket_fd, &UDPPacket,sizeof(enUDPPacketType)+sizeof(UDPPacket.ADCPyroPacket.id)+sizeof(UDPPacket.ADCPyroPacket.size)+sizeof(UDPPacket.ADCPyroPacket.timestamp)+data_size,0,(struct sockaddr*)&ra,sizeof(ra));				
-			UDPPacket.ADCPyroPacket.id++;
+			sendto(socket_fd, &UDPPacket,sizeof(enUDPPacketType)+sizeof(UDPPacket.id)+sizeof(UDPPacket.timestamp)+sizeof(UDPPacket.ADCPyroPacket.size)+data_size,0,(struct sockaddr*)&ra,sizeof(ra));				
+			UDPPacket.id++;
 		}
+		data_size=0;
 	}
 }
 

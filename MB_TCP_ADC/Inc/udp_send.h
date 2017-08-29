@@ -4,38 +4,36 @@
 
 #pragma anon_unions
 
+#define UDP_BASE_DATA_SIZE						1000
+#define UDP_PYRO_DATA_SIZE						1024
 
-#define UDP_ADC_PACKET_SIZE						1000
-#define UDP_ADC_PYRO_MAX_PACKET_SIZE	1024
 #define UDP_PACKET_SEND_DELAY 				1000
 
 #define SENDER_PORT_NUM								1001
 
 typedef enum
 {
-	UDP_PACKET_TYPE_BASE,
-	UDP_PACKET_TYPE_ADC_PYRO,
+	UDP_PACKET_TYPE_BASE=0,
+	UDP_PACKET_TYPE_ADC_PYRO=1,
 }enUDPPacketType;
 
 #pragma pack(push,1)
 typedef struct
 {
-	uint8_t 	id;
-	uint64_t 	timestamp;
-	uint8_t 	data[UDP_ADC_PACKET_SIZE];
+	uint8_t 	data[UDP_BASE_DATA_SIZE];
 }stBasePacket;
 
 typedef struct
 {
-	uint8_t 	id;
-	uint64_t 	timestamp;
-	uint16_t  size;
-	uint8_t			data[UDP_ADC_PYRO_MAX_PACKET_SIZE];
+	uint16_t  	size;
+	uint8_t			data[UDP_PYRO_DATA_SIZE];
 }stADCPyroPacket;
 
 typedef struct
 {
-	enUDPPacketType type;
+	enUDPPacketType type;//тип-базовые данне или данные пиропатронов
+	uint8_t 	id;				 //пор€дковый номер пакета в группе пакетов
+	uint64_t 	timestamp; //штамп времени последнего значени€ последнего пакета	
 	union
 	{
 		stBasePacket BasePacket;
@@ -43,8 +41,10 @@ typedef struct
 	};
 }stPacket;
 
-
 #pragma pack(pop)
+
+#define UDP_BASE_PACKET_SIZE				(sizeof(enUDPPacketType)+sizeof(uint8_t)+sizeof(uint64_t)+UDP_BASE_DATA_SIZE)		
+#define UDP_PYRO_MAX_PACKET_SIZE		(sizeof(enUDPPacketType)+sizeof(uint8_t)+sizeof(uint64_t)+sizeof(ADCPyroPacket))		
 
 void udp_client_init(void);
 
