@@ -117,7 +117,7 @@ void udp_client_send_pyro_buf(void)
 		while(data_size=ADC_PyroBuf_Copy((void *)UDPPacket.ADCPyroPacket.data,UDP_PYRO_DATA_SIZE))
 		{
 			UDPPacket.ADCPyroPacket.size=data_size;
-			sendto(socket_fd, &UDPPacket,sizeof(enUDPPacketType)+sizeof(UDPPacket.id)+sizeof(UDPPacket.timestamp)+sizeof(UDPPacket.ADCPyroPacket.size)+data_size,0,(struct sockaddr*)&ra,sizeof(ra));				
+			sendto(socket_fd, &UDPPacket,UDP_PYRO_MAX_PACKET_SIZE,0,(struct sockaddr*)&ra,sizeof(ra));				
 			UDPPacket.id++;
 		}
 		data_size=0;

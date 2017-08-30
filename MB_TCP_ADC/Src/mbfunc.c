@@ -10,6 +10,48 @@
 #include "adc_pyro_buf.h"
 //#include "main.h"
 
+#pragma anon_unions
+typedef struct
+{
+	union
+	{
+		float val;
+		uint16_t buf[2];
+	};
+}stFloatToUint16Buf;
+
+typedef struct
+{
+	union
+	{
+		uint64_t val;
+		uint16_t buf[4];
+	};
+}stUint64ToUint16Buf;
+
+stFloatToUint16Buf FloatToUint16Buf;
+stUint64ToUint16Buf Uint64ToUint16Buf;
+
+#define FLOAT_TO_UINT16_BUF(fl,uint16buf) 	FloatToUint16Buf.val=fl;\
+																						(uint16buf)[0]=FloatToUint16Buf.buf[0];\
+																						(uint16buf)[1]=FloatToUint16Buf.buf[1];
+
+#define UINT16_BUF_TO_FLOAT(uint16buf,fl) 	FloatToUint16Buf.buf[0]=(uint16buf)[0];\
+																						FloatToUint16Buf.buf[1]=(uint16buf)[1];\
+																						fl=FloatToUint16Buf.val;
+
+#define UINT64_TO_UINT16_BUF(uint64_val,uint16buf) 	Uint64ToUint16Buf.val=uint64_val;\
+																						(uint16buf)[0]=Uint64ToUint16Buf.buf[0];\
+																						(uint16buf)[1]=Uint64ToUint16Buf.buf[1];\
+																						(uint16buf)[2]=Uint64ToUint16Buf.buf[2];\
+																						(uint16buf)[3]=Uint64ToUint16Buf.buf[3];
+
+#define UINT16_BUF_TO_UINT64(uint16buf,uint64_val) 	Uint64ToUint16Buf.buf[0]=(uint16buf)[0];\
+																						Uint64ToUint16Buf.buf[1]=(uint16buf)[1];\
+																						Uint64ToUint16Buf.buf[2]=(uint16buf)[2];\
+																						Uint64ToUint16Buf.buf[3]=(uint16buf)[3];\
+																						uint64_val=Uint64ToUint16Buf.val;
+																		
 
 /* ----------------------- Defines ------------------------------------------*/
 #define REG_INPUT_START         1001
@@ -103,16 +145,25 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 			usRegInputBuf[ADC_CHANNEL_5_RAW]=ChnCalibrValues.val_chn5_raw;
 			
 			
-			*((float*)&usRegInputBuf[ADC_CHANNEL_0_RESULT])=ChnCalibrValues.val_250A;
-			*((float*)&usRegInputBuf[ADC_CHANNEL_1_RESULT])=ChnCalibrValues.val_150A;
-			*((float*)&usRegInputBuf[ADC_CHANNEL_2_RESULT])=ChnCalibrValues.val_75A;
-			*((float*)&usRegInputBuf[ADC_CHANNEL_3_RESULT])=ChnCalibrValues.val_7_5A;
-			*((float*)&usRegInputBuf[ADC_CHANNEL_4_RESULT])=ChnCalibrValues.val_voltage_1;
-			*((float*)&usRegInputBuf[ADC_CHANNEL_5_RESULT])=ChnCalibrValues.val_voltage_2;
+//			*((float*)&usRegInputBuf[ADC_CHANNEL_0_RESULT])=ChnCalibrValues.val_250A;
+				FLOAT_TO_UINT16_BUF(ChnCalibrValues.val_250A, &usRegInputBuf[ADC_CHANNEL_0_RESULT]);
+//			*((float*)&usRegInputBuf[ADC_CHANNEL_1_RESULT])=ChnCalibrValues.val_150A;
+				FLOAT_TO_UINT16_BUF(ChnCalibrValues.val_150A, &usRegInputBuf[ADC_CHANNEL_1_RESULT]);			
+//			*((float*)&usRegInputBuf[ADC_CHANNEL_2_RESULT])=ChnCalibrValues.val_75A;
+				FLOAT_TO_UINT16_BUF(ChnCalibrValues.val_75A, &usRegInputBuf[ADC_CHANNEL_2_RESULT]);			
+//			*((float*)&usRegInputBuf[ADC_CHANNEL_3_RESULT])=ChnCalibrValues.val_7_5A;
+				FLOAT_TO_UINT16_BUF(ChnCalibrValues.val_7_5A, &usRegInputBuf[ADC_CHANNEL_3_RESULT]);			
+//			*((float*)&usRegInputBuf[ADC_CHANNEL_4_RESULT])=ChnCalibrValues.val_voltage_1;
+				FLOAT_TO_UINT16_BUF(ChnCalibrValues.val_voltage_1, &usRegInputBuf[ADC_CHANNEL_4_RESULT]);			
+//			*((float*)&usRegInputBuf[ADC_CHANNEL_5_RESULT])=ChnCalibrValues.val_voltage_2;
+				FLOAT_TO_UINT16_BUF(ChnCalibrValues.val_voltage_2, &usRegInputBuf[ADC_CHANNEL_5_RESULT]);
 			
 			*((float*)&usRegInputBuf[ADC_CHANNEL_CONV])=ChnCalibrValues.val_current;
 			
-			*((uint64_t*)&usRegInputBuf[TIMESTAMP_CURRENT])=DCMI_ADC_GetLastTimestamp();
+			uint64_t temp=DCMI_ADC_GetLastTimestamp();
+			UINT64_TO_UINT16_BUF(temp,&usRegInputBuf[TIMESTAMP_CURRENT]);
+			
+			//*((uint64_t*)&usRegInputBuf[TIMESTAMP_CURRENT])=DCMI_ADC_GetLastTimestamp();
 			
 			memcpy((void *)&usRegInputBuf[ADC_PYRO_SQUIB_0],(const void*)&usMRegInBuf[0][0],M_REG_INPUT_NREGS*sizeof(uint16_t));
 			
@@ -229,25 +280,25 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 								usRegHoldingBuf[SERVER_PORT_REG_0]=configInfo.IPAdress_Server.port;
 
-//								
-//								*((float*)&usRegHoldingBuf[ADC_CHANNEL_0_K])=configInfo.ConfigADC.calibrChannel[0].k;
-//								*((float*)&usRegHoldingBuf[ADC_CHANNEL_0_B])=configInfo.ConfigADC.calibrChannel[0].b;
-//								
-//								*((float*)&usRegHoldingBuf[ADC_CHANNEL_1_K])=configInfo.ConfigADC.calibrChannel[1].k;
-//								*((float*)&usRegHoldingBuf[ADC_CHANNEL_1_B])=configInfo.ConfigADC.calibrChannel[1].b;
-//								
-//								*((float*)&usRegHoldingBuf[ADC_CHANNEL_2_K])=configInfo.ConfigADC.calibrChannel[2].k;
-//								*((float*)&usRegHoldingBuf[ADC_CHANNEL_2_B])=configInfo.ConfigADC.calibrChannel[2].b;
-//								
-//								*((float*)&usRegHoldingBuf[ADC_CHANNEL_3_K])=configInfo.ConfigADC.calibrChannel[3].k;
-//								*((float*)&usRegHoldingBuf[ADC_CHANNEL_3_B])=configInfo.ConfigADC.calibrChannel[3].b;
-//								
-//								*((float*)&usRegHoldingBuf[ADC_CHANNEL_4_K])=configInfo.ConfigADC.calibrChannel[4].k;
-//								*((float*)&usRegHoldingBuf[ADC_CHANNEL_4_B])=configInfo.ConfigADC.calibrChannel[4].b;
-//								
-//								*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_K])=configInfo.ConfigADC.calibrChannel[5].k;
-//								*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_B])=configInfo.ConfigADC.calibrChannel[5].b;
-//								
+
+								FLOAT_TO_UINT16_BUF(configInfo.ConfigADC.calibrChannel[0].k,&usRegHoldingBuf[ADC_CHANNEL_0_K]);
+								FLOAT_TO_UINT16_BUF(configInfo.ConfigADC.calibrChannel[0].b,&usRegHoldingBuf[ADC_CHANNEL_0_B]);		
+							
+								FLOAT_TO_UINT16_BUF(configInfo.ConfigADC.calibrChannel[1].k,&usRegHoldingBuf[ADC_CHANNEL_1_K]);
+								FLOAT_TO_UINT16_BUF(configInfo.ConfigADC.calibrChannel[1].b,&usRegHoldingBuf[ADC_CHANNEL_1_B]);
+							
+								FLOAT_TO_UINT16_BUF(configInfo.ConfigADC.calibrChannel[2].k,&usRegHoldingBuf[ADC_CHANNEL_2_K]);
+								FLOAT_TO_UINT16_BUF(configInfo.ConfigADC.calibrChannel[2].b,&usRegHoldingBuf[ADC_CHANNEL_2_B]);
+							
+								FLOAT_TO_UINT16_BUF(configInfo.ConfigADC.calibrChannel[3].k,&usRegHoldingBuf[ADC_CHANNEL_3_K]);
+								FLOAT_TO_UINT16_BUF(configInfo.ConfigADC.calibrChannel[3].b,&usRegHoldingBuf[ADC_CHANNEL_3_B]);
+							
+								FLOAT_TO_UINT16_BUF(configInfo.ConfigADC.calibrChannel[4].k,&usRegHoldingBuf[ADC_CHANNEL_4_K]);
+								FLOAT_TO_UINT16_BUF(configInfo.ConfigADC.calibrChannel[4].b,&usRegHoldingBuf[ADC_CHANNEL_4_B]);
+								
+								FLOAT_TO_UINT16_BUF(configInfo.ConfigADC.calibrChannel[5].k,&usRegHoldingBuf[ADC_CHANNEL_5_K]);
+								FLOAT_TO_UINT16_BUF(configInfo.ConfigADC.calibrChannel[5].b,&usRegHoldingBuf[ADC_CHANNEL_5_B]);									
+								
 								usRegHoldingBuf[ADC_SAMPLERATE]=(uint16_t)configInfo.ConfigADC.sampleRate;
 								
 								usRegHoldingBuf[ADC_STARTED]=BaseADC_Started_Flag;
@@ -256,7 +307,9 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 								usRegHoldingBuf[DEV_SET_OUTPUTS_2] = (outputs_temp_reg>>32)&0xFFFF;
 								usRegHoldingBuf[DEV_SET_OUTPUTS_3] = (outputs_temp_reg>>48)&0xFFFF;
 								
-								*(uint64_t*)&usRegHoldingBuf[DEV_SET_OUTPUTS_ALL]=outputs_temp_reg;
+//								*(uint64_t*)&usRegHoldingBuf[DEV_SET_OUTPUTS_ALL]=outputs_temp_reg;
+
+								UINT64_TO_UINT16_BUF(outputs_temp_reg, &usRegHoldingBuf[DEV_SET_OUTPUTS_ALL]);
 								
 								usRegHoldingBuf[DEV_ENABLE_OUT_1]=HAL_GPIO_ReadPin(ENABLE_OUT_1_GPIO_Port,ENABLE_OUT_1_Pin);
 								usRegHoldingBuf[DEV_ENABLE_OUT_7]=HAL_GPIO_ReadPin(ENABLE_OUT_7_GPIO_Port,ENABLE_OUT_7_Pin);
@@ -332,84 +385,97 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_0_K+(1):
 												{
-														configInfo.ConfigADC.calibrChannel[0].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_0_K]);
+														//configInfo.ConfigADC.calibrChannel[0].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_0_K]);
+													
+														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_0_K], configInfo.ConfigADC.calibrChannel[0].k);							
 														settings_need_write=1;
 												}
 												break;
 
 												case ADC_CHANNEL_0_B+(1):
 												{
-														configInfo.ConfigADC.calibrChannel[0].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_0_B]);	
+														//configInfo.ConfigADC.calibrChannel[0].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_0_B]);	
+														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_0_B], configInfo.ConfigADC.calibrChannel[0].b);														
 														settings_need_write=1;
 												}
 												break;
 
 												case ADC_CHANNEL_1_K+(1):
 												{
-														configInfo.ConfigADC.calibrChannel[1].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_1_K]);
+														//configInfo.ConfigADC.calibrChannel[1].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_1_K]);
+														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_1_K], configInfo.ConfigADC.calibrChannel[1].k);
 														settings_need_write=1;										
 												}
 												break;
 
 												case ADC_CHANNEL_1_B+(1):
 												{
-														configInfo.ConfigADC.calibrChannel[1].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_1_B]);	
+														//configInfo.ConfigADC.calibrChannel[1].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_1_B]);
+														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_1_B], configInfo.ConfigADC.calibrChannel[1].b);													
 														settings_need_write=1;										
 												}
 												break;	
 
 												case ADC_CHANNEL_2_K+(1):
 												{
-														configInfo.ConfigADC.calibrChannel[2].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_2_K]);
+														//configInfo.ConfigADC.calibrChannel[2].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_2_K]);
+														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_2_K], configInfo.ConfigADC.calibrChannel[2].k);													
 														settings_need_write=1;										
 												}
 												break;
 
 												case ADC_CHANNEL_2_B+(1):
 												{
-														configInfo.ConfigADC.calibrChannel[2].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_2_B]);
+														//configInfo.ConfigADC.calibrChannel[2].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_2_B]);
+														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_2_B], configInfo.ConfigADC.calibrChannel[2].b);													
 														settings_need_write=1;										
 												}
 												break;	
 
 												case ADC_CHANNEL_3_K+(1):
 												{
-														configInfo.ConfigADC.calibrChannel[3].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_3_K]);
+														//configInfo.ConfigADC.calibrChannel[3].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_3_K]);
+														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_3_K], configInfo.ConfigADC.calibrChannel[3].k);
 														settings_need_write=1;										
 												}
 												break;
 
 												case ADC_CHANNEL_3_B+(1):
 												{
-														configInfo.ConfigADC.calibrChannel[3].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_3_B]);	
+														//configInfo.ConfigADC.calibrChannel[3].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_3_B]);
+														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_3_B], configInfo.ConfigADC.calibrChannel[3].b);													
 														settings_need_write=1;										
 												}
 												break;	
 
 												case ADC_CHANNEL_4_K+(1):
 												{
-														configInfo.ConfigADC.calibrChannel[4].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_4_K]);
+														//configInfo.ConfigADC.calibrChannel[4].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_4_K]);
+														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_4_K], configInfo.ConfigADC.calibrChannel[4].k);													
 														settings_need_write=1;										
 												}
 												break;
 
 												case ADC_CHANNEL_4_B+(1):
 												{
-														configInfo.ConfigADC.calibrChannel[4].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_4_B]);
+														//configInfo.ConfigADC.calibrChannel[4].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_4_B]);
+														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_4_B], configInfo.ConfigADC.calibrChannel[4].b);													
 														settings_need_write=1;										
 												}
 												break;	
 
 												case ADC_CHANNEL_5_K+(1):
 												{
-														configInfo.ConfigADC.calibrChannel[5].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_K]);
+														//configInfo.ConfigADC.calibrChannel[5].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_K]);
+														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_5_K], configInfo.ConfigADC.calibrChannel[5].k);													
 														settings_need_write=1;										
 												}
 												break;
 
 												case ADC_CHANNEL_5_B+(1):
 												{
-														configInfo.ConfigADC.calibrChannel[5].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_B]);
+														//configInfo.ConfigADC.calibrChannel[5].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_B]);
+														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_5_B], configInfo.ConfigADC.calibrChannel[5].b);													
 														settings_need_write=1;
 												}
 												break;
@@ -472,7 +538,8 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												
 												case DEV_SET_OUTPUTS_ALL+3:
 												{
-														DiscretOutputs_Set(*(uint64_t*)&usRegHoldingBuf[DEV_SET_OUTPUTS_ALL]);								
+														UINT16_BUF_TO_UINT64(&usRegHoldingBuf[DEV_SET_OUTPUTS_ALL],outputs_temp_reg);
+														DiscretOutputs_Set(outputs_temp_reg);	
 												}
 												break;													
 

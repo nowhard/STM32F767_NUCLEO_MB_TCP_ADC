@@ -10,6 +10,7 @@ uint16_t ADC_PyroBuf_Copy(void *dst_buf, uint16_t max_size)
 {
 	uint16_t buf_len;//=FIFO_COUNT(ADCPyroFIFO);
 	uint16_t buf_cnt=0;	
+	stADCPyroBuf ADCPyroBuf_temp;
 	
 	if(ADCPyroBufState==ADC_PYRO_BUF_FILL_START)//ждем заполнения буфера до останова
 	{
@@ -23,11 +24,14 @@ uint16_t ADC_PyroBuf_Copy(void *dst_buf, uint16_t max_size)
 	else
 	{
 			buf_len=FIFO_COUNT(ADCPyroFIFO)*sizeof(stADCPyroBuf);
+			memset(dst_buf,0,max_size);
 	}
 
 	for(buf_cnt=0;buf_cnt<(buf_len/sizeof(stADCPyroBuf));buf_cnt++)
 	{
-		*(stADCPyroBuf*)&dst_buf =	FIFO_FRONT(ADCPyroFIFO);
+		ADCPyroBuf_temp=FIFO_FRONT(ADCPyroFIFO);
+		//*(stADCPyroBuf*)&dst_buf =	FIFO_FRONT(ADCPyroFIFO);
+		memcpy(&((uint8_t *)dst_buf)[buf_cnt*sizeof(stADCPyroBuf)], &ADCPyroBuf_temp, sizeof(stADCPyroBuf));
 		FIFO_POP(ADCPyroFIFO);
 	}
 	
