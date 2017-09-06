@@ -35,12 +35,12 @@ void MBMaster_RTU_Init(void)
 {
 	vSemaphoreCreateBinary(xSendRTURegSem);
 	
-	GPIO_InitTypeDef GPIO_InitStruct;
-	GPIO_InitStruct.Pin = DATALED_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-  HAL_GPIO_Init(DATALED_GPIO_Port, &GPIO_InitStruct);
+//	GPIO_InitTypeDef GPIO_InitStruct;
+//	GPIO_InitStruct.Pin = DATALED_Pin;
+//  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+//  GPIO_InitStruct.Pull = GPIO_NOPULL;
+//  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+//  HAL_GPIO_Init(DATALED_GPIO_Port, &GPIO_InitStruct);
 	
 	eMBMasterInit(MB_RTU, 2, MODBUS_M_BAUDRATE,  MB_PAR_NONE);
 	eMBMasterEnable();
