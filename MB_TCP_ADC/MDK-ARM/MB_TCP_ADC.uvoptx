@@ -192,6 +192,11 @@
           <WinNumber>1</WinNumber>
           <ItemText>usMRegInBuf</ItemText>
         </Ww>
+        <Ww>
+          <count>9</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>test_relay_state</ItemText>
+        </Ww>
       </WatchWindow1>
       <MemoryWindow1>
         <Mm>

@@ -4,6 +4,10 @@
 #include "stm32f7xx_hal.h"
 #include "stm32f7xx.h"
 
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+
 typedef enum
 {
   DISCR_OUT_DISABLE = 0,
@@ -33,10 +37,14 @@ enDiscrOutTransferState DiscrOutTransferState=DISCR_OUT_TRANSFER_COMPLETE;
 void SPI5_DMA_TransferCallback(void);
 void DiscretOutputs_Enable(enDiscrOutState DiscrOutState);
 
+void Discr_RelayTest_Task(void *pvParameters);
+
 void DiscretOutputs_Init(void)
 {
 		DiscretOutputs_Enable(DISCR_OUT_ENABLE);
 		HAL_GPIO_WritePin(STROB_GPIO_Port, STROB_Pin, GPIO_PIN_RESET);
+	
+		xTaskCreate( Discr_RelayTest_Task, "Relay Test Task", 256, NULL, 3, NULL );
 //		HAL_DMA_RegisterCallback(&hdma_spi5_tx,HAL_DMA_XFER_CPLT_CB_ID,SPI5_DMA_TransferCallback);
 }
 
@@ -71,4 +79,22 @@ void DiscretOutputs_Set(uint64_t discrOut)
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 {
 	HAL_GPIO_WritePin(STROB_GPIO_Port, STROB_Pin, GPIO_PIN_SET);
+}
+
+uint64_t test_relay_state=0xFFFFFFFFFFFFFFFF;
+void Discr_RelayTest_Task(void *pvParameters)
+{
+	uint8_t i=0;
+	uint64_t mask;
+	while(1)
+	{
+			vTaskDelay(1000);
+			
+			mask=(uint64_t)1<<(i&0x3F);
+			
+			test_relay_state^=mask;
+			
+			DiscretOutputs_Set(test_relay_state);
+			i++;
+	}
 }
