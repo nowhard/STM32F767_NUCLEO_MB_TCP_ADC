@@ -302,10 +302,10 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 								usRegHoldingBuf[ADC_SAMPLERATE]=(uint16_t)configInfo.ConfigADC.sampleRate;
 								
 								usRegHoldingBuf[ADC_STARTED]=BaseADC_Started_Flag;
-								usRegHoldingBuf[DEV_SET_OUTPUTS_0] = outputs_temp_reg&0xFFFF;
-								usRegHoldingBuf[DEV_SET_OUTPUTS_1] = (outputs_temp_reg>>16)&0xFFFF;
-								usRegHoldingBuf[DEV_SET_OUTPUTS_2] = (outputs_temp_reg>>32)&0xFFFF;
-								usRegHoldingBuf[DEV_SET_OUTPUTS_3] = (outputs_temp_reg>>48)&0xFFFF;
+								usRegHoldingBuf[DEV_SET_OUTPUTS_0] = (uint16_t)((outputs_temp_reg)&0xFFFF);
+								usRegHoldingBuf[DEV_SET_OUTPUTS_1] = (uint16_t)((outputs_temp_reg>>16)&0xFFFF);
+								usRegHoldingBuf[DEV_SET_OUTPUTS_2] = (uint16_t)((outputs_temp_reg>>32)&0xFFFF);
+								usRegHoldingBuf[DEV_SET_OUTPUTS_3] = (uint16_t)((outputs_temp_reg>>48)&0xFFFF);
 								
 //								*(uint64_t*)&usRegHoldingBuf[DEV_SET_OUTPUTS_ALL]=outputs_temp_reg;
 
@@ -523,7 +523,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												case DEV_SET_OUTPUTS_2:
 												{											
 														outputs_temp_reg&=(~((uint64_t)0xFFFF<<32));
-														outputs_temp_reg|=(uint64_t)usRegHoldingBuf[DEV_SET_OUTPUTS_1]<<32;
+														outputs_temp_reg|=(uint64_t)usRegHoldingBuf[DEV_SET_OUTPUTS_2]<<32;
 														DiscretOutputs_Set(outputs_temp_reg);
 												}
 												break;		
@@ -531,7 +531,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												case DEV_SET_OUTPUTS_3:
 												{											
 														outputs_temp_reg&=(~((uint64_t)0xFFFF<<48));
-														outputs_temp_reg|=(uint64_t)usRegHoldingBuf[DEV_SET_OUTPUTS_1]<<48;
+														outputs_temp_reg|=(uint64_t)usRegHoldingBuf[DEV_SET_OUTPUTS_3]<<48;
 														DiscretOutputs_Set(outputs_temp_reg);
 												}
 												break;		

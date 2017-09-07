@@ -96,6 +96,10 @@ void udp_client_send_base_buf(float *buf, uint16_t bufSize)
 		UDPPacket.id=0;
 		UDPPacket.type=UDP_PACKET_TYPE_BASE;
 		UDPPacket.timestamp=DCMI_ADC_GetLastTimestamp();
+	
+		ra.sin_addr.s_addr = DestIPaddr.addr;
+		ra.sin_port = htons(configInfo.IPAdress_Server.port);
+	
 		while(adc_buf_offset<(bufSize*sizeof(float)))
 		{
 			memcpy(&UDPPacket.BasePacket.data,((uint8_t*)buf+adc_buf_offset),UDP_BASE_DATA_SIZE);			
@@ -109,6 +113,10 @@ void udp_client_send_base_buf(float *buf, uint16_t bufSize)
 void udp_client_send_pyro_buf(void)
 {
 	uint16_t data_size=0;
+	
+	ra.sin_addr.s_addr = DestIPaddr.addr;
+	ra.sin_port = htons(configInfo.IPAdress_Server.port);
+	
 	if((ADCPyroBufState==ADC_PYRO_BUF_FILL_STOP)&&ADC_PyroBuf_GetCurrentLength())//передача данных ацп пиропатрона закончена
 	{
 		UDPPacket.id=0;

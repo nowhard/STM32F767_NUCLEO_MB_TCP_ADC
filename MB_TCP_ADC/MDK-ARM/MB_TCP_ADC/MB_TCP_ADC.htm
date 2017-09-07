@@ -3,7 +3,7 @@
 <title>Static Call Graph - [MB_TCP_ADC\MB_TCP_ADC.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image MB_TCP_ADC\MB_TCP_ADC.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060061: Last Updated: Wed Aug 30 14:43:00 2017
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060061: Last Updated: Thu Sep 07 17:46:27 2017
 <BR><P>
 <H3>Maximum Stack Usage =        776 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -1321,7 +1321,6 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = HAL_GPIO_Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[145]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RCC_MCOConfig
-<LI><a href="#[17d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MBMaster_RTU_Init
 <LI><a href="#[190]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_GPIO_Init
 <LI><a href="#[175]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_MspInit
 <LI><a href="#[15c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_MspPostInit
@@ -1897,13 +1896,12 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[17d]"></a>MBMaster_RTU_Init</STRONG> (Thumb, 126 bytes, Stack size 32 bytes, mbmasterpyro.o(i.MBMaster_RTU_Init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 208<LI>Call Chain = MBMaster_RTU_Init &rArr; eMBMasterInit &rArr; eMBMasterRTUInit &rArr; xMBMasterPortTimersInit &rArr; HAL_TIM_Base_Init &rArr; HAL_TIM_Base_MspInit &rArr; HAL_NVIC_SetPriority &rArr; NVIC_SetPriority
+<P><STRONG><a name="[17d]"></a>MBMaster_RTU_Init</STRONG> (Thumb, 96 bytes, Stack size 16 bytes, mbmasterpyro.o(i.MBMaster_RTU_Init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 192<LI>Call Chain = MBMaster_RTU_Init &rArr; eMBMasterInit &rArr; eMBMasterRTUInit &rArr; xMBMasterPortTimersInit &rArr; HAL_TIM_Base_Init &rArr; HAL_TIM_Base_MspInit &rArr; HAL_NVIC_SetPriority &rArr; NVIC_SetPriority
 </UL>
 <BR>[Calls]<UL><LI><a href="#[180]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreate
 <LI><a href="#[f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
 <LI><a href="#[f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericCreate
-<LI><a href="#[119]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_Init
 <LI><a href="#[17e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBMasterInit
 <LI><a href="#[17f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBMasterEnable
 </UL>
@@ -2942,6 +2940,8 @@ Global Symbols
 <LI><a href="#[231]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ip_reass_chain_frag_into_datagram_and_validate
 <LI><a href="#[208]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;etharp_input
 <LI><a href="#[20b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ethernet_output
+<LI><a href="#[1b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;udp_client_send_pyro_buf
+<LI><a href="#[1b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;udp_client_send_base_buf
 <LI><a href="#[1ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;udp_client_init
 <LI><a href="#[1fd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xMBTCPPortInit
 </UL>
@@ -4728,20 +4728,22 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StartDefaultTask
 </UL>
 
-<P><STRONG><a name="[1b8]"></a>udp_client_send_base_buf</STRONG> (Thumb, 92 bytes, Stack size 24 bytes, udp_send.o(i.udp_client_send_base_buf))
+<P><STRONG><a name="[1b8]"></a>udp_client_send_base_buf</STRONG> (Thumb, 112 bytes, Stack size 24 bytes, udp_send.o(i.udp_client_send_base_buf))
 <BR><BR>[Stack]<UL><LI>Max Depth = 368<LI>Call Chain = udp_client_send_base_buf &rArr; lwip_sendto &rArr; netbuf_ref &rArr; pbuf_alloc &rArr; pbuf_pool_is_empty &rArr; tcpip_callback_with_block &rArr; memp_free &rArr; do_memp_free_pool &rArr; sys_arch_protect &rArr; osMutexWait &rArr; xQueueGenericReceive &rArr; vTaskPlaceOnEventList &rArr; prvAddCurrentTaskToDelayedList &rArr; vListInsert
 </UL>
-<BR>[Calls]<UL><LI><a href="#[26f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwip_sendto
+<BR>[Calls]<UL><LI><a href="#[20a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwip_htons
+<LI><a href="#[26f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwip_sendto
 <LI><a href="#[1fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DCMI_ADC_GetLastTimestamp
 <LI><a href="#[eb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
 </UL>
 <BR>[Called By]<UL><LI><a href="#[cb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UDP_Send_Task
 </UL>
 
-<P><STRONG><a name="[1b9]"></a>udp_client_send_pyro_buf</STRONG> (Thumb, 100 bytes, Stack size 16 bytes, udp_send.o(i.udp_client_send_pyro_buf))
+<P><STRONG><a name="[1b9]"></a>udp_client_send_pyro_buf</STRONG> (Thumb, 120 bytes, Stack size 16 bytes, udp_send.o(i.udp_client_send_pyro_buf))
 <BR><BR>[Stack]<UL><LI>Max Depth = 360<LI>Call Chain = udp_client_send_pyro_buf &rArr; lwip_sendto &rArr; netbuf_ref &rArr; pbuf_alloc &rArr; pbuf_pool_is_empty &rArr; tcpip_callback_with_block &rArr; memp_free &rArr; do_memp_free_pool &rArr; sys_arch_protect &rArr; osMutexWait &rArr; xQueueGenericReceive &rArr; vTaskPlaceOnEventList &rArr; prvAddCurrentTaskToDelayedList &rArr; vListInsert
 </UL>
-<BR>[Calls]<UL><LI><a href="#[26f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwip_sendto
+<BR>[Calls]<UL><LI><a href="#[20a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwip_htons
+<LI><a href="#[26f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;lwip_sendto
 <LI><a href="#[302]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_PyroBuf_GetCurrentLength
 <LI><a href="#[ea]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_PyroBuf_Copy
 </UL>
