@@ -136,12 +136,11 @@ int main(void)
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
-//  /* Enable I-Cache-------------------------------------------------------------*/
+
+  /* Enable I-Cache-------------------------------------------------------------*/
   SCB_EnableICache();
 
-//  /* Enable D-Cache-------------------------------------------------------------*/
-//  SCB_EnableDCache();
-//  /* MCU Configuration----------------------------------------------------------*/
+  /* MCU Configuration----------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
@@ -731,7 +730,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, SYNC_ADC_Pin|GPIO0_ADC_Pin|BUSE_SIG_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(ENABLE_OUT_1_GPIO_Port, ENABLE_OUT_1_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(ENABLE_OUT_1_GPIO_Port, ENABLE_OUT_1_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(OE_GPIO_Port, OE_Pin, GPIO_PIN_RESET);
@@ -742,10 +741,13 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOG, ENABLE_AIR_Pin|AIR_CS_Pin|EN_VCC_7_5_Pin|EN_VCC_150_Pin 
-                          |USB_PowerSwitchOn_Pin|EN_VCC_250_Pin|U_CS_Pin|ENABLE_OUT_7_Pin, GPIO_PIN_RESET);
+                          |USB_PowerSwitchOn_Pin|EN_VCC_250_Pin|U_CS_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(BUSE_SYNC_GPIO_Port, BUSE_SYNC_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(ENABLE_OUT_7_GPIO_Port, ENABLE_OUT_7_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin : User_Blue_Button_Pin */
   GPIO_InitStruct.Pin = User_Blue_Button_Pin;

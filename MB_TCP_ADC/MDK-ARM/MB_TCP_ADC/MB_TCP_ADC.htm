@@ -3,7 +3,7 @@
 <title>Static Call Graph - [MB_TCP_ADC\MB_TCP_ADC.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image MB_TCP_ADC\MB_TCP_ADC.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060061: Last Updated: Fri Sep 08 16:00:02 2017
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060061: Last Updated: Fri Sep 08 17:10:56 2017
 <BR><P>
 <H3>Maximum Stack Usage =        776 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -986,10 +986,11 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[104]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DiscretOutputs_Init
 </UL>
 
-<P><STRONG><a name="[104]"></a>DiscretOutputs_Init</STRONG> (Thumb, 20 bytes, Stack size 8 bytes, discret_out.o(i.DiscretOutputs_Init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = DiscretOutputs_Init &rArr; DiscretOutputs_Enable
+<P><STRONG><a name="[104]"></a>DiscretOutputs_Init</STRONG> (Thumb, 52 bytes, Stack size 8 bytes, discret_out.o(i.DiscretOutputs_Init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 92<LI>Call Chain = DiscretOutputs_Init &rArr; DiscretOutputs_Set &rArr; HAL_SPI_Transmit_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
 </UL>
 <BR>[Calls]<UL><LI><a href="#[f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
+<LI><a href="#[105]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DiscretOutputs_Set
 <LI><a href="#[103]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DiscretOutputs_Enable
 </UL>
 <BR>[Called By]<UL><LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
@@ -1002,6 +1003,7 @@ Global Symbols
 <LI><a href="#[106]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_SPI_Transmit_DMA
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBRegHoldingCB
+<LI><a href="#[104]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DiscretOutputs_Init
 </UL>
 
 <P><STRONG><a name="[5a]"></a>ETH_IRQHandler</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, stm32f7xx_it.o(i.ETH_IRQHandler))
@@ -6859,7 +6861,7 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[190]"></a>MX_GPIO_Init</STRONG> (Thumb, 732 bytes, Stack size 32 bytes, main.o(i.MX_GPIO_Init))
+<P><STRONG><a name="[190]"></a>MX_GPIO_Init</STRONG> (Thumb, 742 bytes, Stack size 32 bytes, main.o(i.MX_GPIO_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 80<LI>Call Chain = MX_GPIO_Init &rArr; HAL_NVIC_SetPriority &rArr; NVIC_SetPriority
 </UL>
 <BR>[Calls]<UL><LI><a href="#[f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin

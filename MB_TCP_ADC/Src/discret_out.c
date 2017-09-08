@@ -16,12 +16,9 @@ typedef enum
 	DISCR_OUT_TRANSFER_COMPLETE,
 }enDiscrOutTransferState;
 
-//uint16_t outputs_temp_reg_0=0xFFFF;
-//uint16_t outputs_temp_reg_1=0xFFFF;
-//uint16_t outputs_temp_reg_2=0xFFFF;
-//uint16_t outputs_temp_reg_3=0xFFFF;
+#define OUTPUTS_REG_ALL_RELAY_OFF		0xFFFFFFFFFFFFFFFF
 	
-uint64_t	outputs_temp_reg=0xFFFFFFFFFFFFFFFF; 
+uint64_t	outputs_temp_reg=OUTPUTS_REG_ALL_RELAY_OFF; 
 
 #define SPI_OUT_REG_NUM	8
 
@@ -37,6 +34,10 @@ void DiscretOutputs_Init(void)
 {
 		DiscretOutputs_Enable(DISCR_OUT_ENABLE);
 		HAL_GPIO_WritePin(STROB_GPIO_Port, STROB_Pin, GPIO_PIN_RESET);
+		
+		DiscretOutputs_Set(OUTPUTS_REG_ALL_RELAY_OFF);
+		HAL_GPIO_WritePin(ENABLE_OUT_1_GPIO_Port, ENABLE_OUT_1_Pin, GPIO_PIN_RESET);//включаем оптроны реле
+		HAL_GPIO_WritePin(ENABLE_OUT_1_GPIO_Port, ENABLE_OUT_7_Pin, GPIO_PIN_RESET);
 //		HAL_DMA_RegisterCallback(&hdma_spi5_tx,HAL_DMA_XFER_CPLT_CB_ID,SPI5_DMA_TransferCallback);
 }
 
