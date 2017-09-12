@@ -53,11 +53,16 @@ void DiscretOutputs_Enable(enDiscrOutState DiscrOutState)
 	}
 }
 
-
+static  uint64_t temp_out;
 void DiscretOutputs_Set(uint64_t discrOut)
 {
-  static uint64_t temp_out;
-	temp_out=discrOut;
+	uint8_t i=0;
+	
+	for(i=0;i<sizeof(uint64_t);i++)
+	{
+		((uint8_t*)&temp_out)[i]=((uint8_t*)&discrOut)[(sizeof(uint64_t)-1)-i];	
+	}
+
 	HAL_GPIO_WritePin(STROB_GPIO_Port, STROB_Pin, GPIO_PIN_RESET);	
 	HAL_SPI_Transmit_DMA(&hspi5, (uint8_t*)&temp_out, SPI_OUT_REG_NUM);
 }
