@@ -6,6 +6,6 @@
 #define DISCRET_OUT_NUM	48
 
 void DiscretOutputs_Init(void);
-void DiscretOutputs_Set(uint64_t *discrOut);
+void DiscretOutputs_Set(uint64_t discrOut);
 
 #endif

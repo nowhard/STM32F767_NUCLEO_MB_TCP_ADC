@@ -508,7 +508,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												{											
 														outputs_temp_reg&=(~((uint64_t)0xFFFF));
 														outputs_temp_reg|=(uint64_t)usRegHoldingBuf[DEV_SET_OUTPUTS_0];
-														DiscretOutputs_Set(&outputs_temp_reg);
+														DiscretOutputs_Set(outputs_temp_reg);
 												}
 												break;
 
@@ -516,7 +516,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												{											
 														outputs_temp_reg&=(~((uint64_t)0xFFFF<<16));
 														outputs_temp_reg|=(uint64_t)usRegHoldingBuf[DEV_SET_OUTPUTS_1]<<16;
-														DiscretOutputs_Set(&outputs_temp_reg);
+														DiscretOutputs_Set(outputs_temp_reg);
 												}
 												break;	
 
@@ -524,7 +524,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												{											
 														outputs_temp_reg&=(~((uint64_t)0xFFFF<<32));
 														outputs_temp_reg|=(uint64_t)usRegHoldingBuf[DEV_SET_OUTPUTS_2]<<32;
-														DiscretOutputs_Set(&outputs_temp_reg);
+														DiscretOutputs_Set(outputs_temp_reg);
 												}
 												break;		
 
@@ -532,14 +532,14 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												{											
 														outputs_temp_reg&=(~((uint64_t)0xFFFF<<48));
 														outputs_temp_reg|=(uint64_t)usRegHoldingBuf[DEV_SET_OUTPUTS_3]<<48;
-														DiscretOutputs_Set(&outputs_temp_reg);
+														DiscretOutputs_Set(outputs_temp_reg);
 												}
 												break;		
 												
 												case DEV_SET_OUTPUTS_ALL+3:
 												{
 														UINT16_BUF_TO_UINT64(&usRegHoldingBuf[DEV_SET_OUTPUTS_ALL],outputs_temp_reg);
-														DiscretOutputs_Set(&outputs_temp_reg);	
+														DiscretOutputs_Set(outputs_temp_reg);	
 												}
 												break;													
 

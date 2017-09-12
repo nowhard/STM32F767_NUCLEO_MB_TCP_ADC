@@ -3,7 +3,7 @@
 <title>Static Call Graph - [MB_TCP_ADC\MB_TCP_ADC.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image MB_TCP_ADC\MB_TCP_ADC.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060061: Last Updated: Mon Sep 11 16:14:33 2017
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060061: Last Updated: Fri Sep 08 17:10:56 2017
 <BR><P>
 <H3>Maximum Stack Usage =        776 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -636,16 +636,6 @@ Global Symbols
 <P><STRONG><a name="[1d]"></a>WWDG_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f767xx.o(.text))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f767xx.o(RESET)
 </UL>
-<P><STRONG><a name="[dd]"></a>__aeabi_llsl</STRONG> (Thumb, 30 bytes, Stack size 0 bytes, llshl.o(.text))
-<BR><BR>[Called By]<UL><LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_double_epilogue
-<LI><a href="#[db]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_uldivmod
-<LI><a href="#[de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dadd
-<LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2ulz
-<LI><a href="#[105]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DiscretOutputs_Set
-</UL>
-
-<P><STRONG><a name="[320]"></a>_ll_shift_l</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, llshl.o(.text), UNUSED)
-
 <P><STRONG><a name="[eb]"></a>__aeabi_memcpy</STRONG> (Thumb, 36 bytes, Stack size 0 bytes, memcpya.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[2ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvCopyDataToQueue
 <LI><a href="#[2b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvCopyDataFromQueue
@@ -677,7 +667,7 @@ Global Symbols
 <LI><a href="#[e8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_PyroBuf_Add
 </UL>
 
-<P><STRONG><a name="[321]"></a>__aeabi_memcpy8</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, memcpya.o(.text), UNUSED)
+<P><STRONG><a name="[320]"></a>__aeabi_memcpy8</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, memcpya.o(.text), UNUSED)
 
 <P><STRONG><a name="[d9]"></a>__aeabi_memset</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, memseta.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[2c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvInitialiseNewTask
@@ -685,9 +675,9 @@ Global Symbols
 <LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr
 </UL>
 
-<P><STRONG><a name="[322]"></a>__aeabi_memset4</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, memseta.o(.text), UNUSED)
+<P><STRONG><a name="[321]"></a>__aeabi_memset4</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, memseta.o(.text), UNUSED)
 
-<P><STRONG><a name="[323]"></a>__aeabi_memset8</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, memseta.o(.text), UNUSED)
+<P><STRONG><a name="[322]"></a>__aeabi_memset8</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, memseta.o(.text), UNUSED)
 
 <P><STRONG><a name="[d8]"></a>__aeabi_memclr</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, memseta.o(.text))
 <BR><BR>[Calls]<UL><LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memset
@@ -702,7 +692,7 @@ Global Symbols
 <LI><a href="#[230]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ip_reass_enqueue_new_datagram
 </UL>
 
-<P><STRONG><a name="[324]"></a>__aeabi_memclr8</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, memseta.o(.text), UNUSED)
+<P><STRONG><a name="[323]"></a>__aeabi_memclr8</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, memseta.o(.text), UNUSED)
 
 <P><STRONG><a name="[da]"></a>_memset$wrapper</STRONG> (Thumb, 18 bytes, Stack size 8 bytes, memseta.o(.text), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memset
@@ -720,7 +710,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ethernet_input
 </UL>
 
-<P><STRONG><a name="[325]"></a>__aeabi_uidiv</STRONG> (Thumb, 0 bytes, Stack size 12 bytes, uidiv.o(.text), UNUSED)
+<P><STRONG><a name="[324]"></a>__aeabi_uidiv</STRONG> (Thumb, 0 bytes, Stack size 12 bytes, uidiv.o(.text), UNUSED)
 
 <P><STRONG><a name="[1c1]"></a>__aeabi_uidivmod</STRONG> (Thumb, 44 bytes, Stack size 12 bytes, uidiv.o(.text), UNUSED)
 <BR><BR>[Called By]<UL><LI><a href="#[1bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_printf_core
@@ -734,13 +724,13 @@ Global Symbols
 <LI><a href="#[1bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_fp_digits
 </UL>
 
-<P><STRONG><a name="[326]"></a>__I$use$fp</STRONG> (Thumb, 0 bytes, Stack size 48 bytes, iusefp.o(.text), UNUSED)
+<P><STRONG><a name="[325]"></a>__I$use$fp</STRONG> (Thumb, 0 bytes, Stack size 48 bytes, iusefp.o(.text), UNUSED)
 
 <P><STRONG><a name="[de]"></a>__aeabi_dadd</STRONG> (Thumb, 322 bytes, Stack size 48 bytes, dadd.o(.text), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[df]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_lasr
+<LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_llsl
 <LI><a href="#[e1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_double_round
 <LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_double_epilogue
-<LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_llsl
 </UL>
 <BR>[Called By]<UL><LI><a href="#[e3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_drsub
 <LI><a href="#[e2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dsub
@@ -784,7 +774,16 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_main_scatterload
 </UL>
 
-<P><STRONG><a name="[327]"></a>__scatterload_rt2</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, init.o(.text), UNUSED)
+<P><STRONG><a name="[326]"></a>__scatterload_rt2</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, init.o(.text), UNUSED)
+
+<P><STRONG><a name="[dd]"></a>__aeabi_llsl</STRONG> (Thumb, 30 bytes, Stack size 0 bytes, llshl.o(.text), UNUSED)
+<BR><BR>[Called By]<UL><LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_double_epilogue
+<LI><a href="#[db]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_uldivmod
+<LI><a href="#[de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dadd
+<LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2ulz
+</UL>
+
+<P><STRONG><a name="[327]"></a>_ll_shift_l</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, llshl.o(.text), UNUSED)
 
 <P><STRONG><a name="[dc]"></a>__aeabi_llsr</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, llushr.o(.text), UNUSED)
 <BR><BR>[Called By]<UL><LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_double_epilogue
@@ -808,8 +807,8 @@ Global Symbols
 
 <P><STRONG><a name="[e0]"></a>_double_epilogue</STRONG> (Thumb, 156 bytes, Stack size 32 bytes, depilogue.o(.text), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_llsr
-<LI><a href="#[e1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_double_round
 <LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_llsl
+<LI><a href="#[e1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_double_round
 </UL>
 <BR>[Called By]<UL><LI><a href="#[e4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul
 <LI><a href="#[de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dadd
@@ -987,8 +986,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[104]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DiscretOutputs_Init
 </UL>
 
-<P><STRONG><a name="[104]"></a>DiscretOutputs_Init</STRONG> (Thumb, 58 bytes, Stack size 8 bytes, discret_out.o(i.DiscretOutputs_Init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 108<LI>Call Chain = DiscretOutputs_Init &rArr; DiscretOutputs_Set &rArr; HAL_SPI_Transmit_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
+<P><STRONG><a name="[104]"></a>DiscretOutputs_Init</STRONG> (Thumb, 52 bytes, Stack size 8 bytes, discret_out.o(i.DiscretOutputs_Init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 92<LI>Call Chain = DiscretOutputs_Init &rArr; DiscretOutputs_Set &rArr; HAL_SPI_Transmit_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
 </UL>
 <BR>[Calls]<UL><LI><a href="#[f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
 <LI><a href="#[105]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DiscretOutputs_Set
@@ -997,12 +996,11 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[105]"></a>DiscretOutputs_Set</STRONG> (Thumb, 100 bytes, Stack size 32 bytes, discret_out.o(i.DiscretOutputs_Set))
-<BR><BR>[Stack]<UL><LI>Max Depth = 100<LI>Call Chain = DiscretOutputs_Set &rArr; HAL_SPI_Transmit_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
+<P><STRONG><a name="[105]"></a>DiscretOutputs_Set</STRONG> (Thumb, 32 bytes, Stack size 16 bytes, discret_out.o(i.DiscretOutputs_Set))
+<BR><BR>[Stack]<UL><LI>Max Depth = 84<LI>Call Chain = DiscretOutputs_Set &rArr; HAL_SPI_Transmit_DMA &rArr; HAL_DMA_Start_IT &rArr; DMA_SetConfig
 </UL>
 <BR>[Calls]<UL><LI><a href="#[f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
 <LI><a href="#[106]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_SPI_Transmit_DMA
-<LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_llsl
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBRegHoldingCB
 <LI><a href="#[104]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DiscretOutputs_Init
@@ -2530,7 +2528,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBFuncReadDiscreteInputs
 </UL>
 
-<P><STRONG><a name="[1d7]"></a>eMBRegHoldingCB</STRONG> (Thumb, 2142 bytes, Stack size 32 bytes, mbfunc.o(i.eMBRegHoldingCB))
+<P><STRONG><a name="[1d7]"></a>eMBRegHoldingCB</STRONG> (Thumb, 2160 bytes, Stack size 32 bytes, mbfunc.o(i.eMBRegHoldingCB))
 <BR><BR>[Stack]<UL><LI>Max Depth = 184<LI>Call Chain = eMBRegHoldingCB &rArr; StartConfigInfoWrite &rArr; xTaskCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
