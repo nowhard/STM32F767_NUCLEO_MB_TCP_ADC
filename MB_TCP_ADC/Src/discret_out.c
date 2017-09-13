@@ -37,7 +37,7 @@ void DiscretOutputs_Init(void)
 		
 		DiscretOutputs_Set(OUTPUTS_REG_ALL_RELAY_OFF);
 		HAL_GPIO_WritePin(ENABLE_OUT_1_GPIO_Port, ENABLE_OUT_1_Pin, GPIO_PIN_RESET);//включаем оптроны реле
-		HAL_GPIO_WritePin(ENABLE_OUT_1_GPIO_Port, ENABLE_OUT_7_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(ENABLE_OUT_7_GPIO_Port, ENABLE_OUT_7_Pin, GPIO_PIN_RESET);
 //		HAL_DMA_RegisterCallback(&hdma_spi5_tx,HAL_DMA_XFER_CPLT_CB_ID,SPI5_DMA_TransferCallback);
 }
 
