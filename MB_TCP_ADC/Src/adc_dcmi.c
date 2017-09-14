@@ -120,7 +120,7 @@ void DCMI_ADC_SetSamplerate(enADCSamplerate sampleRate)
 		default:
 		{
 				htim2.Init.Prescaler = 0;
-				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_100KHz;
+				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_1KHz;
 				period=(uint16_t)((108000000/100000)-1);
 		}
 	}

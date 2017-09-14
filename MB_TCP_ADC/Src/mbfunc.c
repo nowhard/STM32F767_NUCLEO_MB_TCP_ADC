@@ -1,5 +1,6 @@
 #include "mbfunc.h"
 #include "mb.h"
+#include "mb_m.h"
 #include "mbtcp.h"
 #include "cfg_info.h"
 #include "adc_dcmi.h"
@@ -8,7 +9,7 @@
 #include "mb_master_user.h"
 #include "data_converter.h"
 #include "adc_pyro_buf.h"
-//#include "main.h"
+#include "system_reset.h"
 
 #pragma anon_unions
 typedef struct
@@ -90,6 +91,8 @@ stUint64ToUint16Buf Uint64ToUint16Buf;
 
 #define PYRO_SQUIB_PIR_STATE				40
 #define PYRO_SQUIB_PIR_ERROR				41
+#define PYRO_SQUIB_MB_CONNECT_ERROR	48
+
 
 //--------FAULT SIGNALS-----------
 #define FAULT_OUT_1_SIG							42
@@ -119,6 +122,7 @@ stTCPtoRTURegWrite TCPtoRTURegWrite;
 extern uint32_t counter_DMA_half;
 extern uint32_t counter_DMA_full;
 extern uint32_t udp_send_counter;
+extern eMBMasterReqErrCode    MB_Master_ErrorCode;
 
 eMBErrorCode
 eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
@@ -174,6 +178,7 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 			usRegInputBuf[FAULT_150A_SIG]=HAL_GPIO_ReadPin(FAULT_150A_GPIO_Port,FAULT_150A_Pin);
 			usRegInputBuf[FAULT_75A_SIG]=HAL_GPIO_ReadPin(FAULT_75A_GPIO_Port,FAULT_75A_Pin);
 			usRegInputBuf[FAULT_7_5A_SIG]=HAL_GPIO_ReadPin(FAULT_7_5A_GPIO_Port,FAULT_7_5A_Pin);
+			usRegInputBuf[PYRO_SQUIB_MB_CONNECT_ERROR]=MB_Master_ErrorCode;
 			
         while( usNRegs > 0 )
         {
@@ -341,6 +346,8 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 							case MB_REG_WRITE:
 							{
 									uint8_t settings_need_write=0;
+									float temp_coef;
+								
 									while( usNRegs > 0 )
 									{
 											usRegHoldingBuf[iRegIndex] = *pucRegBuffer++ << 8;
@@ -350,140 +357,205 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 											{
 												case SERVER_IP_REG_0:
 												{
-														configInfo.IPAdress_Server.ip_addr_0=usRegHoldingBuf[SERVER_IP_REG_0];
-														settings_need_write=1;
+														if(configInfo.IPAdress_Server.ip_addr_0!=usRegHoldingBuf[SERVER_IP_REG_0])
+														{
+															configInfo.IPAdress_Server.ip_addr_0=usRegHoldingBuf[SERVER_IP_REG_0];
+															settings_need_write=1;
+														}
 												}
 												break;
 												
 												case SERVER_IP_REG_1:
 												{
-														configInfo.IPAdress_Server.ip_addr_1=usRegHoldingBuf[SERVER_IP_REG_1];
-														settings_need_write=1;
+														if(configInfo.IPAdress_Server.ip_addr_1!=usRegHoldingBuf[SERVER_IP_REG_1])
+														{
+															configInfo.IPAdress_Server.ip_addr_1=usRegHoldingBuf[SERVER_IP_REG_1];
+															settings_need_write=1;
+														}
 												}
 												break;
 												
 												case SERVER_IP_REG_2:
 												{
-														configInfo.IPAdress_Server.ip_addr_2=usRegHoldingBuf[SERVER_IP_REG_2];
-														settings_need_write=1;
+														if(configInfo.IPAdress_Server.ip_addr_2!=usRegHoldingBuf[SERVER_IP_REG_2])
+														{
+															configInfo.IPAdress_Server.ip_addr_2=usRegHoldingBuf[SERVER_IP_REG_2];
+															settings_need_write=1;
+														}
 												}
 												break;	
 
 												case SERVER_IP_REG_3:
 												{
-														configInfo.IPAdress_Server.ip_addr_3=usRegHoldingBuf[SERVER_IP_REG_3];
-														settings_need_write=1;
+														if(configInfo.IPAdress_Server.ip_addr_3!=usRegHoldingBuf[SERVER_IP_REG_3])
+														{
+															configInfo.IPAdress_Server.ip_addr_3=usRegHoldingBuf[SERVER_IP_REG_3];
+															settings_need_write=1;
+														}
 												}
 												break;
 
 												case SERVER_PORT_REG_0:
 												{
-														configInfo.IPAdress_Server.port=usRegHoldingBuf[SERVER_PORT_REG_0];
-														settings_need_write=1;
+														if(configInfo.IPAdress_Server.port!=usRegHoldingBuf[SERVER_PORT_REG_0])
+														{
+															configInfo.IPAdress_Server.port=usRegHoldingBuf[SERVER_PORT_REG_0];
+															settings_need_write=1;
+														}
 												}
 												break;
 
 												case ADC_CHANNEL_0_K+(1):
 												{
-														//configInfo.ConfigADC.calibrChannel[0].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_0_K]);
+														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_0_K],temp_coef);
 													
-														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_0_K], configInfo.ConfigADC.calibrChannel[0].k);							
-														settings_need_write=1;
+														if(configInfo.ConfigADC.calibrChannel[0].k!=temp_coef)
+														{
+																configInfo.ConfigADC.calibrChannel[0].k=temp_coef;
+																settings_need_write=1;
+														}														
 												}
 												break;
 
 												case ADC_CHANNEL_0_B+(1):
 												{
-														//configInfo.ConfigADC.calibrChannel[0].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_0_B]);	
-														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_0_B], configInfo.ConfigADC.calibrChannel[0].b);														
-														settings_need_write=1;
+														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_0_B],temp_coef);
+													
+														if(configInfo.ConfigADC.calibrChannel[0].b!=temp_coef)
+														{
+																configInfo.ConfigADC.calibrChannel[0].b=temp_coef;
+																settings_need_write=1;
+														}	
 												}
 												break;
 
 												case ADC_CHANNEL_1_K+(1):
 												{
-														//configInfo.ConfigADC.calibrChannel[1].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_1_K]);
-														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_1_K], configInfo.ConfigADC.calibrChannel[1].k);
-														settings_need_write=1;										
+														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_1_K],temp_coef);
+													
+														if(configInfo.ConfigADC.calibrChannel[1].k!=temp_coef)
+														{
+																configInfo.ConfigADC.calibrChannel[1].k=temp_coef;
+																settings_need_write=1;
+														}											
 												}
 												break;
 
 												case ADC_CHANNEL_1_B+(1):
 												{
-														//configInfo.ConfigADC.calibrChannel[1].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_1_B]);
-														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_1_B], configInfo.ConfigADC.calibrChannel[1].b);													
-														settings_need_write=1;										
+														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_1_B],temp_coef);
+													
+														if(configInfo.ConfigADC.calibrChannel[1].b!=temp_coef)
+														{
+																configInfo.ConfigADC.calibrChannel[1].b=temp_coef;
+																settings_need_write=1;
+														}										
 												}
 												break;	
 
 												case ADC_CHANNEL_2_K+(1):
 												{
-														//configInfo.ConfigADC.calibrChannel[2].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_2_K]);
-														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_2_K], configInfo.ConfigADC.calibrChannel[2].k);													
-														settings_need_write=1;										
+														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_2_K],temp_coef);
+													
+														if(configInfo.ConfigADC.calibrChannel[2].k!=temp_coef)
+														{
+																configInfo.ConfigADC.calibrChannel[2].k=temp_coef;
+																settings_need_write=1;
+														}											
 												}
 												break;
 
 												case ADC_CHANNEL_2_B+(1):
 												{
-														//configInfo.ConfigADC.calibrChannel[2].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_2_B]);
-														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_2_B], configInfo.ConfigADC.calibrChannel[2].b);													
-														settings_need_write=1;										
+														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_2_B],temp_coef);
+													
+														if(configInfo.ConfigADC.calibrChannel[2].b!=temp_coef)
+														{
+																configInfo.ConfigADC.calibrChannel[2].b=temp_coef;
+																settings_need_write=1;
+														}										
 												}
 												break;	
 
 												case ADC_CHANNEL_3_K+(1):
 												{
-														//configInfo.ConfigADC.calibrChannel[3].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_3_K]);
-														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_3_K], configInfo.ConfigADC.calibrChannel[3].k);
-														settings_need_write=1;										
+														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_3_K],temp_coef);
+													
+														if(configInfo.ConfigADC.calibrChannel[3].k!=temp_coef)
+														{
+																configInfo.ConfigADC.calibrChannel[3].k=temp_coef;
+																settings_need_write=1;
+														}										
 												}
 												break;
 
 												case ADC_CHANNEL_3_B+(1):
 												{
-														//configInfo.ConfigADC.calibrChannel[3].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_3_B]);
-														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_3_B], configInfo.ConfigADC.calibrChannel[3].b);													
-														settings_need_write=1;										
+														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_3_B],temp_coef);
+													
+														if(configInfo.ConfigADC.calibrChannel[3].b!=temp_coef)
+														{
+																configInfo.ConfigADC.calibrChannel[3].b=temp_coef;
+																settings_need_write=1;
+														}										
 												}
 												break;	
 
 												case ADC_CHANNEL_4_K+(1):
 												{
-														//configInfo.ConfigADC.calibrChannel[4].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_4_K]);
-														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_4_K], configInfo.ConfigADC.calibrChannel[4].k);													
-														settings_need_write=1;										
+														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_4_K],temp_coef);
+													
+														if(configInfo.ConfigADC.calibrChannel[4].k!=temp_coef)
+														{
+																configInfo.ConfigADC.calibrChannel[4].k=temp_coef;
+																settings_need_write=1;
+														}										
 												}
 												break;
 
 												case ADC_CHANNEL_4_B+(1):
 												{
-														//configInfo.ConfigADC.calibrChannel[4].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_4_B]);
-														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_4_B], configInfo.ConfigADC.calibrChannel[4].b);													
-														settings_need_write=1;										
+														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_4_B],temp_coef);
+													
+														if(configInfo.ConfigADC.calibrChannel[4].b!=temp_coef)
+														{
+																configInfo.ConfigADC.calibrChannel[4].b=temp_coef;
+																settings_need_write=1;
+														}										
 												}
 												break;	
 
 												case ADC_CHANNEL_5_K+(1):
 												{
-														//configInfo.ConfigADC.calibrChannel[5].k =*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_K]);
-														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_5_K], configInfo.ConfigADC.calibrChannel[5].k);													
-														settings_need_write=1;										
+														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_5_K],temp_coef);
+													
+														if(configInfo.ConfigADC.calibrChannel[5].k!=temp_coef)
+														{
+																configInfo.ConfigADC.calibrChannel[5].k=temp_coef;
+																settings_need_write=1;
+														}										
 												}
 												break;
 
 												case ADC_CHANNEL_5_B+(1):
 												{
-														//configInfo.ConfigADC.calibrChannel[5].b =*((float*)&usRegHoldingBuf[ADC_CHANNEL_5_B]);
-														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_5_B], configInfo.ConfigADC.calibrChannel[5].b);													
-														settings_need_write=1;
+														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_5_B],temp_coef);
+													
+														if(configInfo.ConfigADC.calibrChannel[5].b!=temp_coef)
+														{
+																configInfo.ConfigADC.calibrChannel[5].b=temp_coef;
+																settings_need_write=1;
+														}	
 												}
 												break;
 
 												case ADC_SAMPLERATE:
 												{
-														DCMI_ADC_SetSamplerate(usRegHoldingBuf[ADC_SAMPLERATE]);
-														settings_need_write=1;										
+														if(configInfo.ConfigADC.sampleRate!=usRegHoldingBuf[ADC_SAMPLERATE])
+														{
+															DCMI_ADC_SetSamplerate(usRegHoldingBuf[ADC_SAMPLERATE]);
+															settings_need_write=1;	
+														}															
 												}
 												break;	
 												
@@ -599,9 +671,8 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												{
 														if(usRegHoldingBuf[DEV_RESET_CONTROLLER])//reset timestamp
 														{
-																//DCMI_ADC_ResetTimestamp();
 																usRegHoldingBuf[DEV_RESET_CONTROLLER]=0;
-																NVIC_SystemReset();
+																SystemReset_Start();
 														}	
 												}
 												break;	
