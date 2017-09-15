@@ -10,6 +10,7 @@
 #include "data_converter.h"
 #include "adc_pyro_buf.h"
 #include "system_reset.h"
+#include "mbmasterpyro.h"
 
 #pragma anon_unions
 typedef struct
@@ -79,7 +80,7 @@ stUint64ToUint16Buf Uint64ToUint16Buf;
 #define	ADC_CHANNEL_CONV						18
 
 #define TIMESTAMP_CURRENT						20
-
+//---------PYRO SQUIB REGS------------
 #define ADC_PYRO_SQUIB_0						24
 #define ADC_PYRO_SQUIB_1						26
 #define ADC_PYRO_SQUIB_2						28
@@ -91,17 +92,17 @@ stUint64ToUint16Buf Uint64ToUint16Buf;
 
 #define PYRO_SQUIB_PIR_STATE				40
 #define PYRO_SQUIB_PIR_ERROR				41
-#define PYRO_SQUIB_MB_CONNECT_ERROR	48
+#define	PYRO_SQUIB_PIR_IN_LINE			42
 
+#define PYRO_SQUIB_MB_CONNECT_ERROR	43
+//--------FAULT SIGNALS---------------
+#define FAULT_OUT_1_SIG							44
+#define FAULT_OUT_7_SIG							45
 
-//--------FAULT SIGNALS-----------
-#define FAULT_OUT_1_SIG							42
-#define FAULT_OUT_7_SIG							43
-
-#define FAULT_250A_SIG							44
-#define FAULT_150A_SIG							45
-#define FAULT_75A_SIG								46
-#define FAULT_7_5A_SIG							47
+#define FAULT_250A_SIG							46
+#define FAULT_150A_SIG							47
+#define FAULT_75A_SIG								48
+#define FAULT_7_5A_SIG							49
 
 /* ----------------------- Static variables ---------------------------------*/
 static USHORT   usRegInputStart = REG_INPUT_START;
@@ -132,53 +133,42 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
     uint8_t i=0;
 
 
-    //xQueueReceive( xADC_MB_Queue, &( usRegInputBuf ), ( TickType_t ) 0 ) ;
-
-	
-
     if( ( usAddress >= REG_INPUT_START )
         && ( usAddress + usNRegs <= REG_INPUT_START + REG_INPUT_NREGS ) )
     {
         iRegIndex = ( int )( usAddress - usRegInputStart );
 			
-			usRegInputBuf[ADC_CHANNEL_0_RAW]=ChnCalibrValues.val_chn0_raw;
-			usRegInputBuf[ADC_CHANNEL_1_RAW]=ChnCalibrValues.val_chn1_raw;
-			usRegInputBuf[ADC_CHANNEL_2_RAW]=ChnCalibrValues.val_chn2_raw;
-			usRegInputBuf[ADC_CHANNEL_3_RAW]=ChnCalibrValues.val_chn3_raw;
-			usRegInputBuf[ADC_CHANNEL_4_RAW]=ChnCalibrValues.val_chn4_raw;
-			usRegInputBuf[ADC_CHANNEL_5_RAW]=ChnCalibrValues.val_chn5_raw;
+				usRegInputBuf[ADC_CHANNEL_0_RAW]=ChnCalibrValues.val_chn0_raw;
+				usRegInputBuf[ADC_CHANNEL_1_RAW]=ChnCalibrValues.val_chn1_raw;
+				usRegInputBuf[ADC_CHANNEL_2_RAW]=ChnCalibrValues.val_chn2_raw;
+				usRegInputBuf[ADC_CHANNEL_3_RAW]=ChnCalibrValues.val_chn3_raw;
+				usRegInputBuf[ADC_CHANNEL_4_RAW]=ChnCalibrValues.val_chn4_raw;
+				usRegInputBuf[ADC_CHANNEL_5_RAW]=ChnCalibrValues.val_chn5_raw;
 			
 			
-//			*((float*)&usRegInputBuf[ADC_CHANNEL_0_RESULT])=ChnCalibrValues.val_250A;
 				FLOAT_TO_UINT16_BUF(ChnCalibrValues.val_250A, &usRegInputBuf[ADC_CHANNEL_0_RESULT]);
-//			*((float*)&usRegInputBuf[ADC_CHANNEL_1_RESULT])=ChnCalibrValues.val_150A;
 				FLOAT_TO_UINT16_BUF(ChnCalibrValues.val_150A, &usRegInputBuf[ADC_CHANNEL_1_RESULT]);			
-//			*((float*)&usRegInputBuf[ADC_CHANNEL_2_RESULT])=ChnCalibrValues.val_75A;
 				FLOAT_TO_UINT16_BUF(ChnCalibrValues.val_75A, &usRegInputBuf[ADC_CHANNEL_2_RESULT]);			
-//			*((float*)&usRegInputBuf[ADC_CHANNEL_3_RESULT])=ChnCalibrValues.val_7_5A;
 				FLOAT_TO_UINT16_BUF(ChnCalibrValues.val_7_5A, &usRegInputBuf[ADC_CHANNEL_3_RESULT]);			
-//			*((float*)&usRegInputBuf[ADC_CHANNEL_4_RESULT])=ChnCalibrValues.val_voltage_1;
 				FLOAT_TO_UINT16_BUF(ChnCalibrValues.val_voltage_1, &usRegInputBuf[ADC_CHANNEL_4_RESULT]);			
-//			*((float*)&usRegInputBuf[ADC_CHANNEL_5_RESULT])=ChnCalibrValues.val_voltage_2;
 				FLOAT_TO_UINT16_BUF(ChnCalibrValues.val_voltage_2, &usRegInputBuf[ADC_CHANNEL_5_RESULT]);
+				
+				FLOAT_TO_UINT16_BUF(ChnCalibrValues.val_current, &usRegInputBuf[ADC_CHANNEL_CONV]);
 			
-			*((float*)&usRegInputBuf[ADC_CHANNEL_CONV])=ChnCalibrValues.val_current;
+				uint64_t temp=DCMI_ADC_GetLastTimestamp();
+				UINT64_TO_UINT16_BUF(temp,&usRegInputBuf[TIMESTAMP_CURRENT]);
 			
-			uint64_t temp=DCMI_ADC_GetLastTimestamp();
-			UINT64_TO_UINT16_BUF(temp,&usRegInputBuf[TIMESTAMP_CURRENT]);
 			
-			//*((uint64_t*)&usRegInputBuf[TIMESTAMP_CURRENT])=DCMI_ADC_GetLastTimestamp();
-			
-			memcpy((void *)&usRegInputBuf[ADC_PYRO_SQUIB_0],(const void*)&usMRegInBuf[0][0],M_REG_INPUT_NREGS*sizeof(uint16_t));
-			
-			usRegInputBuf[FAULT_OUT_1_SIG]=HAL_GPIO_ReadPin(FAULT_OUT_1_GPIO_Port,FAULT_OUT_1_Pin);
-			usRegInputBuf[FAULT_OUT_7_SIG]=HAL_GPIO_ReadPin(FAULT_OUT_7_GPIO_Port,FAULT_OUT_7_Pin);
-			
-			usRegInputBuf[FAULT_250A_SIG]=HAL_GPIO_ReadPin(FAULT_250A_GPIO_Port,FAULT_250A_Pin);
-			usRegInputBuf[FAULT_150A_SIG]=HAL_GPIO_ReadPin(FAULT_150A_GPIO_Port,FAULT_150A_Pin);
-			usRegInputBuf[FAULT_75A_SIG]=HAL_GPIO_ReadPin(FAULT_75A_GPIO_Port,FAULT_75A_Pin);
-			usRegInputBuf[FAULT_7_5A_SIG]=HAL_GPIO_ReadPin(FAULT_7_5A_GPIO_Port,FAULT_7_5A_Pin);
-			usRegInputBuf[PYRO_SQUIB_MB_CONNECT_ERROR]=MB_Master_ErrorCode;
+				memcpy((void *)&usRegInputBuf[ADC_PYRO_SQUIB_0],(const void*)&usMRegInBuf[0][0],M_REG_INPUT_NREGS*sizeof(uint16_t));
+				
+				usRegInputBuf[FAULT_OUT_1_SIG]=HAL_GPIO_ReadPin(FAULT_OUT_1_GPIO_Port,FAULT_OUT_1_Pin);
+				usRegInputBuf[FAULT_OUT_7_SIG]=HAL_GPIO_ReadPin(FAULT_OUT_7_GPIO_Port,FAULT_OUT_7_Pin);
+				
+				usRegInputBuf[FAULT_250A_SIG]=HAL_GPIO_ReadPin(FAULT_250A_GPIO_Port,FAULT_250A_Pin);
+				usRegInputBuf[FAULT_150A_SIG]=HAL_GPIO_ReadPin(FAULT_150A_GPIO_Port,FAULT_150A_Pin);
+				usRegInputBuf[FAULT_75A_SIG]=HAL_GPIO_ReadPin(FAULT_75A_GPIO_Port,FAULT_75A_Pin);
+				usRegInputBuf[FAULT_7_5A_SIG]=HAL_GPIO_ReadPin(FAULT_7_5A_GPIO_Port,FAULT_7_5A_Pin);
+				usRegInputBuf[PYRO_SQUIB_MB_CONNECT_ERROR]=MB_Master_ErrorCode;
 			
         while( usNRegs > 0 )
         {
@@ -680,7 +670,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												case PYRO_SQUIB_PIR_SET_TIME:
 												{
 														TCPtoRTURegWrite.nRegs=1;
-														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+0;
+														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_SET_TIME;
 														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_SET_TIME];
 														xSemaphoreGive(xSendRTURegSem);
 												}
@@ -689,7 +679,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												case PYRO_SQUIB_PIR_1_SET_CURRENT +(1) :
 												{
 														TCPtoRTURegWrite.nRegs=2;
-														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+1;
+														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_1_SET_CURRENT;
 														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_1_SET_CURRENT];
 														xSemaphoreGive(xSendRTURegSem);	
 												}
@@ -698,7 +688,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												case PYRO_SQUIB_PIR_2_SET_CURRENT +(1):
 												{
 														TCPtoRTURegWrite.nRegs=2;
-														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+3;
+														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_2_SET_CURRENT;
 														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_2_SET_CURRENT];
 														xSemaphoreGive(xSendRTURegSem);	
 												}
@@ -707,7 +697,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												case PYRO_SQUIB_PIR_3_SET_CURRENT +(1):
 												{
 														TCPtoRTURegWrite.nRegs=2;
-														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+5;
+														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_3_SET_CURRENT;
 														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_3_SET_CURRENT];
 														xSemaphoreGive(xSendRTURegSem);	
 												}
@@ -716,7 +706,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												case PYRO_SQUIB_PIR_4_SET_CURRENT +(1):
 												{
 														TCPtoRTURegWrite.nRegs=2;
-														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+7;
+														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_4_SET_CURRENT;
 														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_4_SET_CURRENT];
 														xSemaphoreGive(xSendRTURegSem);	
 												}
@@ -725,7 +715,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												case PYRO_SQUIB_PIR_SET_MASK:
 												{
 														TCPtoRTURegWrite.nRegs=1;
-														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+9;
+														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_SET_MASK;
 														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_SET_MASK];
 														xSemaphoreGive(xSendRTURegSem);											
 												}
@@ -734,7 +724,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												case PYRO_SQUIB_PIR_START:
 												{
 														TCPtoRTURegWrite.nRegs=1;
-														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+10;
+														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_START;
 														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_START];
 														xSemaphoreGive(xSendRTURegSem);		
 
