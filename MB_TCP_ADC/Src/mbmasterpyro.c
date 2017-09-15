@@ -33,7 +33,7 @@ void MBMaster_RTU_Poll(void *pvParameters);
 
 void MBMaster_RTU_Init(void)
 {
-	vSemaphoreCreateBinary(xSendRTURegSem);
+	xSendRTURegSem=xSemaphoreCreateBinary();
 	
 //	GPIO_InitTypeDef GPIO_InitStruct;
 //	GPIO_InitStruct.Pin = DATALED_Pin;

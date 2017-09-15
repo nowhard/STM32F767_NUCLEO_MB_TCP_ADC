@@ -55,7 +55,7 @@ void DCMI_ADC_Init(void)
 	
 	HAL_GPIO_WritePin(SYNC_ADC_GPIO_Port, SYNC_ADC_Pin, GPIO_PIN_SET);
 	
-	vSemaphoreCreateBinary( xAdcBuf_Send_Semaphore );
+	xAdcBuf_Send_Semaphore=xSemaphoreCreateBinary();
 	DCMI_ADC_SetSamplerate(configInfo.ConfigADC.sampleRate);
 	
 
