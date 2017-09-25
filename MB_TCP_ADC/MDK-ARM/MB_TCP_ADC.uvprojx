@@ -1113,6 +1113,11 @@
               <FileType>1</FileType>
               <FilePath>..\Src\system_reset.c</FilePath>
             </File>
+            <File>
+              <FileName>utilities.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\utilities.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

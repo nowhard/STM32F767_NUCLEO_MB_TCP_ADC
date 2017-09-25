@@ -1,5 +1,6 @@
 #include "discret_out.h"
 #include "main.h"
+#include "utilities.h"
 
 #include "stm32f7xx_hal.h"
 #include "stm32f7xx.h"
@@ -56,23 +57,10 @@ void DiscretOutputs_Enable(enDiscrOutState DiscrOutState)
 static  uint64_t temp_out;
 void DiscretOutputs_Set(uint64_t discrOut)
 {
-	uint8_t i=0;
-	
-	for(i=0;i<sizeof(uint64_t);i++)
-	{
-		((uint8_t*)&temp_out)[i]=((uint8_t*)&discrOut)[(sizeof(uint64_t)-1)-i];	
-	}
-
+	temp_out=ReverseBytes_UINT64(discrOut);
 	HAL_GPIO_WritePin(STROB_GPIO_Port, STROB_Pin, GPIO_PIN_RESET);	
 	HAL_SPI_Transmit_DMA(&hspi5, (uint8_t*)&temp_out, SPI_OUT_REG_NUM);
 }
-
-//void SPI5_DMA_TransferCallback(void)
-//{
-//	HAL_GPIO_WritePin(STROB_GPIO_Port, STROB_Pin, GPIO_PIN_SET);
-//	//dly??
-//	//HAL_GPIO_WritePin(STROB_GPIO_Port, STROB_Pin, GPIO_PIN_RESET);	
-//}
 
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 {

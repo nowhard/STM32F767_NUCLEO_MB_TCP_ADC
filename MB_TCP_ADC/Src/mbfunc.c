@@ -11,49 +11,7 @@
 #include "adc_pyro_buf.h"
 #include "system_reset.h"
 #include "mbmasterpyro.h"
-
-#pragma anon_unions
-typedef struct
-{
-	union
-	{
-		float val;
-		uint16_t buf[2];
-	};
-}stFloatToUint16Buf;
-
-typedef struct
-{
-	union
-	{
-		uint64_t val;
-		uint16_t buf[4];
-	};
-}stUint64ToUint16Buf;
-
-stFloatToUint16Buf FloatToUint16Buf;
-stUint64ToUint16Buf Uint64ToUint16Buf;
-
-#define FLOAT_TO_UINT16_BUF(fl,uint16buf) 	FloatToUint16Buf.val=fl;\
-																						(uint16buf)[0]=FloatToUint16Buf.buf[0];\
-																						(uint16buf)[1]=FloatToUint16Buf.buf[1];
-
-#define UINT16_BUF_TO_FLOAT(uint16buf,fl) 	FloatToUint16Buf.buf[0]=(uint16buf)[0];\
-																						FloatToUint16Buf.buf[1]=(uint16buf)[1];\
-																						fl=FloatToUint16Buf.val;
-
-#define UINT64_TO_UINT16_BUF(uint64_val,uint16buf) 	Uint64ToUint16Buf.val=uint64_val;\
-																						(uint16buf)[0]=Uint64ToUint16Buf.buf[0];\
-																						(uint16buf)[1]=Uint64ToUint16Buf.buf[1];\
-																						(uint16buf)[2]=Uint64ToUint16Buf.buf[2];\
-																						(uint16buf)[3]=Uint64ToUint16Buf.buf[3];
-
-#define UINT16_BUF_TO_UINT64(uint16buf,uint64_val) 	Uint64ToUint16Buf.buf[0]=(uint16buf)[0];\
-																						Uint64ToUint16Buf.buf[1]=(uint16buf)[1];\
-																						Uint64ToUint16Buf.buf[2]=(uint16buf)[2];\
-																						Uint64ToUint16Buf.buf[3]=(uint16buf)[3];\
-																						uint64_val=Uint64ToUint16Buf.val;
-																		
+#include "utilities.h"
 
 /* ----------------------- Defines ------------------------------------------*/
 #define REG_INPUT_START         1001
@@ -146,17 +104,17 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 				usRegInputBuf[ADC_CHANNEL_5_RAW]=ChnCalibrValues.val_chn5_raw;
 			
 			
-				FLOAT_TO_UINT16_BUF(ChnCalibrValues.val_250A, &usRegInputBuf[ADC_CHANNEL_0_RESULT]);
-				FLOAT_TO_UINT16_BUF(ChnCalibrValues.val_150A, &usRegInputBuf[ADC_CHANNEL_1_RESULT]);			
-				FLOAT_TO_UINT16_BUF(ChnCalibrValues.val_75A, &usRegInputBuf[ADC_CHANNEL_2_RESULT]);			
-				FLOAT_TO_UINT16_BUF(ChnCalibrValues.val_7_5A, &usRegInputBuf[ADC_CHANNEL_3_RESULT]);			
-				FLOAT_TO_UINT16_BUF(ChnCalibrValues.val_voltage_1, &usRegInputBuf[ADC_CHANNEL_4_RESULT]);			
-				FLOAT_TO_UINT16_BUF(ChnCalibrValues.val_voltage_2, &usRegInputBuf[ADC_CHANNEL_5_RESULT]);
+				Float_To_UINT16_Buf(ChnCalibrValues.val_250A, &usRegInputBuf[ADC_CHANNEL_0_RESULT]);
+				Float_To_UINT16_Buf(ChnCalibrValues.val_150A, &usRegInputBuf[ADC_CHANNEL_1_RESULT]);			
+				Float_To_UINT16_Buf(ChnCalibrValues.val_75A, &usRegInputBuf[ADC_CHANNEL_2_RESULT]);			
+				Float_To_UINT16_Buf(ChnCalibrValues.val_7_5A, &usRegInputBuf[ADC_CHANNEL_3_RESULT]);			
+				Float_To_UINT16_Buf(ChnCalibrValues.val_voltage_1, &usRegInputBuf[ADC_CHANNEL_4_RESULT]);			
+				Float_To_UINT16_Buf(ChnCalibrValues.val_voltage_2, &usRegInputBuf[ADC_CHANNEL_5_RESULT]);
 				
-				FLOAT_TO_UINT16_BUF(ChnCalibrValues.val_current, &usRegInputBuf[ADC_CHANNEL_CONV]);
+				Float_To_UINT16_Buf(ChnCalibrValues.val_current, &usRegInputBuf[ADC_CHANNEL_CONV]);
 			
 				uint64_t temp=DCMI_ADC_GetLastTimestamp();
-				UINT64_TO_UINT16_BUF(temp,&usRegInputBuf[TIMESTAMP_CURRENT]);
+				UINT64_To_UINT16_Buf(temp,&usRegInputBuf[TIMESTAMP_CURRENT]);
 			
 			
 				memcpy((void *)&usRegInputBuf[ADC_PYRO_SQUIB_0],(const void*)&usMRegInBuf[0][0],M_REG_INPUT_NREGS*sizeof(uint16_t));
@@ -276,23 +234,23 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 								usRegHoldingBuf[SERVER_PORT_REG_0]=configInfo.IPAdress_Server.port;
 
 
-								FLOAT_TO_UINT16_BUF(configInfo.ConfigADC.calibrChannel[0].k,&usRegHoldingBuf[ADC_CHANNEL_0_K]);
-								FLOAT_TO_UINT16_BUF(configInfo.ConfigADC.calibrChannel[0].b,&usRegHoldingBuf[ADC_CHANNEL_0_B]);		
+								Float_To_UINT16_Buf(configInfo.ConfigADC.calibrChannel[0].k,&usRegHoldingBuf[ADC_CHANNEL_0_K]);
+								Float_To_UINT16_Buf(configInfo.ConfigADC.calibrChannel[0].b,&usRegHoldingBuf[ADC_CHANNEL_0_B]);		
 							
-								FLOAT_TO_UINT16_BUF(configInfo.ConfigADC.calibrChannel[1].k,&usRegHoldingBuf[ADC_CHANNEL_1_K]);
-								FLOAT_TO_UINT16_BUF(configInfo.ConfigADC.calibrChannel[1].b,&usRegHoldingBuf[ADC_CHANNEL_1_B]);
+								Float_To_UINT16_Buf(configInfo.ConfigADC.calibrChannel[1].k,&usRegHoldingBuf[ADC_CHANNEL_1_K]);
+								Float_To_UINT16_Buf(configInfo.ConfigADC.calibrChannel[1].b,&usRegHoldingBuf[ADC_CHANNEL_1_B]);
 							
-								FLOAT_TO_UINT16_BUF(configInfo.ConfigADC.calibrChannel[2].k,&usRegHoldingBuf[ADC_CHANNEL_2_K]);
-								FLOAT_TO_UINT16_BUF(configInfo.ConfigADC.calibrChannel[2].b,&usRegHoldingBuf[ADC_CHANNEL_2_B]);
+								Float_To_UINT16_Buf(configInfo.ConfigADC.calibrChannel[2].k,&usRegHoldingBuf[ADC_CHANNEL_2_K]);
+								Float_To_UINT16_Buf(configInfo.ConfigADC.calibrChannel[2].b,&usRegHoldingBuf[ADC_CHANNEL_2_B]);
 							
-								FLOAT_TO_UINT16_BUF(configInfo.ConfigADC.calibrChannel[3].k,&usRegHoldingBuf[ADC_CHANNEL_3_K]);
-								FLOAT_TO_UINT16_BUF(configInfo.ConfigADC.calibrChannel[3].b,&usRegHoldingBuf[ADC_CHANNEL_3_B]);
+								Float_To_UINT16_Buf(configInfo.ConfigADC.calibrChannel[3].k,&usRegHoldingBuf[ADC_CHANNEL_3_K]);
+								Float_To_UINT16_Buf(configInfo.ConfigADC.calibrChannel[3].b,&usRegHoldingBuf[ADC_CHANNEL_3_B]);
 							
-								FLOAT_TO_UINT16_BUF(configInfo.ConfigADC.calibrChannel[4].k,&usRegHoldingBuf[ADC_CHANNEL_4_K]);
-								FLOAT_TO_UINT16_BUF(configInfo.ConfigADC.calibrChannel[4].b,&usRegHoldingBuf[ADC_CHANNEL_4_B]);
+								Float_To_UINT16_Buf(configInfo.ConfigADC.calibrChannel[4].k,&usRegHoldingBuf[ADC_CHANNEL_4_K]);
+								Float_To_UINT16_Buf(configInfo.ConfigADC.calibrChannel[4].b,&usRegHoldingBuf[ADC_CHANNEL_4_B]);
 								
-								FLOAT_TO_UINT16_BUF(configInfo.ConfigADC.calibrChannel[5].k,&usRegHoldingBuf[ADC_CHANNEL_5_K]);
-								FLOAT_TO_UINT16_BUF(configInfo.ConfigADC.calibrChannel[5].b,&usRegHoldingBuf[ADC_CHANNEL_5_B]);									
+								Float_To_UINT16_Buf(configInfo.ConfigADC.calibrChannel[5].k,&usRegHoldingBuf[ADC_CHANNEL_5_K]);
+								Float_To_UINT16_Buf(configInfo.ConfigADC.calibrChannel[5].b,&usRegHoldingBuf[ADC_CHANNEL_5_B]);									
 								
 								usRegHoldingBuf[ADC_SAMPLERATE]=(uint16_t)configInfo.ConfigADC.sampleRate;
 								
@@ -304,7 +262,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 								
 //								*(uint64_t*)&usRegHoldingBuf[DEV_SET_OUTPUTS_ALL]=outputs_temp_reg;
 
-								UINT64_TO_UINT16_BUF(outputs_temp_reg, &usRegHoldingBuf[DEV_SET_OUTPUTS_ALL]);
+								UINT64_To_UINT16_Buf(outputs_temp_reg, &usRegHoldingBuf[DEV_SET_OUTPUTS_ALL]);
 								
 								usRegHoldingBuf[DEV_ENABLE_OUT_1]=HAL_GPIO_ReadPin(ENABLE_OUT_1_GPIO_Port,ENABLE_OUT_1_Pin);
 								usRegHoldingBuf[DEV_ENABLE_OUT_7]=HAL_GPIO_ReadPin(ENABLE_OUT_7_GPIO_Port,ENABLE_OUT_7_Pin);
@@ -397,7 +355,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_0_K+(1):
 												{
-														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_0_K],temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_0_K],temp_coef);
 													
 														if(configInfo.ConfigADC.calibrChannel[0].k!=temp_coef)
 														{
@@ -409,7 +367,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_0_B+(1):
 												{
-														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_0_B],temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_0_B],temp_coef);
 													
 														if(configInfo.ConfigADC.calibrChannel[0].b!=temp_coef)
 														{
@@ -421,7 +379,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_1_K+(1):
 												{
-														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_1_K],temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_1_K],temp_coef);
 													
 														if(configInfo.ConfigADC.calibrChannel[1].k!=temp_coef)
 														{
@@ -433,7 +391,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_1_B+(1):
 												{
-														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_1_B],temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_1_B],temp_coef);
 													
 														if(configInfo.ConfigADC.calibrChannel[1].b!=temp_coef)
 														{
@@ -445,7 +403,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_2_K+(1):
 												{
-														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_2_K],temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_2_K],temp_coef);
 													
 														if(configInfo.ConfigADC.calibrChannel[2].k!=temp_coef)
 														{
@@ -457,7 +415,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_2_B+(1):
 												{
-														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_2_B],temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_2_B],temp_coef);
 													
 														if(configInfo.ConfigADC.calibrChannel[2].b!=temp_coef)
 														{
@@ -469,7 +427,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_3_K+(1):
 												{
-														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_3_K],temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_3_K],temp_coef);
 													
 														if(configInfo.ConfigADC.calibrChannel[3].k!=temp_coef)
 														{
@@ -481,7 +439,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_3_B+(1):
 												{
-														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_3_B],temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_3_B],temp_coef);
 													
 														if(configInfo.ConfigADC.calibrChannel[3].b!=temp_coef)
 														{
@@ -493,7 +451,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_4_K+(1):
 												{
-														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_4_K],temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_4_K],temp_coef);
 													
 														if(configInfo.ConfigADC.calibrChannel[4].k!=temp_coef)
 														{
@@ -505,7 +463,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_4_B+(1):
 												{
-														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_4_B],temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_4_B],temp_coef);
 													
 														if(configInfo.ConfigADC.calibrChannel[4].b!=temp_coef)
 														{
@@ -517,7 +475,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_5_K+(1):
 												{
-														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_5_K],temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_5_K],temp_coef);
 													
 														if(configInfo.ConfigADC.calibrChannel[5].k!=temp_coef)
 														{
@@ -529,7 +487,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_5_B+(1):
 												{
-														UINT16_BUF_TO_FLOAT(&usRegHoldingBuf[ADC_CHANNEL_5_B],temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_5_B],temp_coef);
 													
 														if(configInfo.ConfigADC.calibrChannel[5].b!=temp_coef)
 														{
@@ -600,7 +558,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												
 												case DEV_SET_OUTPUTS_ALL+3:
 												{
-														UINT16_BUF_TO_UINT64(&usRegHoldingBuf[DEV_SET_OUTPUTS_ALL],outputs_temp_reg);
+														UINT16_Buf_To_UINT64(&usRegHoldingBuf[DEV_SET_OUTPUTS_ALL],outputs_temp_reg);
 														DiscretOutputs_Set(outputs_temp_reg);	
 												}
 												break;													
