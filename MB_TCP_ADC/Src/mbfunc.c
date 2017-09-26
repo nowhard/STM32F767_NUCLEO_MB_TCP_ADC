@@ -83,6 +83,17 @@ extern uint32_t counter_DMA_full;
 extern uint32_t udp_send_counter;
 extern eMBMasterReqErrCode    MB_Master_ErrorCode;
 
+/* ----------------------- Time of process ---------------------------------*/
+typedef struct
+{
+	uint16_t hour;
+	uint16_t minute;
+	uint16_t second;
+}stTimeProc;
+
+static stTimeProc TimeProc={0,0,0};
+/*--------------------------------------------------------------------------*/
+
 eMBErrorCode
 eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 {
@@ -200,7 +211,10 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 #define PYRO_SQUIB_PIR_4_SET_CURRENT		55
 #define PYRO_SQUIB_PIR_SET_MASK					57
 #define PYRO_SQUIB_PIR_START						58
-
+//------------------------------------------
+#define DEV_PROC_TIME_HOUR							59
+#define DEV_PROC_TIME_MINUTE						60
+#define DEV_PROC_TIME_SECOND						61
 
 extern uint64_t	outputs_temp_reg;
 extern stADCPyroBuf ADCPyroBuf;
@@ -260,8 +274,6 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 								usRegHoldingBuf[DEV_SET_OUTPUTS_2] = (uint16_t)((outputs_temp_reg>>32)&0xFFFF);
 								usRegHoldingBuf[DEV_SET_OUTPUTS_3] = (uint16_t)((outputs_temp_reg>>48)&0xFFFF);
 								
-//								*(uint64_t*)&usRegHoldingBuf[DEV_SET_OUTPUTS_ALL]=outputs_temp_reg;
-
 								UINT64_To_UINT16_Buf(outputs_temp_reg, &usRegHoldingBuf[DEV_SET_OUTPUTS_ALL]);
 								
 								usRegHoldingBuf[DEV_ENABLE_OUT_1]=HAL_GPIO_ReadPin(ENABLE_OUT_1_GPIO_Port,ENABLE_OUT_1_Pin);
@@ -276,6 +288,10 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 								
 
 								memcpy((void *)&usRegHoldingBuf[PYRO_SQUIB_PIR_SET_TIME],(const void*)&usMRegHoldBuf[0][0],M_REG_HOLDING_NREGS*sizeof(uint16_t));
+								
+								usRegHoldingBuf[DEV_PROC_TIME_HOUR]=TimeProc.hour;
+								usRegHoldingBuf[DEV_PROC_TIME_MINUTE]=TimeProc.minute;
+								usRegHoldingBuf[DEV_PROC_TIME_SECOND]=TimeProc.second;
 
 								while( usNRegs > 0 )
 								{
@@ -355,7 +371,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_0_K+(1):
 												{
-														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_0_K],temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_0_K],&temp_coef);
 													
 														if(configInfo.ConfigADC.calibrChannel[0].k!=temp_coef)
 														{
@@ -367,7 +383,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_0_B+(1):
 												{
-														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_0_B],temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_0_B],&temp_coef);
 													
 														if(configInfo.ConfigADC.calibrChannel[0].b!=temp_coef)
 														{
@@ -379,7 +395,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_1_K+(1):
 												{
-														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_1_K],temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_1_K],&temp_coef);
 													
 														if(configInfo.ConfigADC.calibrChannel[1].k!=temp_coef)
 														{
@@ -391,7 +407,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_1_B+(1):
 												{
-														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_1_B],temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_1_B],&temp_coef);
 													
 														if(configInfo.ConfigADC.calibrChannel[1].b!=temp_coef)
 														{
@@ -403,7 +419,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_2_K+(1):
 												{
-														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_2_K],temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_2_K],&temp_coef);
 													
 														if(configInfo.ConfigADC.calibrChannel[2].k!=temp_coef)
 														{
@@ -415,7 +431,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_2_B+(1):
 												{
-														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_2_B],temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_2_B],&temp_coef);
 													
 														if(configInfo.ConfigADC.calibrChannel[2].b!=temp_coef)
 														{
@@ -427,7 +443,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_3_K+(1):
 												{
-														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_3_K],temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_3_K],&temp_coef);
 													
 														if(configInfo.ConfigADC.calibrChannel[3].k!=temp_coef)
 														{
@@ -439,7 +455,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_3_B+(1):
 												{
-														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_3_B],temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_3_B],&temp_coef);
 													
 														if(configInfo.ConfigADC.calibrChannel[3].b!=temp_coef)
 														{
@@ -451,7 +467,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_4_K+(1):
 												{
-														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_4_K],temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_4_K],&temp_coef);
 													
 														if(configInfo.ConfigADC.calibrChannel[4].k!=temp_coef)
 														{
@@ -463,7 +479,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_4_B+(1):
 												{
-														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_4_B],temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_4_B],&temp_coef);
 													
 														if(configInfo.ConfigADC.calibrChannel[4].b!=temp_coef)
 														{
@@ -475,7 +491,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_5_K+(1):
 												{
-														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_5_K],temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_5_K],&temp_coef);
 													
 														if(configInfo.ConfigADC.calibrChannel[5].k!=temp_coef)
 														{
@@ -487,7 +503,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_5_B+(1):
 												{
-														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_5_B],temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_5_B],&temp_coef);
 													
 														if(configInfo.ConfigADC.calibrChannel[5].b!=temp_coef)
 														{
@@ -558,7 +574,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												
 												case DEV_SET_OUTPUTS_ALL+3:
 												{
-														UINT16_Buf_To_UINT64(&usRegHoldingBuf[DEV_SET_OUTPUTS_ALL],outputs_temp_reg);
+														UINT16_Buf_To_UINT64(&usRegHoldingBuf[DEV_SET_OUTPUTS_ALL],&outputs_temp_reg);
 														DiscretOutputs_Set(outputs_temp_reg);	
 												}
 												break;													
@@ -688,6 +704,24 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												}
 												break;
+												
+												case DEV_PROC_TIME_HOUR:
+												{
+														TimeProc.hour=usRegHoldingBuf[DEV_PROC_TIME_HOUR];
+												}
+												break;
+												
+												case DEV_PROC_TIME_MINUTE:
+												{
+														TimeProc.minute=usRegHoldingBuf[DEV_PROC_TIME_MINUTE];
+												}
+												break;	
+												
+												case DEV_PROC_TIME_SECOND:
+												{
+														TimeProc.second=usRegHoldingBuf[DEV_PROC_TIME_SECOND];
+												}
+												break;													
 												
 												default:
 												{

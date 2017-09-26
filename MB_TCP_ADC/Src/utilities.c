@@ -34,13 +34,13 @@ void Float_To_UINT16_Buf(float val, uint16_t *buf)
 		buf[1]=conv.buf[1];
 }
 
-void UINT16_Buf_To_Float(uint16_t * buf, float val)
+void UINT16_Buf_To_Float(uint16_t * buf, float *val)
 {
 		unConvFloatToBufUINT16 conv;
 	
 		conv.buf[0]=buf[0];
 		conv.buf[1]=buf[1];		
-		val=conv.val;
+		*val=conv.val;
 }
 
 void UINT64_To_UINT16_Buf(uint64_t val, uint16_t *buf)
@@ -55,7 +55,7 @@ void UINT64_To_UINT16_Buf(uint64_t val, uint16_t *buf)
 }
 
 
-void UINT16_Buf_To_UINT64(uint16_t * buf, uint64_t val)
+void UINT16_Buf_To_UINT64(uint16_t * buf, uint64_t *val)
 {
 		unConvUINT64ToBufUINT16 conv;
 		
@@ -63,5 +63,5 @@ void UINT16_Buf_To_UINT64(uint16_t * buf, uint64_t val)
 		conv.buf[1]=buf[1];	
 		conv.buf[2]=buf[2];
 		conv.buf[3]=buf[3];			
-		val=conv.val;
+		*val=conv.val;
 }	

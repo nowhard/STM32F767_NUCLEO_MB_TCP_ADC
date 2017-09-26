@@ -3,7 +3,7 @@
 <title>Static Call Graph - [MB_TCP_ADC\MB_TCP_ADC.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image MB_TCP_ADC\MB_TCP_ADC.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060061: Last Updated: Mon Sep 25 23:03:43 2017
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060061: Last Updated: Tue Sep 26 16:36:21 2017
 <BR><P>
 <H3>Maximum Stack Usage =        776 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -2165,7 +2165,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[1da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBRegHoldingCB
 </UL>
 
-<P><STRONG><a name="[201]"></a>UINT16_Buf_To_UINT64</STRONG> (Thumb, 32 bytes, Stack size 16 bytes, utilities.o(i.UINT16_Buf_To_UINT64))
+<P><STRONG><a name="[201]"></a>UINT16_Buf_To_UINT64</STRONG> (Thumb, 36 bytes, Stack size 16 bytes, utilities.o(i.UINT16_Buf_To_UINT64))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = UINT16_Buf_To_UINT64
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBRegHoldingCB
@@ -2231,7 +2231,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> mb.o(.data)
 </UL>
 <P><STRONG><a name="[2]"></a>eMBFuncReadHoldingRegister</STRONG> (Thumb, 140 bytes, Stack size 32 bytes, mbfuncholding.o(i.eMBFuncReadHoldingRegister))
-<BR><BR>[Stack]<UL><LI>Max Depth = 216<LI>Call Chain = eMBFuncReadHoldingRegister &rArr; eMBRegHoldingCB &rArr; SystemReset_Start &rArr; xTaskCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<BR><BR>[Stack]<UL><LI>Max Depth = 224<LI>Call Chain = eMBFuncReadHoldingRegister &rArr; eMBRegHoldingCB &rArr; SystemReset_Start &rArr; xTaskCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBRegHoldingCB
 <LI><a href="#[1d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prveMBError2Exception
@@ -2247,7 +2247,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> mb.o(.data)
 </UL>
 <P><STRONG><a name="[5]"></a>eMBFuncReadWriteMultipleHoldingRegister</STRONG> (Thumb, 212 bytes, Stack size 48 bytes, mbfuncholding.o(i.eMBFuncReadWriteMultipleHoldingRegister))
-<BR><BR>[Stack]<UL><LI>Max Depth = 232<LI>Call Chain = eMBFuncReadWriteMultipleHoldingRegister &rArr; eMBRegHoldingCB &rArr; SystemReset_Start &rArr; xTaskCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<BR><BR>[Stack]<UL><LI>Max Depth = 240<LI>Call Chain = eMBFuncReadWriteMultipleHoldingRegister &rArr; eMBRegHoldingCB &rArr; SystemReset_Start &rArr; xTaskCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBRegHoldingCB
 <LI><a href="#[1d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prveMBError2Exception
@@ -2271,7 +2271,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> mb.o(.data)
 </UL>
 <P><STRONG><a name="[4]"></a>eMBFuncWriteHoldingRegister</STRONG> (Thumb, 66 bytes, Stack size 24 bytes, mbfuncholding.o(i.eMBFuncWriteHoldingRegister))
-<BR><BR>[Stack]<UL><LI>Max Depth = 208<LI>Call Chain = eMBFuncWriteHoldingRegister &rArr; eMBRegHoldingCB &rArr; SystemReset_Start &rArr; xTaskCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<BR><BR>[Stack]<UL><LI>Max Depth = 216<LI>Call Chain = eMBFuncWriteHoldingRegister &rArr; eMBRegHoldingCB &rArr; SystemReset_Start &rArr; xTaskCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBRegHoldingCB
 <LI><a href="#[1d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prveMBError2Exception
@@ -2287,7 +2287,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> mb.o(.data)
 </UL>
 <P><STRONG><a name="[3]"></a>eMBFuncWriteMultipleHoldingRegister</STRONG> (Thumb, 110 bytes, Stack size 32 bytes, mbfuncholding.o(i.eMBFuncWriteMultipleHoldingRegister))
-<BR><BR>[Stack]<UL><LI>Max Depth = 216<LI>Call Chain = eMBFuncWriteMultipleHoldingRegister &rArr; eMBRegHoldingCB &rArr; SystemReset_Start &rArr; xTaskCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<BR><BR>[Stack]<UL><LI>Max Depth = 224<LI>Call Chain = eMBFuncWriteMultipleHoldingRegister &rArr; eMBRegHoldingCB &rArr; SystemReset_Start &rArr; xTaskCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBRegHoldingCB
 <LI><a href="#[1d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prveMBError2Exception
@@ -2575,8 +2575,8 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;eMBFuncReadDiscreteInputs
 </UL>
 
-<P><STRONG><a name="[1da]"></a>eMBRegHoldingCB</STRONG> (Thumb, 2054 bytes, Stack size 32 bytes, mbfunc.o(i.eMBRegHoldingCB))
-<BR><BR>[Stack]<UL><LI>Max Depth = 184<LI>Call Chain = eMBRegHoldingCB &rArr; SystemReset_Start &rArr; xTaskCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[1da]"></a>eMBRegHoldingCB</STRONG> (Thumb, 2240 bytes, Stack size 40 bytes, mbfunc.o(i.eMBRegHoldingCB))
+<BR><BR>[Stack]<UL><LI>Max Depth = 192<LI>Call Chain = eMBRegHoldingCB &rArr; SystemReset_Start &rArr; xTaskCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[202]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
 <LI><a href="#[f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
