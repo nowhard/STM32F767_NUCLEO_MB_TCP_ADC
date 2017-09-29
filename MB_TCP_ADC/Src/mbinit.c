@@ -10,7 +10,7 @@
 
 #define MB_TCP_CLIENT_NUM					2
 
-static uint8_t Vendor[] = "GEOS";
+//static uint8_t Vendor[] = "GEOS";
 
 stMBContext stTCPContext[MB_TCP_CLIENT_NUM];
 
@@ -25,8 +25,7 @@ void MB_TCP_Init(void)
 	{
 	eMBTCPInit(&stTCPContext[context_cnt],0);
 	eMBEnable(&stTCPContext[context_cnt]);
-	//eMBSetSlaveID( MB_TCP_PSEUDO_ADDRESS, TRUE, Vendor, sizeof(Vendor) );
-//	
+
 	xTaskCreate(MB_TCP_Task, "MB TCP Task", MB_TCP_TASK_STACK_SIZE, (void*)&stTCPContext[context_cnt], 2, ( TaskHandle_t * ) NULL);
 	}
 }

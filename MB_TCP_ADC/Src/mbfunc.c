@@ -17,7 +17,7 @@
 #define REG_INPUT_START         1001
 #define REG_INPUT_NREGS         64
 #define REG_HOLDING_START       2001
-#define REG_HOLDING_NREGS       64
+#define REG_HOLDING_NREGS       80
 
 
 //-------ADC RESULT REGS--------
@@ -61,6 +61,8 @@
 #define FAULT_150A_SIG							47
 #define FAULT_75A_SIG								48
 #define FAULT_7_5A_SIG							49
+//------------------------------------
+#define DEV_SET_OUTPUTS_SEQUENCE_IN_PROGRESS	50
 
 /* ----------------------- Static variables ---------------------------------*/
 static USHORT   usRegInputStart = REG_INPUT_START;
@@ -82,6 +84,9 @@ extern uint32_t counter_DMA_half;
 extern uint32_t counter_DMA_full;
 extern uint32_t udp_send_counter;
 extern eMBMasterReqErrCode    MB_Master_ErrorCode;
+
+extern stSetSequenceParams	discrOutSequenceParams;
+extern uint8_t 	discrOutSequenceProgress;
 
 /* ----------------------- Time of process ---------------------------------*/
 typedef struct
@@ -138,6 +143,8 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 				usRegInputBuf[FAULT_75A_SIG]=HAL_GPIO_ReadPin(FAULT_75A_GPIO_Port,FAULT_75A_Pin);
 				usRegInputBuf[FAULT_7_5A_SIG]=HAL_GPIO_ReadPin(FAULT_7_5A_GPIO_Port,FAULT_7_5A_Pin);
 				usRegInputBuf[PYRO_SQUIB_MB_CONNECT_ERROR]=MB_Master_ErrorCode;
+				
+				usRegInputBuf[DEV_SET_OUTPUTS_SEQUENCE_IN_PROGRESS]=discrOutSequenceProgress;
 			
         while( usNRegs > 0 )
         {
@@ -190,6 +197,13 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 
 #define DEV_SET_OUTPUTS_ALL		35
 
+#define DEV_SET_OUTPUTS_SEQUENCE_STATE_1		62
+#define DEV_SET_OUTPUTS_SEQUENCE_STATE_2		66
+#define DEV_SET_OUTPUTS_SEQUENCE_STATE_END	70
+#define DEV_SET_OUTPUTS_SEQUENCE_TIME				74
+#define DEV_SET_OUTPUTS_SEQUENCE_NUM_CYCLES	75
+#define DEV_SET_OUTPUTS_SEQUENCE_START			76
+//------------------------------------------
 #define DEV_ENABLE_OUT_1			39
 #define DEV_ENABLE_OUT_7			40
 
@@ -216,7 +230,7 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 #define DEV_PROC_TIME_MINUTE						60
 #define DEV_PROC_TIME_SECOND						61
 
-extern uint64_t	outputs_temp_reg;
+extern uint64_t	discrOutTempReg;
 extern stADCPyroBuf ADCPyroBuf;
 
 uint16_t BaseADC_Started_Flag=0;
@@ -269,12 +283,12 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 								usRegHoldingBuf[ADC_SAMPLERATE]=(uint16_t)configInfo.ConfigADC.sampleRate;
 								
 								usRegHoldingBuf[ADC_STARTED]=BaseADC_Started_Flag;
-								usRegHoldingBuf[DEV_SET_OUTPUTS_0] = (uint16_t)((outputs_temp_reg)&0xFFFF);
-								usRegHoldingBuf[DEV_SET_OUTPUTS_1] = (uint16_t)((outputs_temp_reg>>16)&0xFFFF);
-								usRegHoldingBuf[DEV_SET_OUTPUTS_2] = (uint16_t)((outputs_temp_reg>>32)&0xFFFF);
-								usRegHoldingBuf[DEV_SET_OUTPUTS_3] = (uint16_t)((outputs_temp_reg>>48)&0xFFFF);
+								usRegHoldingBuf[DEV_SET_OUTPUTS_0] = (uint16_t)((discrOutTempReg)&0xFFFF);
+								usRegHoldingBuf[DEV_SET_OUTPUTS_1] = (uint16_t)((discrOutTempReg>>16)&0xFFFF);
+								usRegHoldingBuf[DEV_SET_OUTPUTS_2] = (uint16_t)((discrOutTempReg>>32)&0xFFFF);
+								usRegHoldingBuf[DEV_SET_OUTPUTS_3] = (uint16_t)((discrOutTempReg>>48)&0xFFFF);
 								
-								UINT64_To_UINT16_Buf(outputs_temp_reg, &usRegHoldingBuf[DEV_SET_OUTPUTS_ALL]);
+								UINT64_To_UINT16_Buf(discrOutTempReg, &usRegHoldingBuf[DEV_SET_OUTPUTS_ALL]);
 								
 								usRegHoldingBuf[DEV_ENABLE_OUT_1]=HAL_GPIO_ReadPin(ENABLE_OUT_1_GPIO_Port,ENABLE_OUT_1_Pin);
 								usRegHoldingBuf[DEV_ENABLE_OUT_7]=HAL_GPIO_ReadPin(ENABLE_OUT_7_GPIO_Port,ENABLE_OUT_7_Pin);
@@ -292,7 +306,15 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 								usRegHoldingBuf[DEV_PROC_TIME_HOUR]=TimeProc.hour;
 								usRegHoldingBuf[DEV_PROC_TIME_MINUTE]=TimeProc.minute;
 								usRegHoldingBuf[DEV_PROC_TIME_SECOND]=TimeProc.second;
+								
+								UINT64_To_UINT16_Buf(discrOutSequenceParams.state_1, &usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_STATE_1]);
+								UINT64_To_UINT16_Buf(discrOutSequenceParams.state_2, &usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_STATE_2]);
+								UINT64_To_UINT16_Buf(discrOutSequenceParams.state_end, &usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_STATE_END]);
 
+								usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_TIME]=discrOutSequenceParams.time;
+								usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_NUM_CYCLES]=discrOutSequenceParams.num_cycles;
+								usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_START]=0;
+	
 								while( usNRegs > 0 )
 								{
 										*pucRegBuffer++ = ( UCHAR ) ( usRegHoldingBuf[iRegIndex] >> 8 );
@@ -541,41 +563,56 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												
 													
 												case DEV_SET_OUTPUTS_0:
-												{											
-														outputs_temp_reg&=(~((uint64_t)0xFFFF));
-														outputs_temp_reg|=(uint64_t)usRegHoldingBuf[DEV_SET_OUTPUTS_0];
-														DiscretOutputs_Set(outputs_temp_reg);
+												{		
+														if(!discrOutSequenceProgress)
+														{
+															discrOutTempReg&=(~((uint64_t)0xFFFF));
+															discrOutTempReg|=(uint64_t)usRegHoldingBuf[DEV_SET_OUTPUTS_0];
+															DiscretOutputs_Set(discrOutTempReg);
+														}
 												}
 												break;
 
 												case DEV_SET_OUTPUTS_1:
-												{											
-														outputs_temp_reg&=(~((uint64_t)0xFFFF<<16));
-														outputs_temp_reg|=(uint64_t)usRegHoldingBuf[DEV_SET_OUTPUTS_1]<<16;
-														DiscretOutputs_Set(outputs_temp_reg);
+												{		
+														if(!discrOutSequenceProgress)
+														{
+															discrOutTempReg&=(~((uint64_t)0xFFFF<<16));
+															discrOutTempReg|=(uint64_t)usRegHoldingBuf[DEV_SET_OUTPUTS_1]<<16;
+															DiscretOutputs_Set(discrOutTempReg);
+														}
 												}
 												break;	
 
 												case DEV_SET_OUTPUTS_2:
-												{											
-														outputs_temp_reg&=(~((uint64_t)0xFFFF<<32));
-														outputs_temp_reg|=(uint64_t)usRegHoldingBuf[DEV_SET_OUTPUTS_2]<<32;
-														DiscretOutputs_Set(outputs_temp_reg);
+												{		
+														if(!discrOutSequenceProgress)
+														{
+															discrOutTempReg&=(~((uint64_t)0xFFFF<<32));
+															discrOutTempReg|=(uint64_t)usRegHoldingBuf[DEV_SET_OUTPUTS_2]<<32;
+															DiscretOutputs_Set(discrOutTempReg);
+														}
 												}
 												break;		
 
 												case DEV_SET_OUTPUTS_3:
-												{											
-														outputs_temp_reg&=(~((uint64_t)0xFFFF<<48));
-														outputs_temp_reg|=(uint64_t)usRegHoldingBuf[DEV_SET_OUTPUTS_3]<<48;
-														DiscretOutputs_Set(outputs_temp_reg);
+												{	
+														if(!discrOutSequenceProgress)
+														{
+															discrOutTempReg&=(~((uint64_t)0xFFFF<<48));
+															discrOutTempReg|=(uint64_t)usRegHoldingBuf[DEV_SET_OUTPUTS_3]<<48;
+															DiscretOutputs_Set(discrOutTempReg);
+														}
 												}
 												break;		
 												
 												case DEV_SET_OUTPUTS_ALL+3:
 												{
-														UINT16_Buf_To_UINT64(&usRegHoldingBuf[DEV_SET_OUTPUTS_ALL],&outputs_temp_reg);
-														DiscretOutputs_Set(outputs_temp_reg);	
+														if(!discrOutSequenceProgress)
+														{
+															UINT16_Buf_To_UINT64(&usRegHoldingBuf[DEV_SET_OUTPUTS_ALL],&discrOutTempReg);
+															DiscretOutputs_Set(discrOutTempReg);	
+														}
 												}
 												break;													
 
@@ -720,6 +757,55 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												case DEV_PROC_TIME_SECOND:
 												{
 														TimeProc.second=usRegHoldingBuf[DEV_PROC_TIME_SECOND];
+												}
+												break;		
+
+												case DEV_SET_OUTPUTS_SEQUENCE_STATE_1+ (3):
+												{
+														uint64_t tempValue;
+														UINT16_Buf_To_UINT64(&usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_STATE_1], &tempValue);
+														discrOutSequenceParams.state_1=tempValue;
+												}
+												break;
+												
+												case DEV_SET_OUTPUTS_SEQUENCE_STATE_2+ (3):
+												{
+														uint64_t tempValue;
+														UINT16_Buf_To_UINT64(&usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_STATE_2], &tempValue);
+														discrOutSequenceParams.state_2=tempValue;
+												}
+												break;			
+
+												case DEV_SET_OUTPUTS_SEQUENCE_STATE_END+ (3):
+												{
+														uint64_t tempValue;
+														UINT16_Buf_To_UINT64(&usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_STATE_END], &tempValue);
+														discrOutSequenceParams.state_end=tempValue;
+												}
+												break;													
+												
+												case DEV_SET_OUTPUTS_SEQUENCE_TIME:
+												{
+														if(IS_DISCR_OUT_TIME(usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_TIME]))
+														{
+																discrOutSequenceParams.time=usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_TIME];
+														}
+												}
+												break;	
+
+												case DEV_SET_OUTPUTS_SEQUENCE_NUM_CYCLES:
+												{
+														if(IS_DISCR_OUT_NUM_CYCLES(usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_NUM_CYCLES]))
+														{
+																discrOutSequenceParams.num_cycles=usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_NUM_CYCLES];
+														}		
+												}
+												break;
+
+												case DEV_SET_OUTPUTS_SEQUENCE_START:
+												{
+														DiscretOutputs_StartSequence();
+														usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_START]=0;
 												}
 												break;													
 												
