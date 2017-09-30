@@ -17,7 +17,7 @@
 #define REG_INPUT_START         1001
 #define REG_INPUT_NREGS         64
 #define REG_HOLDING_START       2001
-#define REG_HOLDING_NREGS       80
+#define REG_HOLDING_NREGS       100
 
 
 //-------ADC RESULT REGS--------
@@ -197,38 +197,47 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 
 #define DEV_SET_OUTPUTS_ALL		35
 
-#define DEV_SET_OUTPUTS_SEQUENCE_STATE_1		62
-#define DEV_SET_OUTPUTS_SEQUENCE_STATE_2		66
-#define DEV_SET_OUTPUTS_SEQUENCE_STATE_END	70
-#define DEV_SET_OUTPUTS_SEQUENCE_TIME				74
-#define DEV_SET_OUTPUTS_SEQUENCE_NUM_CYCLES	75
-#define DEV_SET_OUTPUTS_SEQUENCE_START			76
+#define DEV_SET_OUTPUTS_SEQUENCE_STATE_1		39
+#define DEV_SET_OUTPUTS_SEQUENCE_STATE_2		43
+#define DEV_SET_OUTPUTS_SEQUENCE_STATE_END	47
+#define DEV_SET_OUTPUTS_SEQUENCE_TIME				51
+#define DEV_SET_OUTPUTS_SEQUENCE_NUM_CYCLES	52
+#define DEV_SET_OUTPUTS_SEQUENCE_START			53
 //------------------------------------------
-#define DEV_ENABLE_OUT_1			39
-#define DEV_ENABLE_OUT_7			40
+#define DEV_ENABLE_OUT_1			54
+#define DEV_ENABLE_OUT_7			55
 
-#define DEV_EN_VCC_250				41
-#define DEV_EN_VCC_150				42
-#define DEV_EN_VCC_75					43
-#define DEV_EN_VCC_7_5				44
+#define DEV_EN_VCC_250				56
+#define DEV_EN_VCC_150				57
+#define DEV_EN_VCC_75					58
+#define DEV_EN_VCC_7_5				59
 
-#define DEV_ENABLE_AIR				45
+#define DEV_ENABLE_AIR				60
 //--------SYNC DEV REGS--------------------
-#define DEV_RESET_TIMESTAMP		46
-#define DEV_RESET_CONTROLLER	47
+#define DEV_RESET_TIMESTAMP		61
+#define DEV_RESET_CONTROLLER	62
 //--------REGS STM32F100DISCOVERY----------
 
-#define PYRO_SQUIB_PIR_SET_TIME					48
-#define PYRO_SQUIB_PIR_1_SET_CURRENT		49
-#define PYRO_SQUIB_PIR_2_SET_CURRENT		51
-#define PYRO_SQUIB_PIR_3_SET_CURRENT		53
-#define PYRO_SQUIB_PIR_4_SET_CURRENT		55
-#define PYRO_SQUIB_PIR_SET_MASK					57
-#define PYRO_SQUIB_PIR_START						58
+#define PYRO_SQUIB_PIR_SET_TIME					63
+#define PYRO_SQUIB_PIR_1_SET_CURRENT		64
+#define PYRO_SQUIB_PIR_2_SET_CURRENT		66
+#define PYRO_SQUIB_PIR_3_SET_CURRENT		68
+#define PYRO_SQUIB_PIR_4_SET_CURRENT		70
+#define PYRO_SQUIB_PIR_SET_MASK					72
+#define PYRO_SQUIB_PIR_START						73
+
+#define PYRO_SQUIB_PIR_1_CALIBR_CURRENT_K	74
+#define PYRO_SQUIB_PIR_1_CALIBR_CURRENT_B	76
+#define PYRO_SQUIB_PIR_2_CALIBR_CURRENT_K	78
+#define PYRO_SQUIB_PIR_2_CALIBR_CURRENT_B	80
+#define PYRO_SQUIB_PIR_3_CALIBR_CURRENT_K	82
+#define PYRO_SQUIB_PIR_3_CALIBR_CURRENT_B	84
+#define PYRO_SQUIB_PIR_4_CALIBR_CURRENT_K	86
+#define PYRO_SQUIB_PIR_4_CALIBR_CURRENT_B	88
 //------------------------------------------
-#define DEV_PROC_TIME_HOUR							59
-#define DEV_PROC_TIME_MINUTE						60
-#define DEV_PROC_TIME_SECOND						61
+#define DEV_PROC_TIME_HOUR							90
+#define DEV_PROC_TIME_MINUTE						91
+#define DEV_PROC_TIME_SECOND						92
 
 extern uint64_t	discrOutTempReg;
 extern stADCPyroBuf ADCPyroBuf;
@@ -741,6 +750,78 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												}
 												break;
+												
+												case PYRO_SQUIB_PIR_1_CALIBR_CURRENT_B +(1):
+												{
+														TCPtoRTURegWrite.nRegs=2;
+														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_1_CALIBR_CURRENT_B;
+														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_1_CALIBR_CURRENT_B];
+														xSemaphoreGive(xSendRTURegSem);	
+												}
+												break;
+												
+												case PYRO_SQUIB_PIR_1_CALIBR_CURRENT_K +(1):
+												{
+														TCPtoRTURegWrite.nRegs=2;
+														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_1_CALIBR_CURRENT_K;
+														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_1_CALIBR_CURRENT_K];
+														xSemaphoreGive(xSendRTURegSem);	
+												}
+												break;
+												
+												case PYRO_SQUIB_PIR_2_CALIBR_CURRENT_B +(1):
+												{
+														TCPtoRTURegWrite.nRegs=2;
+														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_2_CALIBR_CURRENT_B;
+														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_2_CALIBR_CURRENT_B];
+														xSemaphoreGive(xSendRTURegSem);	
+												}
+												break;
+												
+												case PYRO_SQUIB_PIR_2_CALIBR_CURRENT_K +(1):
+												{
+														TCPtoRTURegWrite.nRegs=2;
+														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_2_CALIBR_CURRENT_K;
+														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_2_CALIBR_CURRENT_K];
+														xSemaphoreGive(xSendRTURegSem);	
+												}
+												break;		
+
+												case PYRO_SQUIB_PIR_3_CALIBR_CURRENT_B +(1):
+												{
+														TCPtoRTURegWrite.nRegs=2;
+														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_3_CALIBR_CURRENT_B;
+														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_3_CALIBR_CURRENT_B];
+														xSemaphoreGive(xSendRTURegSem);	
+												}
+												break;
+												
+												case PYRO_SQUIB_PIR_3_CALIBR_CURRENT_K +(1):
+												{
+														TCPtoRTURegWrite.nRegs=2;
+														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_3_CALIBR_CURRENT_K;
+														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_3_CALIBR_CURRENT_K];
+														xSemaphoreGive(xSendRTURegSem);	
+												}
+												break;	
+
+												case PYRO_SQUIB_PIR_4_CALIBR_CURRENT_B +(1):
+												{
+														TCPtoRTURegWrite.nRegs=2;
+														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_4_CALIBR_CURRENT_B;
+														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_4_CALIBR_CURRENT_B];
+														xSemaphoreGive(xSendRTURegSem);	
+												}
+												break;
+												
+												case PYRO_SQUIB_PIR_4_CALIBR_CURRENT_K +(1):
+												{
+														TCPtoRTURegWrite.nRegs=2;
+														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_4_CALIBR_CURRENT_K;
+														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_4_CALIBR_CURRENT_K];
+														xSemaphoreGive(xSendRTURegSem);	
+												}
+												break;												
 												
 												case DEV_PROC_TIME_HOUR:
 												{
