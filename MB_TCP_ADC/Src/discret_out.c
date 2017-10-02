@@ -28,7 +28,7 @@ typedef enum
 
 uint8_t 	discrOutSequenceProgress=0;
 uint64_t	discrOutTempReg=OUTPUTS_REG_ALL_RELAY_OFF; 
-stSetSequenceParams	discrOutSequenceParams={0,10,1};
+stSetSequenceParams	discrOutSequenceParams={OUTPUTS_REG_ALL_RELAY_OFF,OUTPUTS_REG_ALL_RELAY_OFF,OUTPUTS_REG_ALL_RELAY_OFF,10,1};
 
 
 extern SPI_HandleTypeDef hspi5;
@@ -78,13 +78,13 @@ void DiscretOutputs_Set(uint64_t discrOut)
 }
 
 
-static stSetSequenceParams SetSequenceParams;
+//static stSetSequenceParams SetSequenceParams;
 
 uint8_t DiscretOutputs_StartSequence(void)
 {
 	if(!discrOutSequenceProgress)
 	{
-			xTaskCreate( DiscretOutputs_SetSequence_Task, "Set Sequence  Task", SEQUENCE_SET_TASK_STACK_SIZE, (void *)&SetSequenceParams, SEQUENCE_SET_TASK_PRIO, NULL );
+			xTaskCreate( DiscretOutputs_SetSequence_Task, "Set Sequence  Task", SEQUENCE_SET_TASK_STACK_SIZE, (void *)&discrOutSequenceParams, SEQUENCE_SET_TASK_PRIO, NULL );
 	}
 }
 
@@ -102,11 +102,14 @@ void DiscretOutputs_SetSequence_Task( void *pvParameters )
 	{
 			for(i=0;i<taskParams->num_cycles;i++)
 			{
+				discrOutTempReg=taskParams->state_1;
 				DiscretOutputs_Set(taskParams->state_1);
 				vTaskDelay(taskParams->time);
+				discrOutTempReg=taskParams->state_2;
 				DiscretOutputs_Set(taskParams->state_2);
 				vTaskDelay(taskParams->time);
 			}
+			discrOutTempReg=taskParams->state_end;
 			DiscretOutputs_Set(taskParams->state_end);
 	}
 	discrOutSequenceProgress=0;
