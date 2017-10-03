@@ -73,9 +73,14 @@ static USHORT   usRegHoldingBuf[REG_HOLDING_NREGS];
 extern float ADC_resultBuf[ADC_RESULT_BUF_LEN];
 extern SemaphoreHandle_t	xMBSaveSettingsSemaphore;
 
+/*-----------------------Pyro squib vars-------------------------------------*/
 extern USHORT   usMRegInBuf[MB_MASTER_TOTAL_SLAVE_NUM][M_REG_INPUT_NREGS];
 extern USHORT   usMRegHoldBuf[MB_MASTER_TOTAL_SLAVE_NUM][M_REG_HOLDING_NREGS];
 extern xSemaphoreHandle xSendRTURegSem;
+
+uint16_t 				usMRegTempBuf[M_REG_HOLDING_NREGS];
+/*---------------------------------------------------------------------------*/
+
 extern stChnCalibrValues ChnCalibrValues;
 
 stTCPtoRTURegWrite TCPtoRTURegWrite;
@@ -342,6 +347,10 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 							{
 									uint8_t settings_need_write=0;
 									float temp_coef;
+									TCPtoRTURegWrite.regBuf=usMRegTempBuf;
+									TCPtoRTURegWrite.nRegs=0;
+									TCPtoRTURegWrite.regAddr=0;
+
 								
 									while( usNRegs > 0 )
 									{
@@ -689,137 +698,182 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case PYRO_SQUIB_PIR_SET_TIME:
 												{
-														TCPtoRTURegWrite.nRegs=1;
-														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_SET_TIME;
-														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_SET_TIME];
-														xSemaphoreGive(xSendRTURegSem);
+//														TCPtoRTURegWrite.nRegs=1;
+//														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_SET_TIME;
+//														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_SET_TIME];
+//														xSemaphoreGive(xSendRTURegSem);
+															if(TCPtoRTURegWrite.regAddr==0)
+															{
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_SET_TIME;
+															}
+															
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_SET_TIME];															
 												}
 												break;
 												
 												case PYRO_SQUIB_PIR_1_SET_CURRENT +(1) :
 												{
-														TCPtoRTURegWrite.nRegs=2;
-														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_1_SET_CURRENT;
-														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_1_SET_CURRENT];
-														xSemaphoreGive(xSendRTURegSem);	
+															if(TCPtoRTURegWrite.regAddr==0)
+															{
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+PYRO_SQUIB_PIR_1_SET_CURRENT;
+															}
+															
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_1_SET_CURRENT];		
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_1_SET_CURRENT+1];	
 												}
 												break;
 												
 												case PYRO_SQUIB_PIR_2_SET_CURRENT +(1):
 												{
-														TCPtoRTURegWrite.nRegs=2;
-														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_2_SET_CURRENT;
-														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_2_SET_CURRENT];
-														xSemaphoreGive(xSendRTURegSem);	
+															if(TCPtoRTURegWrite.regAddr==0)
+															{
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+PYRO_SQUIB_PIR_2_SET_CURRENT;
+															}
+															
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_2_SET_CURRENT];		
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_2_SET_CURRENT+1];	
 												}
 												break;
 												
 												case PYRO_SQUIB_PIR_3_SET_CURRENT +(1):
 												{
-														TCPtoRTURegWrite.nRegs=2;
-														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_3_SET_CURRENT;
-														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_3_SET_CURRENT];
-														xSemaphoreGive(xSendRTURegSem);	
+															if(TCPtoRTURegWrite.regAddr==0)
+															{
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+PYRO_SQUIB_PIR_3_SET_CURRENT;
+															}
+															
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_3_SET_CURRENT];		
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_3_SET_CURRENT+1];	
 												}
 												break;
 
 												case PYRO_SQUIB_PIR_4_SET_CURRENT +(1):
 												{
-														TCPtoRTURegWrite.nRegs=2;
-														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_4_SET_CURRENT;
-														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_4_SET_CURRENT];
-														xSemaphoreGive(xSendRTURegSem);	
+															if(TCPtoRTURegWrite.regAddr==0)
+															{
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+PYRO_SQUIB_PIR_4_SET_CURRENT;
+															}
+															
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_4_SET_CURRENT];		
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_4_SET_CURRENT+1];	
 												}
 												break;
 												
 												case PYRO_SQUIB_PIR_SET_MASK:
 												{
-														TCPtoRTURegWrite.nRegs=1;
-														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_SET_MASK;
-														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_SET_MASK];
-														xSemaphoreGive(xSendRTURegSem);											
+															if(TCPtoRTURegWrite.regAddr==0)
+															{
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+PYRO_SQUIB_PIR_SET_MASK;
+															}
+															
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_SET_MASK];											
 												}
 												break;
 												
 												case PYRO_SQUIB_PIR_START:
 												{
-														TCPtoRTURegWrite.nRegs=1;
-														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_START;
-														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_START];
-														xSemaphoreGive(xSendRTURegSem);		
-
+															if(TCPtoRTURegWrite.regAddr==0)
+															{
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+PYRO_SQUIB_PIR_START;
+															}
+															
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_START];
 												}
 												break;
 												
 												case PYRO_SQUIB_PIR_1_CALIBR_CURRENT_B +(1):
 												{
-														TCPtoRTURegWrite.nRegs=2;
-														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_1_CALIBR_CURRENT_B;
-														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_1_CALIBR_CURRENT_B];
-														xSemaphoreGive(xSendRTURegSem);	
+															if(TCPtoRTURegWrite.regAddr==0)
+															{
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+PYRO_SQUIB_PIR_1_CALIBR_CURRENT_B;
+															}
+															
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_1_CALIBR_CURRENT_B];		
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_1_CALIBR_CURRENT_B+1];	
 												}
 												break;
 												
 												case PYRO_SQUIB_PIR_1_CALIBR_CURRENT_K +(1):
 												{
-														TCPtoRTURegWrite.nRegs=2;
-														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_1_CALIBR_CURRENT_K;
-														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_1_CALIBR_CURRENT_K];
-														xSemaphoreGive(xSendRTURegSem);	
+															if(TCPtoRTURegWrite.regAddr==0)
+															{
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+PYRO_SQUIB_PIR_1_CALIBR_CURRENT_K;
+															}
+															
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_1_CALIBR_CURRENT_K];		
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_1_CALIBR_CURRENT_K+1];	
 												}
 												break;
 												
 												case PYRO_SQUIB_PIR_2_CALIBR_CURRENT_B +(1):
 												{
-														TCPtoRTURegWrite.nRegs=2;
-														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_2_CALIBR_CURRENT_B;
-														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_2_CALIBR_CURRENT_B];
-														xSemaphoreGive(xSendRTURegSem);	
+															if(TCPtoRTURegWrite.regAddr==0)
+															{
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+PYRO_SQUIB_PIR_2_CALIBR_CURRENT_B;
+															}
+															
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_2_CALIBR_CURRENT_B];		
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_2_CALIBR_CURRENT_B+1];	
 												}
 												break;
 												
 												case PYRO_SQUIB_PIR_2_CALIBR_CURRENT_K +(1):
 												{
-														TCPtoRTURegWrite.nRegs=2;
-														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_2_CALIBR_CURRENT_K;
-														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_2_CALIBR_CURRENT_K];
-														xSemaphoreGive(xSendRTURegSem);	
+															if(TCPtoRTURegWrite.regAddr==0)
+															{
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+PYRO_SQUIB_PIR_2_CALIBR_CURRENT_K;
+															}
+															
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_2_CALIBR_CURRENT_K];		
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_2_CALIBR_CURRENT_K+1];	
 												}
 												break;		
 
 												case PYRO_SQUIB_PIR_3_CALIBR_CURRENT_B +(1):
 												{
-														TCPtoRTURegWrite.nRegs=2;
-														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_3_CALIBR_CURRENT_B;
-														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_3_CALIBR_CURRENT_B];
-														xSemaphoreGive(xSendRTURegSem);	
+															if(TCPtoRTURegWrite.regAddr==0)
+															{
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+PYRO_SQUIB_PIR_3_CALIBR_CURRENT_B;
+															}
+															
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_3_CALIBR_CURRENT_B];		
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_3_CALIBR_CURRENT_B+1];	
 												}
 												break;
 												
 												case PYRO_SQUIB_PIR_3_CALIBR_CURRENT_K +(1):
 												{
-														TCPtoRTURegWrite.nRegs=2;
-														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_3_CALIBR_CURRENT_K;
-														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_3_CALIBR_CURRENT_K];
-														xSemaphoreGive(xSendRTURegSem);	
+															if(TCPtoRTURegWrite.regAddr==0)
+															{
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+PYRO_SQUIB_PIR_3_CALIBR_CURRENT_K;
+															}
+															
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_3_CALIBR_CURRENT_K];		
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_3_CALIBR_CURRENT_K+1];	
 												}
 												break;	
 
 												case PYRO_SQUIB_PIR_4_CALIBR_CURRENT_B +(1):
 												{
-														TCPtoRTURegWrite.nRegs=2;
-														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_4_CALIBR_CURRENT_B;
-														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_4_CALIBR_CURRENT_B];
-														xSemaphoreGive(xSendRTURegSem);	
+															if(TCPtoRTURegWrite.regAddr==0)
+															{
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+PYRO_SQUIB_PIR_4_CALIBR_CURRENT_B;
+															}
+															
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_4_CALIBR_CURRENT_B];		
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_4_CALIBR_CURRENT_B+1];	
 												}
 												break;
 												
 												case PYRO_SQUIB_PIR_4_CALIBR_CURRENT_K +(1):
 												{
-														TCPtoRTURegWrite.nRegs=2;
-														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_4_CALIBR_CURRENT_K;
-														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_4_CALIBR_CURRENT_K];
-														xSemaphoreGive(xSendRTURegSem);	
+															if(TCPtoRTURegWrite.regAddr==0)
+															{
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+PYRO_SQUIB_PIR_4_CALIBR_CURRENT_K;
+															}
+															
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_4_CALIBR_CURRENT_K];		
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_4_CALIBR_CURRENT_K+1];	
 												}
 												break;												
 												
@@ -903,6 +957,11 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 								if(settings_need_write)
 								{
 										StartConfigInfoWrite();
+								}
+								
+								if(TCPtoRTURegWrite.nRegs>0)
+								{
+										xSemaphoreGive(xSendRTURegSem);
 								}
 							}
 							//-----------case WRITE end-----------------------------------------------------							
