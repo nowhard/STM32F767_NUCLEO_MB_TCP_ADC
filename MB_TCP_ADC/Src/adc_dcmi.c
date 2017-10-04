@@ -79,7 +79,7 @@ void DCMI_ADC_SetSamplerate(enADCSamplerate sampleRate)
 	{
 		case ADC_SAMPLERATE_1KHz:
 		{
-				htim2.Init.Prescaler = 10;
+				htim2.Init.Prescaler = 10-1;
 				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_1KHz;
 				period=(uint16_t)((108000000/10000)-1);
 		}
@@ -119,9 +119,9 @@ void DCMI_ADC_SetSamplerate(enADCSamplerate sampleRate)
 		
 		default:
 		{
-				htim2.Init.Prescaler = 0;
+				htim2.Init.Prescaler = 10;
 				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_1KHz;
-				period=(uint16_t)((108000000/100000)-1);
+				period=(uint16_t)((108000000/10000)-1);
 		}
 	}
 	

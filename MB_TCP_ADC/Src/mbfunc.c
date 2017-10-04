@@ -80,6 +80,7 @@ extern xSemaphoreHandle xSendRTURegSem;
 extern xSemaphoreHandle xMBRTUMutex;
 
 uint16_t 				usMRegTempBuf[M_REG_HOLDING_NREGS];
+extern eMBMasterReqErrCode MBMaster_RTU_WriteRegs(stTCPtoRTURegWrite *regs);
 /*---------------------------------------------------------------------------*/
 
 extern stChnCalibrValues ChnCalibrValues;
@@ -716,7 +717,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												{
 															if(TCPtoRTURegWrite.regAddr==0)
 															{
-																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+PYRO_SQUIB_PIR_1_SET_CURRENT;
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_1_SET_CURRENT;
 															}
 															
 															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_1_SET_CURRENT];		
@@ -728,7 +729,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												{
 															if(TCPtoRTURegWrite.regAddr==0)
 															{
-																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+PYRO_SQUIB_PIR_2_SET_CURRENT;
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_2_SET_CURRENT;
 															}
 															
 															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_2_SET_CURRENT];		
@@ -740,7 +741,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												{
 															if(TCPtoRTURegWrite.regAddr==0)
 															{
-																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+PYRO_SQUIB_PIR_3_SET_CURRENT;
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_3_SET_CURRENT;
 															}
 															
 															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_3_SET_CURRENT];		
@@ -752,7 +753,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												{
 															if(TCPtoRTURegWrite.regAddr==0)
 															{
-																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+PYRO_SQUIB_PIR_4_SET_CURRENT;
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_4_SET_CURRENT;
 															}
 															
 															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_4_SET_CURRENT];		
@@ -764,10 +765,11 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												{
 															if(TCPtoRTURegWrite.regAddr==0)
 															{
-																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+PYRO_SQUIB_PIR_SET_MASK;
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_SET_MASK;
 															}
 															
-															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_SET_MASK];											
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_SET_MASK];	
+															HAL_GPIO_WritePin(TEST_PYRO_SQUIB_TIME_SHIFT_Port, TEST_PYRO_SQUIB_TIME_SHIFT_Pin, GPIO_PIN_RESET);
 												}
 												break;
 												
@@ -775,10 +777,11 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												{
 															if(TCPtoRTURegWrite.regAddr==0)
 															{
-																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+PYRO_SQUIB_PIR_START;
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_START;
 															}
 															
 															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_START];
+															HAL_GPIO_WritePin(TEST_PYRO_SQUIB_TIME_SHIFT_Port, TEST_PYRO_SQUIB_TIME_SHIFT_Pin, GPIO_PIN_SET);
 												}
 												break;
 												
@@ -786,7 +789,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												{
 															if(TCPtoRTURegWrite.regAddr==0)
 															{
-																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+PYRO_SQUIB_PIR_1_CALIBR_CURRENT_B;
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_1_CALIBR_CURRENT_B;
 															}
 															
 															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_1_CALIBR_CURRENT_B];		
@@ -798,7 +801,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												{
 															if(TCPtoRTURegWrite.regAddr==0)
 															{
-																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+PYRO_SQUIB_PIR_1_CALIBR_CURRENT_K;
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_1_CALIBR_CURRENT_K;
 															}
 															
 															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_1_CALIBR_CURRENT_K];		
@@ -810,7 +813,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												{
 															if(TCPtoRTURegWrite.regAddr==0)
 															{
-																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+PYRO_SQUIB_PIR_2_CALIBR_CURRENT_B;
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_2_CALIBR_CURRENT_B;
 															}
 															
 															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_2_CALIBR_CURRENT_B];		
@@ -822,7 +825,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												{
 															if(TCPtoRTURegWrite.regAddr==0)
 															{
-																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+PYRO_SQUIB_PIR_2_CALIBR_CURRENT_K;
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_2_CALIBR_CURRENT_K;
 															}
 															
 															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_2_CALIBR_CURRENT_K];		
@@ -834,7 +837,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												{
 															if(TCPtoRTURegWrite.regAddr==0)
 															{
-																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+PYRO_SQUIB_PIR_3_CALIBR_CURRENT_B;
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_3_CALIBR_CURRENT_B;
 															}
 															
 															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_3_CALIBR_CURRENT_B];		
@@ -846,7 +849,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												{
 															if(TCPtoRTURegWrite.regAddr==0)
 															{
-																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+PYRO_SQUIB_PIR_3_CALIBR_CURRENT_K;
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_3_CALIBR_CURRENT_K;
 															}
 															
 															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_3_CALIBR_CURRENT_K];		
@@ -858,7 +861,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												{
 															if(TCPtoRTURegWrite.regAddr==0)
 															{
-																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+PYRO_SQUIB_PIR_4_CALIBR_CURRENT_B;
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_4_CALIBR_CURRENT_B;
 															}
 															
 															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_4_CALIBR_CURRENT_B];		
@@ -870,7 +873,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												{
 															if(TCPtoRTURegWrite.regAddr==0)
 															{
-																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+PYRO_SQUIB_PIR_4_CALIBR_CURRENT_K;
+																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_4_CALIBR_CURRENT_K;
 															}
 															
 															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_4_CALIBR_CURRENT_K];		
@@ -967,6 +970,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												MB_Master_ErrorCode=MBMaster_RTU_WriteRegs(&TCPtoRTURegWrite);
 												xSemaphoreGive( xMBRTUMutex );
 										}
+										
 										if(MB_Master_ErrorCode!=MB_MRE_NO_ERR)
 										{
 												eStatus=MB_EIO;

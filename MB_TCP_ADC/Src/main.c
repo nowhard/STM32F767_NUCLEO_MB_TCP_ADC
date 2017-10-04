@@ -879,7 +879,16 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(SIG_SYNC_TIM_GPIO_Port, &GPIO_InitStruct);
-
+	
+	
+  GPIO_InitStruct.Pin = TEST_PYRO_SQUIB_TIME_SHIFT_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(TEST_PYRO_SQUIB_TIME_SHIFT_Port, &GPIO_InitStruct);
+	
+	HAL_GPIO_WritePin(TEST_PYRO_SQUIB_TIME_SHIFT_Port, TEST_PYRO_SQUIB_TIME_SHIFT_Pin, GPIO_PIN_RESET);
+	
   /* EXTI interrupt init*/
   HAL_NVIC_SetPriority(EXTI9_5_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);

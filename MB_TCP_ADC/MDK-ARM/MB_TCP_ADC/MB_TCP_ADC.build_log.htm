@@ -27,12 +27,6 @@ Project File Date:  09/27/2017
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 1 (build 61)', folder: 'C:\Program Files\Keil\ARM\ARMCC\Bin'
 Build target 'MB_TCP_ADC'
-compiling mbmasterpyro.c...
-../Inc/mbfunc.h(59): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Inc/adc_pyro_buf.h(24): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\Src\mbmasterpyro.c: 2 warnings, 0 errors
 compiling mbfunc.c...
 ../Inc/mbfunc.h(59): warning:  #1-D: last line of file ends without a newline
   #endif
@@ -42,55 +36,55 @@ compiling mbfunc.c...
   #endif
 ../Inc/utilities.h(13): warning:  #1-D: last line of file ends without a newline
   #endif
-..\Src\mbfunc.c(141): warning:  #223-D: function "memcpy" declared implicitly
+..\Src\mbfunc.c(143): warning:  #223-D: function "memcpy" declared implicitly
   				memcpy((void *)&usRegInputBuf[ADC_PYRO_SQUIB_0],(const void*)&usMRegInBuf[0][0],M_REG_INPUT_NREGS*sizeof(uint16_t));
-..\Src\mbfunc.c(112): warning:  #177-D: variable "i" was declared but never referenced
+..\Src\mbfunc.c(114): warning:  #177-D: variable "i" was declared but never referenced
       uint8_t i=0;
-..\Src\mbfunc.c(321): warning:  #223-D: function "memcpy" declared implicitly
+..\Src\mbfunc.c(320): warning:  #223-D: function "memcpy" declared implicitly
   								memcpy((void *)&usRegHoldingBuf[PYRO_SQUIB_PIR_SET_TIME],(const void*)&usMRegHoldBuf[0][0],M_REG_HOLDING_NREGS*sizeof(uint16_t));
-..\Src\mbfunc.c(559): warning:  #188-D: enumerated type mixed with another type
+..\Src\mbfunc.c(562): warning:  #188-D: enumerated type mixed with another type
   															DCMI_ADC_SetSamplerate(usRegHoldingBuf[
 DC_SAMPLERATE]);
-..\Src\mbfunc.c(638): warning:  #188-D: enumerated type mixed with another type
+..\Src\mbfunc.c(641): warning:  #188-D: enumerated type mixed with another type
   														HAL_GPIO_WritePin(
 NABLE_OUT_1_GPIO_Port,
 NABLE_OUT_1_Pin,usRegHoldingBuf[
 EV_ENABLE_OUT_1]);
-..\Src\mbfunc.c(644): warning:  #188-D: enumerated type mixed with another type
+..\Src\mbfunc.c(647): warning:  #188-D: enumerated type mixed with another type
   														HAL_GPIO_WritePin(
 NABLE_OUT_7_GPIO_Port,
 NABLE_OUT_7_Pin,usRegHoldingBuf[
 EV_ENABLE_OUT_7]);
-..\Src\mbfunc.c(650): warning:  #188-D: enumerated type mixed with another type
+..\Src\mbfunc.c(653): warning:  #188-D: enumerated type mixed with another type
   														HAL_GPIO_WritePin(
 N_VCC_250_GPIO_Port,
 N_VCC_250_Pin,usRegHoldingBuf[
 EV_EN_VCC_250]);
-..\Src\mbfunc.c(656): warning:  #188-D: enumerated type mixed with another type
+..\Src\mbfunc.c(659): warning:  #188-D: enumerated type mixed with another type
   														HAL_GPIO_WritePin(
 N_VCC_150_GPIO_Port,
 N_VCC_150_Pin,usRegHoldingBuf[
 EV_EN_VCC_150]);
-..\Src\mbfunc.c(662): warning:  #188-D: enumerated type mixed with another type
+..\Src\mbfunc.c(665): warning:  #188-D: enumerated type mixed with another type
   														HAL_GPIO_WritePin(
 N_VCC_75_GPIO_Port,
 N_VCC_75_Pin,usRegHoldingBuf[
 EV_EN_VCC_75]);
-..\Src\mbfunc.c(668): warning:  #188-D: enumerated type mixed with another type
+..\Src\mbfunc.c(671): warning:  #188-D: enumerated type mixed with another type
   														HAL_GPIO_WritePin(
 N_VCC_7_5_GPIO_Port,
 N_VCC_7_5_Pin,usRegHoldingBuf[
 EV_EN_VCC_7_5]);
-..\Src\mbfunc.c(674): warning:  #188-D: enumerated type mixed with another type
+..\Src\mbfunc.c(677): warning:  #188-D: enumerated type mixed with another type
   														HAL_GPIO_WritePin(
 NABLE_AIR_GPIO_Port,
 NABLE_AIR_Pin,usRegHoldingBuf[
 EV_ENABLE_AIR]);
 ..\Src\mbfunc.c: 16 warnings, 0 errors
 linking...
-Program Size: Code=94240 RO-data=1804 RW-data=1108 ZI-data=216780  
+Program Size: Code=94392 RO-data=1804 RW-data=1112 ZI-data=216784  
 FromELF: creating hex file...
-"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 17 Warning(s).
+"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 15 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -108,7 +102,7 @@ Package Vendor: ARM
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.0.1
-Build Time Elapsed:  00:00:11
+Build Time Elapsed:  00:00:07
 </pre>
 </body>
 </html>
