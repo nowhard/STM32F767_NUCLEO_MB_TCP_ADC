@@ -201,8 +201,7 @@
 /* USER CODE BEGIN Private defines */
 
 
-#define TEST_PYRO_SQUIB_TIME_SHIFT_Pin 	GPIO_PIN_9
-#define TEST_PYRO_SQUIB_TIME_SHIFT_Port GPIOA
+
 
 #define IP_ADDR0   192
 #define IP_ADDR1   168

@@ -769,7 +769,6 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 															}
 															
 															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_SET_MASK];	
-															HAL_GPIO_WritePin(TEST_PYRO_SQUIB_TIME_SHIFT_Port, TEST_PYRO_SQUIB_TIME_SHIFT_Pin, GPIO_PIN_RESET);
 												}
 												break;
 												
@@ -780,8 +779,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_START;
 															}
 															
-															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_START];
-															HAL_GPIO_WritePin(TEST_PYRO_SQUIB_TIME_SHIFT_Port, TEST_PYRO_SQUIB_TIME_SHIFT_Pin, GPIO_PIN_SET);
+															TCPtoRTURegWrite.regBuf[TCPtoRTURegWrite.nRegs++]=usRegHoldingBuf[PYRO_SQUIB_PIR_START];									
 												}
 												break;
 												
