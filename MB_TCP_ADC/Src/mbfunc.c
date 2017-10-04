@@ -77,6 +77,7 @@ extern SemaphoreHandle_t	xMBSaveSettingsSemaphore;
 extern USHORT   usMRegInBuf[MB_MASTER_TOTAL_SLAVE_NUM][M_REG_INPUT_NREGS];
 extern USHORT   usMRegHoldBuf[MB_MASTER_TOTAL_SLAVE_NUM][M_REG_HOLDING_NREGS];
 extern xSemaphoreHandle xSendRTURegSem;
+extern xSemaphoreHandle xMBRTUMutex;
 
 uint16_t 				usMRegTempBuf[M_REG_HOLDING_NREGS];
 /*---------------------------------------------------------------------------*/
@@ -959,9 +960,17 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 										StartConfigInfoWrite();
 								}
 								
-								if(TCPtoRTURegWrite.nRegs>0)
+								if(TCPtoRTURegWrite.nRegs>0)//Пишем в MBMaster и ждем ответа
 								{
-										xSemaphoreGive(xSendRTURegSem);
+										if( xSemaphoreTake( xMBRTUMutex, portMAX_DELAY ) == pdTRUE )
+										{
+												MB_Master_ErrorCode=MBMaster_RTU_WriteRegs(&TCPtoRTURegWrite);
+												xSemaphoreGive( xMBRTUMutex );
+										}
+										if(MB_Master_ErrorCode!=MB_MRE_NO_ERR)
+										{
+												eStatus=MB_EIO;
+										}
 								}
 							}
 							//-----------case WRITE end-----------------------------------------------------							

@@ -21,6 +21,8 @@
 #define MODBUS_M_BAUDRATE			921600
 
 xSemaphoreHandle xSendRTURegSem;
+xSemaphoreHandle xMBRTUMutex;
+
 extern stTCPtoRTURegWrite TCPtoRTURegWrite;
 extern stPacket UDPPacket;
 extern enADCPyroBufState ADCPyroBufState;
@@ -34,6 +36,7 @@ void MBMaster_RTU_Poll(void *pvParameters);
 void MBMaster_RTU_Init(void)
 {
 	xSendRTURegSem=xSemaphoreCreateBinary();
+	xMBRTUMutex=xSemaphoreCreateMutex();
 	
 	eMBMasterInit(MB_RTU, 2, MODBUS_M_BAUDRATE,  MB_PAR_NONE);
 	eMBMasterEnable();
@@ -60,8 +63,8 @@ enum
 {
   PYRO_SQUIB_STOP=0,
 	PYRO_SQUIB_RUN,
-}
-;
+};
+
 
 eMBMasterReqErrCode    MB_Master_ErrorCode = MB_MRE_NO_ERR;
 
@@ -75,20 +78,13 @@ void MBMaster_RTU_Poll(void *pvParameters)
 	xLastWakeTime = xTaskGetTickCount();
 	while (1)
 	{		
-		if(xSemaphoreTake( xSendRTURegSem, ( TickType_t )0 )==TRUE)	//записываем регистры ведомого, если необходимо
+
+		if( xSemaphoreTake( xMBRTUMutex, portMAX_DELAY ) == pdTRUE )
 		{
-				if(TCPtoRTURegWrite.nRegs==1)
-				{
-						MB_Master_ErrorCode = eMBMasterReqWriteHoldingRegister(SLAVE_PYRO_SQUIB_ADDR,TCPtoRTURegWrite.regAddr,TCPtoRTURegWrite.regBuf[0],SLAVE_PYRO_SQUIB_TIMEOUT);
-				}
-				else 
-				{
-						MB_Master_ErrorCode = eMBMasterReqWriteMultipleHoldingRegister(SLAVE_PYRO_SQUIB_ADDR,TCPtoRTURegWrite.regAddr,TCPtoRTURegWrite.nRegs,&TCPtoRTURegWrite.regBuf[0],SLAVE_PYRO_SQUIB_TIMEOUT);
-				}
+				MB_Master_ErrorCode = eMBMasterReqReadInputRegister(SLAVE_PYRO_SQUIB_ADDR,M_REG_INPUT_START,M_REG_INPUT_NREGS,SLAVE_PYRO_SQUIB_TIMEOUT);//читаем регистры ведомого		
+				xSemaphoreGive( xMBRTUMutex );
 		}
 
-		MB_Master_ErrorCode = eMBMasterReqReadInputRegister(SLAVE_PYRO_SQUIB_ADDR,M_REG_INPUT_START,M_REG_INPUT_NREGS,SLAVE_PYRO_SQUIB_TIMEOUT);//читаем регистры ведомого
-		
 		//проверяем состояние пиропатрона, если включен-заполняем буфер
 		
 		if((usMRegInBuf[0][REG_PIR_STATE]!=PYRO_SQUIB_STOP) && (MB_Master_ErrorCode == MB_MRE_NO_ERR) && (BaseADC_Started_Flag))
@@ -104,12 +100,33 @@ void MBMaster_RTU_Poll(void *pvParameters)
 		
 		if(tick_counter>=HOLDING_REG_POLL_PERIOD)// с редким периодом читаем holding регистры
 		{
-				MB_Master_ErrorCode = eMBMasterReqReadHoldingRegister(SLAVE_PYRO_SQUIB_ADDR,M_REG_HOLDING_START,M_REG_HOLDING_NREGS,SLAVE_PYRO_SQUIB_TIMEOUT);	
+				if( xSemaphoreTake( xMBRTUMutex, portMAX_DELAY ) == pdTRUE )
+				{
+						MB_Master_ErrorCode = eMBMasterReqReadHoldingRegister(SLAVE_PYRO_SQUIB_ADDR,M_REG_HOLDING_START,M_REG_HOLDING_NREGS,SLAVE_PYRO_SQUIB_TIMEOUT);	
+						xSemaphoreGive( xMBRTUMutex );
+				}
+
 				tick_counter=0;
 		}
 		tick_counter++;
 	
 		vTaskDelayUntil( &xLastWakeTime, 1 );
 	}
+}
+
+eMBMasterReqErrCode MBMaster_RTU_WriteRegs(stTCPtoRTURegWrite *regs)
+{
+	eMBMasterReqErrCode    err=MB_MRE_NO_ERR; 
+	
+	if(regs->nRegs==1)
+	{
+			err = eMBMasterReqWriteHoldingRegister(SLAVE_PYRO_SQUIB_ADDR,regs->regAddr,regs->regBuf[0],SLAVE_PYRO_SQUIB_TIMEOUT);
+	}
+	else 
+	{
+			err = eMBMasterReqWriteMultipleHoldingRegister(SLAVE_PYRO_SQUIB_ADDR,regs->regAddr,regs->nRegs,&regs->regBuf[0],SLAVE_PYRO_SQUIB_TIMEOUT);
+	}
+	
+	return err;
 }
 
