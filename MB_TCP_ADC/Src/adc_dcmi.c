@@ -128,7 +128,7 @@ void DCMI_ADC_SetSamplerate(enADCSamplerate sampleRate)
   htim2.Instance = TIM2;
 //  htim2.Init.Prescaler = 0;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = period;
+  htim2.Init.Period = (uint16_t)(period*configInfo.ConfigADC.freqCorrectionFactor);
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   HAL_TIM_Base_Init(&htim2);
 }

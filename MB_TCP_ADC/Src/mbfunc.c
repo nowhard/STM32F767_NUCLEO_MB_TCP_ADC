@@ -194,6 +194,7 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 #define ADC_CHANNEL_5_B				27
 
 #define ADC_SAMPLERATE				29 
+#define ADC_SAMPLERATE_FREQ_CORRECTION_FACTOR		93
 #define ADC_STARTED						30
 
 //--------BITFIELDS------------------------
@@ -297,6 +298,8 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 								Float_To_UINT16_Buf(configInfo.ConfigADC.calibrChannel[5].b,&usRegHoldingBuf[ADC_CHANNEL_5_B]);									
 								
 								usRegHoldingBuf[ADC_SAMPLERATE]=(uint16_t)configInfo.ConfigADC.sampleRate;
+											
+								Float_To_UINT16_Buf(configInfo.ConfigADC.freqCorrectionFactor,&usRegHoldingBuf[ADC_SAMPLERATE_FREQ_CORRECTION_FACTOR]);									
 								
 								usRegHoldingBuf[ADC_STARTED]=BaseADC_Started_Flag;
 								usRegHoldingBuf[DEV_SET_OUTPUTS_0] = (uint16_t)((discrOutTempReg)&0xFFFF);
@@ -565,6 +568,18 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												}
 												break;	
 												
+												case ADC_SAMPLERATE_FREQ_CORRECTION_FACTOR:
+												{
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_SAMPLERATE_FREQ_CORRECTION_FACTOR],&temp_coef);
+													
+														if(configInfo.ConfigADC.freqCorrectionFactor!=temp_coef)
+														{
+																configInfo.ConfigADC.freqCorrectionFactor=temp_coef;
+																settings_need_write=1;
+														}															
+												}
+												break;
+												
 												case ADC_STARTED:
 												{
 														if(usRegHoldingBuf[ADC_STARTED])
@@ -700,10 +715,6 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case PYRO_SQUIB_PIR_SET_TIME:
 												{
-//														TCPtoRTURegWrite.nRegs=1;
-//														TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_SET_TIME;
-//														TCPtoRTURegWrite.regBuf=&usRegHoldingBuf[PYRO_SQUIB_PIR_SET_TIME];
-//														xSemaphoreGive(xSendRTURegSem);
 															if(TCPtoRTURegWrite.regAddr==0)
 															{
 																	TCPtoRTURegWrite.regAddr=M_REG_HOLDING_START+REG_PIR_SET_TIME;

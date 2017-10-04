@@ -50,6 +50,7 @@ typedef struct
 {
 	uint8_t channelMask;
 	enADCSamplerate sampleRate;
+	float freqCorrectionFactor;
 	stCalibrChannel calibrChannel[ADC_CHN_NUM];
 } sConfigADC;
 
