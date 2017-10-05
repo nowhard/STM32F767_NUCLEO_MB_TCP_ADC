@@ -63,7 +63,7 @@
 #define FAULT_7_5A_SIG							49
 //------------------------------------
 #define DEV_SET_OUTPUTS_SEQUENCE_IN_PROGRESS	50
-#define DEV_TIMESTAMP_COUNTER_VALUE						51
+
 
 /* ----------------------- Static variables ---------------------------------*/
 static USHORT   usRegInputStart = REG_INPUT_START;
@@ -154,10 +154,8 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 				
 				usRegInputBuf[DEV_SET_OUTPUTS_SEQUENCE_IN_PROGRESS]=discrOutSequenceProgress;
 				
-				temp=DCMI_ADC_GetCurrentTimestamp();
-				UINT64_To_UINT16_Buf(temp,&usRegInputBuf[DEV_TIMESTAMP_COUNTER_VALUE]);
-				
-			
+
+						
         while( usNRegs > 0 )
         {
             *pucRegBuffer++ = ( unsigned char )( usRegInputBuf[iRegIndex] >> 8 );
@@ -199,58 +197,58 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 #define ADC_CHANNEL_5_B				27
 
 #define ADC_SAMPLERATE				29 
-#define ADC_SAMPLERATE_FREQ_CORRECTION_FACTOR		93
-#define ADC_STARTED						30
+#define ADC_SAMPLERATE_FREQ_CORRECTION_FACTOR		30
+#define ADC_STARTED						32
 
 //--------BITFIELDS------------------------
-#define DEV_SET_OUTPUTS_0			31
-#define DEV_SET_OUTPUTS_1			32
-#define DEV_SET_OUTPUTS_2			33
-#define DEV_SET_OUTPUTS_3			34
+#define DEV_SET_OUTPUTS_0			33
+#define DEV_SET_OUTPUTS_1			34
+#define DEV_SET_OUTPUTS_2			35
+#define DEV_SET_OUTPUTS_3			36
 
-#define DEV_SET_OUTPUTS_ALL		35
+#define DEV_SET_OUTPUTS_ALL		37
 
-#define DEV_SET_OUTPUTS_SEQUENCE_STATE_1		39
-#define DEV_SET_OUTPUTS_SEQUENCE_STATE_2		43
-#define DEV_SET_OUTPUTS_SEQUENCE_STATE_END	47
-#define DEV_SET_OUTPUTS_SEQUENCE_TIME				51
-#define DEV_SET_OUTPUTS_SEQUENCE_NUM_CYCLES	52
-#define DEV_SET_OUTPUTS_SEQUENCE_START			53
+#define DEV_SET_OUTPUTS_SEQUENCE_STATE_1		41
+#define DEV_SET_OUTPUTS_SEQUENCE_STATE_2		45
+#define DEV_SET_OUTPUTS_SEQUENCE_STATE_END	49
+#define DEV_SET_OUTPUTS_SEQUENCE_TIME				53
+#define DEV_SET_OUTPUTS_SEQUENCE_NUM_CYCLES	54
+#define DEV_SET_OUTPUTS_SEQUENCE_START			55
 //------------------------------------------
-#define DEV_ENABLE_OUT_1			54
-#define DEV_ENABLE_OUT_7			55
+#define DEV_ENABLE_OUT_1			56
+#define DEV_ENABLE_OUT_7			57
 
-#define DEV_EN_VCC_250				56
-#define DEV_EN_VCC_150				57
-#define DEV_EN_VCC_75					58
-#define DEV_EN_VCC_7_5				59
+#define DEV_EN_VCC_250				58
+#define DEV_EN_VCC_150				59
+#define DEV_EN_VCC_75					60
+#define DEV_EN_VCC_7_5				61
 
-#define DEV_ENABLE_AIR				60
+#define DEV_ENABLE_AIR				62
 //--------SYNC DEV REGS--------------------
-#define DEV_RESET_TIMESTAMP		61
-#define DEV_RESET_CONTROLLER	62
+#define DEV_RESET_TIMESTAMP		63
+#define DEV_RESET_CONTROLLER	64
 //--------REGS STM32F100DISCOVERY----------
 
-#define PYRO_SQUIB_PIR_SET_TIME					63
-#define PYRO_SQUIB_PIR_1_SET_CURRENT		64
-#define PYRO_SQUIB_PIR_2_SET_CURRENT		66
-#define PYRO_SQUIB_PIR_3_SET_CURRENT		68
-#define PYRO_SQUIB_PIR_4_SET_CURRENT		70
-#define PYRO_SQUIB_PIR_SET_MASK					72
-#define PYRO_SQUIB_PIR_START						73
+#define PYRO_SQUIB_PIR_SET_TIME					65
+#define PYRO_SQUIB_PIR_1_SET_CURRENT		66
+#define PYRO_SQUIB_PIR_2_SET_CURRENT		68
+#define PYRO_SQUIB_PIR_3_SET_CURRENT		70
+#define PYRO_SQUIB_PIR_4_SET_CURRENT		72
+#define PYRO_SQUIB_PIR_SET_MASK					74
+#define PYRO_SQUIB_PIR_START						75
 
-#define PYRO_SQUIB_PIR_1_CALIBR_CURRENT_K	74
-#define PYRO_SQUIB_PIR_1_CALIBR_CURRENT_B	76
-#define PYRO_SQUIB_PIR_2_CALIBR_CURRENT_K	78
-#define PYRO_SQUIB_PIR_2_CALIBR_CURRENT_B	80
-#define PYRO_SQUIB_PIR_3_CALIBR_CURRENT_K	82
-#define PYRO_SQUIB_PIR_3_CALIBR_CURRENT_B	84
-#define PYRO_SQUIB_PIR_4_CALIBR_CURRENT_K	86
-#define PYRO_SQUIB_PIR_4_CALIBR_CURRENT_B	88
+#define PYRO_SQUIB_PIR_1_CALIBR_CURRENT_K	76
+#define PYRO_SQUIB_PIR_1_CALIBR_CURRENT_B	78
+#define PYRO_SQUIB_PIR_2_CALIBR_CURRENT_K	80
+#define PYRO_SQUIB_PIR_2_CALIBR_CURRENT_B	82
+#define PYRO_SQUIB_PIR_3_CALIBR_CURRENT_K	84
+#define PYRO_SQUIB_PIR_3_CALIBR_CURRENT_B	86
+#define PYRO_SQUIB_PIR_4_CALIBR_CURRENT_K	88
+#define PYRO_SQUIB_PIR_4_CALIBR_CURRENT_B	90
 //------------------------------------------
-#define DEV_PROC_TIME_HOUR							90
-#define DEV_PROC_TIME_MINUTE						91
-#define DEV_PROC_TIME_SECOND						92
+#define DEV_PROC_TIME_HOUR							92
+#define DEV_PROC_TIME_MINUTE						93
+#define DEV_PROC_TIME_SECOND						94
 
 extern uint64_t	discrOutTempReg;
 extern stADCPyroBuf ADCPyroBuf;

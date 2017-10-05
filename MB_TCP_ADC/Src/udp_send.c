@@ -39,7 +39,8 @@ extern enADCPyroBufState ADCPyroBufState;
 extern uint64_t ADC_Pyro_Timestamp;
 
 
-
+#define UDP_SEND_TASK_STACK_SIZE	1024
+#define UDP_SEND_TASK_PRIO				3
 void UDP_Send_Task( void *pvParameters );
 void udp_client_send_base_buf(float *buf, uint16_t bufSize);
 void udp_client_send_pyro_buf(void);
@@ -84,7 +85,7 @@ void udp_client_init(void)
 	ra.sin_addr.s_addr = DestIPaddr.addr;
 	ra.sin_port = htons(configInfo.IPAdress_Server.port);
 
-  xTaskCreate( UDP_Send_Task, "UDP Task", 1024, NULL, 3, NULL );
+  xTaskCreate( UDP_Send_Task, "UDP Task", UDP_SEND_TASK_STACK_SIZE, NULL, UDP_SEND_TASK_PRIO, NULL );
 }
 
 
@@ -97,6 +98,7 @@ void udp_client_send_base_buf(float *buf, uint16_t bufSize)
 		UDPPacket.type=UDP_PACKET_TYPE_BASE;
 		UDPPacket.timestamp=DCMI_ADC_GetLastTimestamp();
 	
+		IP4_ADDR( &DestIPaddr, configInfo.IPAdress_Server.ip_addr_0, configInfo.IPAdress_Server.ip_addr_1, configInfo.IPAdress_Server.ip_addr_2, configInfo.IPAdress_Server.ip_addr_3 );
 		ra.sin_addr.s_addr = DestIPaddr.addr;
 		ra.sin_port = htons(configInfo.IPAdress_Server.port);
 	
@@ -114,6 +116,7 @@ void udp_client_send_pyro_buf(void)
 {
 	uint16_t data_size=0;
 	
+  IP4_ADDR( &DestIPaddr, configInfo.IPAdress_Server.ip_addr_0, configInfo.IPAdress_Server.ip_addr_1, configInfo.IPAdress_Server.ip_addr_2, configInfo.IPAdress_Server.ip_addr_3 );
 	ra.sin_addr.s_addr = DestIPaddr.addr;
 	ra.sin_port = htons(configInfo.IPAdress_Server.port);
 	
