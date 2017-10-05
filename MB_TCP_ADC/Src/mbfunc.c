@@ -63,6 +63,7 @@
 #define FAULT_7_5A_SIG							49
 //------------------------------------
 #define DEV_SET_OUTPUTS_SEQUENCE_IN_PROGRESS	50
+#define DEV_TIMESTAMP_COUNTER_VALUE						51
 
 /* ----------------------- Static variables ---------------------------------*/
 static USHORT   usRegInputStart = REG_INPUT_START;
@@ -112,7 +113,7 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
     eMBErrorCode    eStatus = MB_ENOERR;
     int             iRegIndex;
     uint8_t i=0;
-
+		uint64_t temp=0;
 
     if( ( usAddress >= REG_INPUT_START )
         && ( usAddress + usNRegs <= REG_INPUT_START + REG_INPUT_NREGS ) )
@@ -136,7 +137,7 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 				
 				Float_To_UINT16_Buf(ChnCalibrValues.val_current, &usRegInputBuf[ADC_CHANNEL_CONV]);
 			
-				uint64_t temp=DCMI_ADC_GetLastTimestamp();
+				temp=DCMI_ADC_GetLastTimestamp();
 				UINT64_To_UINT16_Buf(temp,&usRegInputBuf[TIMESTAMP_CURRENT]);
 			
 			
@@ -152,6 +153,10 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 				usRegInputBuf[PYRO_SQUIB_MB_CONNECT_ERROR]=MB_Master_ErrorCode;
 				
 				usRegInputBuf[DEV_SET_OUTPUTS_SEQUENCE_IN_PROGRESS]=discrOutSequenceProgress;
+				
+				temp=DCMI_ADC_GetCurrentTimestamp();
+				UINT64_To_UINT16_Buf(temp,&usRegInputBuf[DEV_TIMESTAMP_COUNTER_VALUE]);
+				
 			
         while( usNRegs > 0 )
         {
@@ -568,7 +573,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												}
 												break;	
 												
-												case ADC_SAMPLERATE_FREQ_CORRECTION_FACTOR:
+												case ADC_SAMPLERATE_FREQ_CORRECTION_FACTOR+(1):
 												{
 														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_SAMPLERATE_FREQ_CORRECTION_FACTOR],&temp_coef);
 													
