@@ -77,7 +77,7 @@ extern SemaphoreHandle_t	xMBSaveSettingsSemaphore;
 /*-----------------------Pyro squib vars-------------------------------------*/
 extern USHORT   usMRegInBuf[MB_MASTER_TOTAL_SLAVE_NUM][M_REG_INPUT_NREGS];
 extern USHORT   usMRegHoldBuf[MB_MASTER_TOTAL_SLAVE_NUM][M_REG_HOLDING_NREGS];
-extern xSemaphoreHandle xSendRTURegSem;
+extern xSemaphoreHandle xStartReadPyroADCSem;
 extern xSemaphoreHandle xMBRTUMutex;
 
 uint16_t 				usMRegTempBuf[M_REG_HOLDING_NREGS];
@@ -983,7 +983,15 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												xSemaphoreGive( xMBRTUMutex );
 										}
 										
-										if(MB_Master_ErrorCode!=MB_MRE_NO_ERR)
+										if(MB_Master_ErrorCode==MB_MRE_NO_ERR)
+										{
+												if((TCPtoRTURegWrite.regAddr==(M_REG_HOLDING_START+REG_PIR_START))&& BaseADC_Started_Flag)//запрос на запуск пиропатронов прошел успешно
+												{
+														//запустим скоростное измерение пиропатронов
+														xSemaphoreGive(xStartReadPyroADCSem);
+												}
+										}
+										else
 										{
 												eStatus=MB_EIO;
 										}
