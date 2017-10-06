@@ -12,10 +12,10 @@
 
 
 #define MB_RTU_TASK_STACK_SIZE			2048
-#define MB_RTU_TASK_PRIO						3
+#define MB_RTU_TASK_PRIO						2
 
 #define MB_RTU_POLL_TASK_STACK_SIZE	256
-#define MB_RTU_POLL_TASK_PRIO				3
+#define MB_RTU_POLL_TASK_PRIO				2
 
 #define SLAVE_PYRO_SQUIB_ADDR					0xA
 #define SLAVE_PYRO_SQUIB_TIMEOUT			100
@@ -32,6 +32,8 @@ extern enADCPyroBufState ADCPyroBufState;
 extern uint64_t ADC_Pyro_Timestamp;
 extern uint16_t BaseADC_Started_Flag;
 
+TaskHandle_t RTUTaskHandle;
+TaskHandle_t RTUPollTaskHandle;
 void MBMaster_RTU_Task(void *pvParameters);
 void MBMaster_RTU_Poll(void *pvParameters);
 
@@ -43,8 +45,8 @@ void MBMaster_RTU_Init(void)
 	
 	eMBMasterInit(MB_RTU, 2, MODBUS_M_BAUDRATE,  MB_PAR_NONE);
 	eMBMasterEnable();
-	xTaskCreate(MBMaster_RTU_Task, "MB RTU Task", MB_RTU_TASK_STACK_SIZE, NULL, MB_RTU_TASK_PRIO, ( TaskHandle_t * ) NULL);
-	xTaskCreate(MBMaster_RTU_Poll, "MB RTU Poll Task", MB_RTU_POLL_TASK_STACK_SIZE, NULL, MB_RTU_POLL_TASK_PRIO, ( TaskHandle_t * ) NULL);
+	xTaskCreate(MBMaster_RTU_Task, "MB RTU Task", MB_RTU_TASK_STACK_SIZE, NULL, MB_RTU_TASK_PRIO, &RTUTaskHandle);
+	xTaskCreate(MBMaster_RTU_Poll, "MB RTU Poll Task", MB_RTU_POLL_TASK_STACK_SIZE, NULL, MB_RTU_POLL_TASK_PRIO, &RTUPollTaskHandle);
 }
 
 
@@ -62,6 +64,7 @@ void MBMaster_RTU_Task(void *pvParameters)
 #define SLAVE_REGS_POLL_PERIOD		200
 #define REG_ADC_0									0
 #define REG_PIR_STATE							16
+#define READ_ERR_MAX							10
 enum
 {
   PYRO_SQUIB_STOP=0,
@@ -77,6 +80,7 @@ void MBMaster_RTU_Poll(void *pvParameters)
 {
 	static uint16_t tick_counter=0;
 	portTickType xLastWakeTime;
+	uint8_t read_err_cnt=0;
 	
 	
 	while (1)
@@ -84,7 +88,10 @@ void MBMaster_RTU_Poll(void *pvParameters)
 			if( xSemaphoreTake( xStartReadPyroADCSem, SLAVE_REGS_POLL_PERIOD ) == pdTRUE )
 			{//проверяем состояние пиропатрона, если включен-заполняем буфер
 					xLastWakeTime = xTaskGetTickCount();
-					
+					read_err_cnt=0;
+
+					vTaskPrioritySet(RTUPollTaskHandle,MB_RTU_POLL_TASK_PRIO+1);
+					vTaskPrioritySet(RTUTaskHandle,MB_RTU_TASK_PRIO+1);
 					do
 					{
 								vTaskDelayUntil( &xLastWakeTime, 1 );
@@ -100,13 +107,23 @@ void MBMaster_RTU_Poll(void *pvParameters)
 										ADC_PyroBuf_Add((float*)&usMRegInBuf[0][REG_ADC_0]);
 										ADC_Pyro_Timestamp=DCMI_ADC_GetCurrentTimestamp();
 										ADCPyroBufState=ADC_PYRO_BUF_FILL_START;
+										read_err_cnt=0;
 								}
 								else
 								{
 										ADCPyroBufState=ADC_PYRO_BUF_FILL_STOP;
+										read_err_cnt++;
+										if(read_err_cnt>=READ_ERR_MAX)
+										{
+												break;
+										}
 								}	
 					}
 					while(usMRegInBuf[0][REG_PIR_STATE]!=PYRO_SQUIB_STOP);
+					ADCPyroBufState=ADC_PYRO_BUF_FILL_STOP;
+					vTaskPrioritySet(RTUTaskHandle,MB_RTU_TASK_PRIO);
+					vTaskPrioritySet(RTUPollTaskHandle,MB_RTU_POLL_TASK_PRIO);
+					
 			}
 			else
 			{
