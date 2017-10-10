@@ -50,6 +50,9 @@ union wordfield{
 
 stChnCalibrValues ChnCalibrValues;
 
+float ADC_CurrentChannelsConvolution(void);
+float ADC_GetCalibrateValue(uint8_t channel, uint16_t value);
+
 void ADC_ConvertBuf(uint8_t *dcmiBuf,uint16_t dcmiBufLen, uint16_t *spiBuf_1, uint16_t *spiBuf_2, uint16_t spiBufLen,float *resultBuf,uint16_t *resultBufLen)
 {
 
@@ -180,37 +183,13 @@ void ADC_ConvertBuf(uint8_t *dcmiBuf,uint16_t dcmiBufLen, uint16_t *spiBuf_1, ui
 			ChnCalibrValues.val_chn2_raw=out3.val;
 			ChnCalibrValues.val_chn3_raw=out4.val;
 			
-			ChnCalibrValues.val_7_5A=configInfo.ConfigADC.calibrChannel[0].k*(out1.val&0xFFFF)+configInfo.ConfigADC.calibrChannel[0].b;
-			ChnCalibrValues.val_75A	=configInfo.ConfigADC.calibrChannel[1].k*(out2.val&0xFFFF)+configInfo.ConfigADC.calibrChannel[1].b;
-			ChnCalibrValues.val_150A=configInfo.ConfigADC.calibrChannel[2].k*(out3.val&0xFFFF)+configInfo.ConfigADC.calibrChannel[2].b;
-			ChnCalibrValues.val_250A=configInfo.ConfigADC.calibrChannel[3].k*(out4.val&0xFFFF)+configInfo.ConfigADC.calibrChannel[3].b;
+			ChnCalibrValues.val_7_5A=ADC_GetCalibrateValue(0,(out1.val&0xFFFF));
+			ChnCalibrValues.val_75A	=ADC_GetCalibrateValue(1,(out2.val&0xFFFF));
+			ChnCalibrValues.val_150A=ADC_GetCalibrateValue(2,(out3.val&0xFFFF));
+			ChnCalibrValues.val_250A=ADC_GetCalibrateValue(3,(out4.val&0xFFFF));
 		
-		 if(ChnCalibrValues.val_7_5A>=CHANNEL_7_5A_MAX_VAL)
-		 {
-					if(ChnCalibrValues.val_75A>=CHANNEL_75A_MAX_VAL)
-					{
-							if(ChnCalibrValues.val_150A>=CHANNEL_150A_MAX_VAL)
-							{
-									ChnCalibrValues.val_current=ChnCalibrValues.val_250A;
-							}	
-							else
-							{
-									ChnCalibrValues.val_current=ChnCalibrValues.val_75A;
-							}
-					}	
-					else
-					{
-							ChnCalibrValues.val_current=ChnCalibrValues.val_75A;
-					}
-			}	
-			else
-			{
-					ChnCalibrValues.val_current=ChnCalibrValues.val_7_5A;
-			}
-			
-			/*test*/
-//			ChnCalibrValues.val_current=ChnCalibrValues.val_7_5A;
-			/*   */
+			ChnCalibrValues.val_current=ADC_CurrentChannelsConvolution();
+
 			
 			*(resultBuf+offset)=ChnCalibrValues.val_current;
 			offset++;
@@ -218,9 +197,9 @@ void ADC_ConvertBuf(uint8_t *dcmiBuf,uint16_t dcmiBufLen, uint16_t *spiBuf_1, ui
 			ChnCalibrValues.val_chn4_raw=spiBuf_1[cycle_count/SPI_ADC_FREQ_DIV]&0xFFFF;
 			ChnCalibrValues.val_chn5_raw=spiBuf_2[cycle_count/SPI_ADC_FREQ_DIV]&0xFFFF;
 			
-			ChnCalibrValues.val_voltage_1=*(resultBuf+offset)=configInfo.ConfigADC.calibrChannel[4].k*(spiBuf_1[cycle_count/SPI_ADC_FREQ_DIV]&0xFFFF)+configInfo.ConfigADC.calibrChannel[4].b;
+			ChnCalibrValues.val_voltage_1=*(resultBuf+offset)= ADC_GetCalibrateValue(4,(spiBuf_1[cycle_count/SPI_ADC_FREQ_DIV]&0xFFFF));
 			offset++;
-			ChnCalibrValues.val_voltage_2=*(resultBuf+offset)=configInfo.ConfigADC.calibrChannel[5].k*(spiBuf_2[cycle_count/SPI_ADC_FREQ_DIV]&0xFFFF)+configInfo.ConfigADC.calibrChannel[5].b;
+			ChnCalibrValues.val_voltage_2=*(resultBuf+offset)= ADC_GetCalibrateValue(5,(spiBuf_2[cycle_count/SPI_ADC_FREQ_DIV]&0xFFFF));
 			offset++;
 		
 			dcmiBuf+=16;
@@ -231,3 +210,33 @@ void ADC_ConvertBuf(uint8_t *dcmiBuf,uint16_t dcmiBufLen, uint16_t *spiBuf_1, ui
 	*resultBufLen=cycle_count*ANALOG_CHN_NUM;
 }
 
+inline float ADC_CurrentChannelsConvolution(void)//свертка токовых каналов
+{
+	 if(ChnCalibrValues.val_7_5A>=CHANNEL_7_5A_MAX_VAL)
+	 {
+				if(ChnCalibrValues.val_75A>=CHANNEL_75A_MAX_VAL)
+				{
+						if(ChnCalibrValues.val_150A>=CHANNEL_150A_MAX_VAL)
+						{
+								return ChnCalibrValues.val_250A;
+						}	
+						else
+						{
+								return ChnCalibrValues.val_75A;
+						}
+				}	
+				else
+				{
+						return ChnCalibrValues.val_75A;
+				}
+		}	
+		else
+		{
+				return ChnCalibrValues.val_7_5A;
+		}
+}
+
+inline float ADC_GetCalibrateValue(uint8_t channel, uint16_t value)
+{
+	return (configInfo.ConfigADC.calibrChannel[channel].k*value+configInfo.ConfigADC.calibrChannel[channel].b);		 
+}
