@@ -27,7 +27,31 @@ Project File Date:  09/27/2017
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 1 (build 61)', folder: 'C:\Program Files\Keil\ARM\ARMCC\Bin'
 Build target 'MB_TCP_ADC'
-"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 0 Warning(s).
+compiling data_converter.c...
+../Inc/spi_adc.h(16): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\Src\data_converter.c(188): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  		 if(ChnCalibrValues.val_7_5A>=
+HANNEL_7_5A_MAX_VAL)
+..\Src\data_converter.c(190): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  					if(ChnCalibrValues.val_75A>=
+HANNEL_75A_MAX_VAL)
+..\Src\data_converter.c(192): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+  							if(ChnCalibrValues.val_150A>=
+HANNEL_150A_MAX_VAL)
+..\Src\data_converter.c(59): warning:  #177-D: variable "out5" was declared but never referenced
+  	union wordfield out1, out2, out3, out4, out5, out6, out7, out8;
+..\Src\data_converter.c(59): warning:  #177-D: variable "out6" was declared but never referenced
+  	union wordfield out1, out2, out3, out4, out5, out6, out7, out8;
+..\Src\data_converter.c(59): warning:  #177-D: variable "out7" was declared but never referenced
+  	union wordfield out1, out2, out3, out4, out5, out6, out7, out8;
+..\Src\data_converter.c(59): warning:  #177-D: variable "out8" was declared but never referenced
+  	union wordfield out1, out2, out3, out4, out5, out6, out7, out8;
+..\Src\data_converter.c: 8 warnings, 0 errors
+linking...
+Program Size: Code=94924 RO-data=1808 RW-data=1128 ZI-data=216784  
+FromELF: creating hex file...
+"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 8 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -45,7 +69,7 @@ Package Vendor: ARM
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.0.1
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:06
 </pre>
 </body>
 </html>

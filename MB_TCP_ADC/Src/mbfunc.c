@@ -128,10 +128,10 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 				usRegInputBuf[ADC_CHANNEL_5_RAW]=ChnCalibrValues.val_chn5_raw;
 			
 			
-				Float_To_UINT16_Buf(ChnCalibrValues.val_250A, &usRegInputBuf[ADC_CHANNEL_0_RESULT]);
-				Float_To_UINT16_Buf(ChnCalibrValues.val_150A, &usRegInputBuf[ADC_CHANNEL_1_RESULT]);			
-				Float_To_UINT16_Buf(ChnCalibrValues.val_75A, &usRegInputBuf[ADC_CHANNEL_2_RESULT]);			
-				Float_To_UINT16_Buf(ChnCalibrValues.val_7_5A, &usRegInputBuf[ADC_CHANNEL_3_RESULT]);			
+				Float_To_UINT16_Buf(ChnCalibrValues.val_7_5A, &usRegInputBuf[ADC_CHANNEL_0_RESULT]);
+				Float_To_UINT16_Buf(ChnCalibrValues.val_75A, &usRegInputBuf[ADC_CHANNEL_1_RESULT]);			
+				Float_To_UINT16_Buf(ChnCalibrValues.val_150A, &usRegInputBuf[ADC_CHANNEL_2_RESULT]);			
+				Float_To_UINT16_Buf(ChnCalibrValues.val_250A, &usRegInputBuf[ADC_CHANNEL_3_RESULT]);			
 				Float_To_UINT16_Buf(ChnCalibrValues.val_voltage_1, &usRegInputBuf[ADC_CHANNEL_4_RESULT]);			
 				Float_To_UINT16_Buf(ChnCalibrValues.val_voltage_2, &usRegInputBuf[ADC_CHANNEL_5_RESULT]);
 				
