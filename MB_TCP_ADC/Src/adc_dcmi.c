@@ -20,19 +20,18 @@ extern TIM_HandleTypeDef htim5;
 
 
 #define RX_BUFF_SIZE	ADC_DCMI_BUF_LEN
-__IO uint8_t DCMIAdcRxBuff[RX_BUFF_SIZE];//__attribute__((at(0x20008000)));
+__IO uint8_t DCMIAdcRxBuff[RX_BUFF_SIZE];
 
 
 uint8_t *ADC_DCMI_buf_pnt;
-uint64_t timestamp=0;
+uint64_t lastDCMITimestamp=0;
 
 SemaphoreHandle_t xAdcBuf_Send_Semaphore=NULL;
 QueueHandle_t xADC_MB_Queue;
 
 extern sConfigInfo configInfo;
 
-uint32_t counter_DMA_half=0;
-uint32_t counter_DMA_full=0;
+
 
 
 void DCMI_DMA_HalfTransferCallback(void);
@@ -41,6 +40,7 @@ void DCMI_DMA_TransferCallback(void);
 
 void DCMI_ADC_Init(void)
 {
+	ADC_DCMI_buf_pnt=&DCMIAdcRxBuff[0];
 	//Set mode and format of data
 	//Mode -HI SPEED MODE=00
 	 HAL_GPIO_WritePin(GPIO0_ADC_GPIO_Port, GPIO0_ADC_Pin, GPIO_PIN_RESET);
@@ -85,48 +85,47 @@ void DCMI_ADC_SetSamplerate(enADCSamplerate sampleRate)
 		}
 		break;
 		
-		case ADC_SAMPLERATE_10KHz:
-		{
-				htim2.Init.Prescaler = 0;
-				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_10KHz;
-				period=(uint16_t)((108000000/10000)-1);
-		}
-		break;
-		
-		case ADC_SAMPLERATE_20KHz:
-		{
-			htim2.Init.Prescaler = 0;
-			configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_20KHz;
-			period=(uint16_t)((108000000/20000)-1);
-		}
-		break;
+//		case ADC_SAMPLERATE_10KHz:
+//		{
+//				htim2.Init.Prescaler = 0;
+//				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_10KHz;
+//				period=(uint16_t)((108000000/10000)-1);
+//		}
+//		break;
+//		
+//		case ADC_SAMPLERATE_20KHz:
+//		{
+//			htim2.Init.Prescaler = 0;
+//			configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_20KHz;
+//			period=(uint16_t)((108000000/20000)-1);
+//		}
+//		break;
 
-		case ADC_SAMPLERATE_50KHz:
-		{
-				htim2.Init.Prescaler = 0;
-				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_50KHz;
-				period=(uint16_t)((108000000/50000)-1);
-		}
-		break;
+//		case ADC_SAMPLERATE_50KHz:
+//		{
+//				htim2.Init.Prescaler = 0;
+//				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_50KHz;
+//				period=(uint16_t)((108000000/50000)-1);
+//		}
+//		break;
 
-		case ADC_SAMPLERATE_100KHz:
-		{
-				htim2.Init.Prescaler = 0;
-				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_100KHz;
-				period=(uint16_t)((108000000/100000)-1);
-		}
-		break;		
+//		case ADC_SAMPLERATE_100KHz:
+//		{
+//				htim2.Init.Prescaler = 0;
+//				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_100KHz;
+//				period=(uint16_t)((108000000/100000)-1);
+//		}
+//		break;		
 		
 		default:
 		{
-				htim2.Init.Prescaler = 10;
+				htim2.Init.Prescaler = 10-1;
 				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_1KHz;
 				period=(uint16_t)((108000000/10000)-1);
 		}
 	}
 	
   htim2.Instance = TIM2;
-//  htim2.Init.Prescaler = 0;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim2.Init.Period = (uint16_t)(period*configInfo.ConfigADC.freqCorrectionFactor);
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -140,7 +139,7 @@ uint32_t DCMI_ADC_GetSamplerate(void)
 
 uint64_t DCMI_ADC_GetLastTimestamp(void)
 {
-	return timestamp;
+	return lastDCMITimestamp;
 }
 
 uint64_t DCMI_ADC_GetCurrentTimestamp(void)
@@ -154,7 +153,7 @@ void DCMI_ADC_ResetTimestamp(void)
 		__HAL_DMA_DISABLE(&hdma_dcmi);  
 		TIM5->CNT=0;
 		TIM4->CNT=0;
-		timestamp=0;
+		lastDCMITimestamp=0;
 	  HAL_DCMI_Start_DMA(&hdcmi,DCMI_MODE_CONTINUOUS,(uint32_t)DCMIAdcRxBuff,RX_BUFF_SIZE>>2);	
 		__HAL_DMA_ENABLE(&hdma_dcmi); 
 }
@@ -174,9 +173,8 @@ void DCMI_DMA_HalfTransferCallback(void)
 		static portBASE_TYPE xHigherPriorityTaskWoken;
     xHigherPriorityTaskWoken = pdFALSE;
 	
-		timestamp=((((uint64_t)(TIM5->CNT))<<16)|TIM4->CNT);
+		lastDCMITimestamp=((((uint64_t)(TIM5->CNT))<<16)|TIM4->CNT);
 		ADC_DCMI_buf_pnt=&DCMIAdcRxBuff[0];
-		counter_DMA_half++;
 		xSemaphoreGiveFromISR( xAdcBuf_Send_Semaphore, &xHigherPriorityTaskWoken );
 	
 	  if( xHigherPriorityTaskWoken == pdTRUE )
@@ -190,9 +188,8 @@ void DCMI_DMA_TransferCallback(void)
 		static portBASE_TYPE xHigherPriorityTaskWoken;
     xHigherPriorityTaskWoken = pdFALSE;
 	
-		timestamp=((((uint64_t)(TIM5->CNT))<<16)|TIM4->CNT);
+		lastDCMITimestamp=((((uint64_t)(TIM5->CNT))<<16)|TIM4->CNT);
 	  ADC_DCMI_buf_pnt=&DCMIAdcRxBuff[ADC_DCMI_BUF_LEN>>1];
-		counter_DMA_full++;
 		xSemaphoreGiveFromISR( xAdcBuf_Send_Semaphore, &xHigherPriorityTaskWoken);
 	
 		if( xHigherPriorityTaskWoken == pdTRUE )

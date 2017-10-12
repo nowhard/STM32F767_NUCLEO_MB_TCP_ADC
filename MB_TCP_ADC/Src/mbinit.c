@@ -10,8 +10,6 @@
 
 #define MB_TCP_CLIENT_NUM					2
 
-//static uint8_t Vendor[] = "GEOS";
-
 stMBContext stTCPContext[MB_TCP_CLIENT_NUM];
 
 void MB_TCP_Task(void *pvParameters);
@@ -19,14 +17,14 @@ void MB_TCP_Task(void *pvParameters);
 
 void MB_TCP_Init(void)
 {
-	uint8_t context_cnt=0;
+	uint8_t contextCnt=0;
 	
-	for(context_cnt=0;context_cnt<MB_TCP_CLIENT_NUM;context_cnt++)
+	for(contextCnt=0;contextCnt<MB_TCP_CLIENT_NUM;contextCnt++)
 	{
-	eMBTCPInit(&stTCPContext[context_cnt],0);
-	eMBEnable(&stTCPContext[context_cnt]);
+			eMBTCPInit(&stTCPContext[contextCnt],0);
+			eMBEnable(&stTCPContext[contextCnt]);
 
-	xTaskCreate(MB_TCP_Task, "MB TCP Task", MB_TCP_TASK_STACK_SIZE, (void*)&stTCPContext[context_cnt], MB_TCP_TASK_PRIO, ( TaskHandle_t * ) NULL);
+			xTaskCreate(MB_TCP_Task, "MB TCP Task", MB_TCP_TASK_STACK_SIZE, (void*)&stTCPContext[contextCnt], MB_TCP_TASK_PRIO, ( TaskHandle_t * ) NULL);
 	}
 }
 

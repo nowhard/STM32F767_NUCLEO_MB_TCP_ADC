@@ -46,7 +46,7 @@ typedef struct
 #define UDP_BASE_PACKET_SIZE				(sizeof(enUDPPacketType)+sizeof(uint8_t)+sizeof(uint64_t)+UDP_BASE_DATA_SIZE)		
 #define UDP_PYRO_MAX_PACKET_SIZE		(sizeof(enUDPPacketType)+sizeof(uint8_t)+sizeof(uint64_t)+sizeof(stADCPyroPacket))		
 
-void udp_client_init(void);
+void UDP_Send_Init(void);
 
 
 #endif

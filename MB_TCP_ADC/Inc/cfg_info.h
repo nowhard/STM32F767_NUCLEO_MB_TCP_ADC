@@ -58,7 +58,6 @@ typedef struct
 typedef struct 
 {
 	char Label[16];           
-	sIPAddress IPAdress_Client;
 	sIPAddress IPAdress_Server;
 	sConfigADC ConfigADC;
 } sConfigInfo;

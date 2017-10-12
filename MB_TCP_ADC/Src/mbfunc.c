@@ -13,6 +13,7 @@
 #include "mbmasterpyro.h"
 #include "utilities.h"
 #include "spi_adc.h"
+#include "string.h"
 
 /* ----------------------- Defines ------------------------------------------*/
 #define REG_INPUT_START         1001
@@ -89,8 +90,7 @@ extern stChnCalibrValues ChnCalibrValues;
 
 stTCPtoRTURegWrite TCPtoRTURegWrite;
 
-extern uint32_t counter_DMA_half;
-extern uint32_t counter_DMA_full;
+
 extern uint32_t udp_send_counter;
 extern eMBMasterReqErrCode    MB_Master_ErrorCode;
 
@@ -113,7 +113,6 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 {
     eMBErrorCode    eStatus = MB_ENOERR;
     int             iRegIndex;
-    uint8_t i=0;
 		uint64_t temp=0;
 
     if( ( usAddress >= REG_INPUT_START )

@@ -18,13 +18,6 @@ typedef enum
   DISCR_OUT_ENABLE
 }enDiscrOutState;
 
-//typedef enum 
-//{
-//	DISCR_OUT_TRANSFER_BUSY=0,
-//	DISCR_OUT_TRANSFER_COMPLETE,
-//}enDiscrOutTransferState;
-
-
 
 
 uint8_t 	discrOutSequenceProgress=0;
@@ -82,7 +75,6 @@ void DiscretOutputs_Set(uint64_t discrOut)
 }
 
 
-//static stSetSequenceParams SetSequenceParams;
 
 uint8_t DiscretOutputs_StartSequence(void)
 {
@@ -95,7 +87,7 @@ uint8_t DiscretOutputs_StartSequence(void)
 
 void DiscretOutputs_SetSequence_Task( void *pvParameters )
 {
-	uint16_t i=0;
+	uint16_t cyclesCnt=0;
 	stSetSequenceParams *taskParams;
 
 	while(1)
@@ -107,14 +99,14 @@ void DiscretOutputs_SetSequence_Task( void *pvParameters )
 
 			if(IS_DISCR_OUT_TIME(taskParams->time) && IS_DISCR_OUT_NUM_CYCLES(taskParams->num_cycles))
 			{
-					for(i=0;i<taskParams->num_cycles;i++)
+					for(cyclesCnt=0;cyclesCnt<taskParams->num_cycles;cyclesCnt++)
 					{
-						discrOutTempReg=taskParams->state_1;
-						DiscretOutputs_Set(taskParams->state_1);
-						vTaskDelay(taskParams->time);
-						discrOutTempReg=taskParams->state_2;
-						DiscretOutputs_Set(taskParams->state_2);
-						vTaskDelay(taskParams->time);
+							discrOutTempReg=taskParams->state_1;
+							DiscretOutputs_Set(taskParams->state_1);
+							vTaskDelay(taskParams->time);
+							discrOutTempReg=taskParams->state_2;
+							DiscretOutputs_Set(taskParams->state_2);
+							vTaskDelay(taskParams->time);
 					}
 					discrOutTempReg=taskParams->state_end;
 					DiscretOutputs_Set(taskParams->state_end);

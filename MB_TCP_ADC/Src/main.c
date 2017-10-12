@@ -49,7 +49,6 @@
 /* USER CODE BEGIN Includes */
 #include "mbinit.h"
 #include "udp_send.h"
-//#include "tcp_send.h"
 #include "adc_dcmi.h"
 #include "cfg_info.h"
 #include "discret_out.h"
@@ -81,15 +80,15 @@ DMA_HandleTypeDef hdma_usart1_rx;
 DMA_HandleTypeDef hdma_usart1_tx;
 
 osThreadId defaultTaskHandle;
-osThreadId SPI_ADC_TaskHandle;
-osMessageQId ADC_SPI3_QueueHandle;
-osMessageQId ADC_SPI6_QueueHandle;
+//osThreadId SPI_ADC_TaskHandle;
+//osMessageQId ADC_SPI3_QueueHandle;
+//osMessageQId ADC_SPI6_QueueHandle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 
-extern __IO uint8_t DCMIAdcRxBuff[ADC_DCMI_BUF_LEN];
-extern uint8_t *ADC_DCMI_buf_pnt;
+//extern __IO uint8_t DCMIAdcRxBuff[ADC_DCMI_BUF_LEN];
+//extern uint8_t *ADC_DCMI_buf_pnt;
 
 /* USER CODE END PV */
 
@@ -110,7 +109,7 @@ static void MX_TIM9_Init(void);
 static void MX_SPI5_Init(void);
 static void MX_TIM6_Init(void);
 void StartDefaultTask(void const * argument);
-void StartSPI_ADC_Task(void const * argument);
+//void StartSPI_ADC_Task(void const * argument);
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
                                 
@@ -164,10 +163,9 @@ int main(void)
   MX_TIM6_Init();
 
   /* USER CODE BEGIN 2 */
-	ConfigInfoRead ();
+	ConfigInfoRead();
 	Jumpers_ReadSettings();
 	DiscretOutputs_Init();
-
 	DCMI_ADC_Init();
  
   /* USER CODE END 2 */
@@ -190,8 +188,8 @@ int main(void)
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* definition and creation of SPI_ADC_Task */
-  osThreadDef(SPI_ADC_Task, StartSPI_ADC_Task, osPriorityNormal, 0, 256);
-  SPI_ADC_TaskHandle = osThreadCreate(osThread(SPI_ADC_Task), NULL);
+//  osThreadDef(SPI_ADC_Task, StartSPI_ADC_Task, osPriorityNormal, 0, 256);
+//  SPI_ADC_TaskHandle = osThreadCreate(osThread(SPI_ADC_Task), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -199,12 +197,12 @@ int main(void)
 
   /* Create the queue(s) */
   /* definition and creation of ADC_SPI3_Queue */
-  osMessageQDef(ADC_SPI3_Queue, 32, uint16_t);
-  ADC_SPI3_QueueHandle = osMessageCreate(osMessageQ(ADC_SPI3_Queue), NULL);
+//  osMessageQDef(ADC_SPI3_Queue, 32, uint16_t);
+//  ADC_SPI3_QueueHandle = osMessageCreate(osMessageQ(ADC_SPI3_Queue), NULL);
 
-  /* definition and creation of ADC_SPI6_Queue */
-  osMessageQDef(ADC_SPI6_Queue, 32, uint16_t);
-  ADC_SPI6_QueueHandle = osMessageCreate(osMessageQ(ADC_SPI6_Queue), NULL);
+//  /* definition and creation of ADC_SPI6_Queue */
+//  osMessageQDef(ADC_SPI6_Queue, 32, uint16_t);
+//  ADC_SPI6_QueueHandle = osMessageCreate(osMessageQ(ADC_SPI6_Queue), NULL);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
@@ -212,7 +210,7 @@ int main(void)
 		//HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
 		HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_2);
 		HAL_TIM_Base_Start_IT(&htim9);
-//		HAL_DCMI_Start_DMA(&hdcmi,DCMI_MODE_CONTINUOUS,(uint32_t)DCMIAdcRxBuff,ADC_DCMI_BUF_LEN);
+
   /* USER CODE END RTOS_QUEUES */
  
 
@@ -901,13 +899,9 @@ void StartDefaultTask(void const * argument)
   /* USER CODE BEGIN 5 */
 	MB_TCP_Init();
 	MBMaster_RTU_Init();
-	udp_client_init();
+	UDP_Send_Init();
+	vTaskDelete(NULL);
 
-
-  for(;;)
-  {
-    osDelay(1000);
-  }
   /* USER CODE END 5 */ 
 }
 
@@ -916,10 +910,10 @@ __weak void StartSPI_ADC_Task(void const * argument)
 {
   /* USER CODE BEGIN StartSPI_ADC_Task */
   /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
+//  for(;;)
+//  {
+//    osDelay(1);
+//  }
   /* USER CODE END StartSPI_ADC_Task */
 }
 

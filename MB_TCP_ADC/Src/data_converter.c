@@ -5,13 +5,18 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
-#pragma anon_unions
+
 
 #define CHANNEL_250A_MAX_VAL	250.0
 #define CHANNEL_150A_MAX_VAL	150.0
 #define CHANNEL_75A_MAX_VAL		75.0
 #define CHANNEL_7_5A_MAX_VAL	7.5
 
+extern uint8_t *ADC_DCMI_buf_pnt;
+extern uint16_t *currentSPI3_ADC_Buf;
+extern uint16_t *currentSPI6_ADC_Buf;
+
+#pragma anon_unions
 union bytefield{
 	struct{
 	uint_fast8_t b0:1;
@@ -53,16 +58,53 @@ stChnCalibrValues ChnCalibrValues;
 float ADC_CurrentChannelsConvolution(void);
 float ADC_GetCalibrateValue(uint8_t channel, uint16_t value);
 
-void ADC_ConvertBuf(uint8_t *dcmiBuf,uint16_t dcmiBufLen, uint16_t *spiBuf_1, uint16_t *spiBuf_2, uint16_t spiBufLen,float *resultBuf,uint16_t *resultBufLen)
+
+
+inline float ADC_CurrentChannelsConvolution(void)//свертка токовых каналов
 {
+	 if(ChnCalibrValues.val_7_5A>=CHANNEL_7_5A_MAX_VAL)
+	 {
+				if(ChnCalibrValues.val_75A>=CHANNEL_75A_MAX_VAL)
+				{
+						if(ChnCalibrValues.val_150A>=CHANNEL_150A_MAX_VAL)
+						{
+								return ChnCalibrValues.val_250A;
+						}	
+						else
+						{
+								return ChnCalibrValues.val_75A;
+						}
+				}	
+				else
+				{
+						return ChnCalibrValues.val_75A;
+				}
+		}	
+		else
+		{
+				return ChnCalibrValues.val_7_5A;
+		}
+}
 
-	uint16_t cycle_count;
 
+inline float ADC_GetCalibrateValue(uint8_t channel, uint16_t value)
+{
+	return (configInfo.ConfigADC.calibrChannel[channel].k*value+configInfo.ConfigADC.calibrChannel[channel].b);		 
+}
+
+
+void ADC_ConvertDCMIAndAssembleUDPBuf(float *resultBuf, uint16_t *resultBufLen)
+{
+	uint16_t cycleCount;
+	uint8_t *dcmiBuf=ADC_DCMI_buf_pnt;
+	uint16_t *spiBuf_1=currentSPI6_ADC_Buf;
+	uint16_t *spiBuf_2=currentSPI3_ADC_Buf;
+	const uint16_t dcmiHalfBufLen=(ADC_DCMI_BUF_LEN>>1);
 	union bytefield byte;
 	union wordfield out1, out2, out3, out4, out5, out6, out7, out8;
 	
 	
-	for(cycle_count=0;cycle_count<(dcmiBufLen>>4);cycle_count++)
+	for(cycleCount=0;cycleCount<(dcmiHalfBufLen/ADC_DCMI_NUM_BITS);cycleCount++)
 	{
 			byte.val=dcmiBuf[0];
 			out1.b0=byte.b0;
@@ -175,68 +217,32 @@ void ADC_ConvertBuf(uint8_t *dcmiBuf,uint16_t dcmiBufLen, uint16_t *spiBuf_1, ui
 			out3.b15=byte.b2;
 			out4.b15=byte.b3;
 
-
-		  uint8_t offset=0;
-			
+			dcmiBuf+=ADC_DCMI_NUM_BITS;
+		  		
 			ChnCalibrValues.val_chn0_raw=out1.val;
 			ChnCalibrValues.val_chn1_raw=out2.val;
 			ChnCalibrValues.val_chn2_raw=out3.val;
 			ChnCalibrValues.val_chn3_raw=out4.val;
+			ChnCalibrValues.val_chn4_raw=spiBuf_1[cycleCount/SPI_ADC_FREQ_DIV]&0xFFFF;
+			ChnCalibrValues.val_chn5_raw=spiBuf_2[cycleCount/SPI_ADC_FREQ_DIV]&0xFFFF;
 			
 			ChnCalibrValues.val_7_5A=ADC_GetCalibrateValue(0,(out1.val&0xFFFF));
 			ChnCalibrValues.val_75A	=ADC_GetCalibrateValue(1,(out2.val&0xFFFF));
 			ChnCalibrValues.val_150A=ADC_GetCalibrateValue(2,(out3.val&0xFFFF));
 			ChnCalibrValues.val_250A=ADC_GetCalibrateValue(3,(out4.val&0xFFFF));
-		
+			ChnCalibrValues.val_voltage_1= ADC_GetCalibrateValue(4,(spiBuf_1[cycleCount/SPI_ADC_FREQ_DIV]&0xFFFF));
+			ChnCalibrValues.val_voltage_2= ADC_GetCalibrateValue(5,(spiBuf_2[cycleCount/SPI_ADC_FREQ_DIV]&0xFFFF));
+			
 			ChnCalibrValues.val_current=ADC_CurrentChannelsConvolution();
 
-			
-			*(resultBuf+offset)=ChnCalibrValues.val_current;
-			offset++;
-						
-			ChnCalibrValues.val_chn4_raw=spiBuf_1[cycle_count/SPI_ADC_FREQ_DIV]&0xFFFF;
-			ChnCalibrValues.val_chn5_raw=spiBuf_2[cycle_count/SPI_ADC_FREQ_DIV]&0xFFFF;
-			
-			ChnCalibrValues.val_voltage_1=*(resultBuf+offset)= ADC_GetCalibrateValue(4,(spiBuf_1[cycle_count/SPI_ADC_FREQ_DIV]&0xFFFF));
-			offset++;
-			ChnCalibrValues.val_voltage_2=*(resultBuf+offset)= ADC_GetCalibrateValue(5,(spiBuf_2[cycle_count/SPI_ADC_FREQ_DIV]&0xFFFF));
-			offset++;
-		
-			dcmiBuf+=16;
 
-			resultBuf+=ADC_UDP_CHN_NUM;	
+			*resultBuf=ChnCalibrValues.val_current;
+			resultBuf++;
+			*resultBuf=ChnCalibrValues.val_voltage_1;
+			resultBuf++;
+			*resultBuf=ChnCalibrValues.val_voltage_2;
+			resultBuf++;	
 	}
 	
-	*resultBufLen=cycle_count*ADC_UDP_CHN_NUM;
-}
-
-inline float ADC_CurrentChannelsConvolution(void)//свертка токовых каналов
-{
-	 if(ChnCalibrValues.val_7_5A>=CHANNEL_7_5A_MAX_VAL)
-	 {
-				if(ChnCalibrValues.val_75A>=CHANNEL_75A_MAX_VAL)
-				{
-						if(ChnCalibrValues.val_150A>=CHANNEL_150A_MAX_VAL)
-						{
-								return ChnCalibrValues.val_250A;
-						}	
-						else
-						{
-								return ChnCalibrValues.val_75A;
-						}
-				}	
-				else
-				{
-						return ChnCalibrValues.val_75A;
-				}
-		}	
-		else
-		{
-				return ChnCalibrValues.val_7_5A;
-		}
-}
-
-inline float ADC_GetCalibrateValue(uint8_t channel, uint16_t value)
-{
-	return (configInfo.ConfigADC.calibrChannel[channel].k*value+configInfo.ConfigADC.calibrChannel[channel].b);		 
+	*resultBufLen=cycleCount*ADC_UDP_CHN_NUM;	
 }

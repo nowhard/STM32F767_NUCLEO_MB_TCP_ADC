@@ -9,8 +9,8 @@
 extern SPI_HandleTypeDef hspi3;
 extern SPI_HandleTypeDef hspi6;
 
-static uint8_t spi3_buf[3];
-static uint8_t spi6_buf[3];
+static uint8_t spi3_DMA_buf[3];
+static uint8_t spi6_DMA_buf[3];
 
 
 
@@ -25,8 +25,8 @@ void SPI_ADC_TimerCallback(void)
 {
 		HAL_GPIO_WritePin(AIR_CS_GPIO_Port, AIR_CS_Pin, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(U_CS_GPIO_Port, U_CS_Pin, GPIO_PIN_RESET);
-		HAL_SPI_Receive_DMA(&hspi3, spi3_buf, 3);
-		HAL_SPI_Receive_DMA(&hspi6, spi6_buf, 3);
+		HAL_SPI_Receive_DMA(&hspi3, spi3_DMA_buf, 3);
+		HAL_SPI_Receive_DMA(&hspi6, spi6_DMA_buf, 3);
 }
 
 void SPI_ADC_ResetIndex(void)
@@ -39,7 +39,7 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
 {
 	if(hspi->Instance==SPI3)
 	{
-			SPI3_ADC_Buf.buf[SPI3_ADC_Buf.index]=(((uint16_t)spi3_buf[1])<<8)|((uint16_t)spi3_buf[2]);
+			SPI3_ADC_Buf.buf[SPI3_ADC_Buf.index]=(((uint16_t)spi3_DMA_buf[1])<<8)|((uint16_t)spi3_DMA_buf[2]);
 			SPI3_ADC_Buf.index++;
 			if(SPI3_ADC_Buf.index==SPI_ADC_BUF_LEN)
 			{
@@ -55,7 +55,7 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
 	}
 	else if(hspi->Instance==SPI6)
 	{
-			SPI6_ADC_Buf.buf[SPI6_ADC_Buf.index]=(((uint16_t)spi6_buf[1])<<8)|((uint16_t)spi6_buf[2]);
+			SPI6_ADC_Buf.buf[SPI6_ADC_Buf.index]=(((uint16_t)spi6_DMA_buf[1])<<8)|((uint16_t)spi6_DMA_buf[2]);
 			SPI6_ADC_Buf.index++;
 			if(SPI6_ADC_Buf.index==SPI_ADC_BUF_LEN)
 			{

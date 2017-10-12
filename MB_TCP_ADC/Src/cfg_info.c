@@ -18,7 +18,6 @@
 //****************************************************************************
 const sConfigInfo configInfoHard = {
 	LABEL_CFG_SECTOR,	// Поле не убирать! Метка активного сектора!
-	{IP_ADDR0,IP_ADDR1,IP_ADDR2,IP_ADDR3,0},
 	{SERVER_IP_ADDR0,SERVER_IP_ADDR1,SERVER_IP_ADDR2,SERVER_IP_ADDR3,SERVER_PORT},
 	{0xFF,ADC_SAMPLERATE_1KHz,1.0,{{1.0,0.0},{1.0,0.0},{1.0,0.0},{1.0,0.0},{1.0,0.0},{1.0,0.0}}}
 };
