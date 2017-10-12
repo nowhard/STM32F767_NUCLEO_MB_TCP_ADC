@@ -19,11 +19,11 @@ extern TIM_HandleTypeDef htim4;
 extern TIM_HandleTypeDef htim5;
 
 
-#define RX_BUFF_SIZE	ADC_BUF_LEN
+#define RX_BUFF_SIZE	ADC_DCMI_BUF_LEN
 __IO uint8_t DCMIAdcRxBuff[RX_BUFF_SIZE];//__attribute__((at(0x20008000)));
 
 
-uint8_t *ADC_buf_pnt;
+uint8_t *ADC_DCMI_buf_pnt;
 uint64_t timestamp=0;
 
 SemaphoreHandle_t xAdcBuf_Send_Semaphore=NULL;
@@ -175,7 +175,7 @@ void DCMI_DMA_HalfTransferCallback(void)
     xHigherPriorityTaskWoken = pdFALSE;
 	
 		timestamp=((((uint64_t)(TIM5->CNT))<<16)|TIM4->CNT);
-		ADC_buf_pnt=&DCMIAdcRxBuff[0];
+		ADC_DCMI_buf_pnt=&DCMIAdcRxBuff[0];
 		counter_DMA_half++;
 		xSemaphoreGiveFromISR( xAdcBuf_Send_Semaphore, &xHigherPriorityTaskWoken );
 	
@@ -191,7 +191,7 @@ void DCMI_DMA_TransferCallback(void)
     xHigherPriorityTaskWoken = pdFALSE;
 	
 		timestamp=((((uint64_t)(TIM5->CNT))<<16)|TIM4->CNT);
-	  ADC_buf_pnt=&DCMIAdcRxBuff[ADC_BUF_LEN>>1];
+	  ADC_DCMI_buf_pnt=&DCMIAdcRxBuff[ADC_DCMI_BUF_LEN>>1];
 		counter_DMA_full++;
 		xSemaphoreGiveFromISR( xAdcBuf_Send_Semaphore, &xHigherPriorityTaskWoken);
 	

@@ -12,6 +12,7 @@
 #include "system_reset.h"
 #include "mbmasterpyro.h"
 #include "utilities.h"
+#include "spi_adc.h"
 
 /* ----------------------- Defines ------------------------------------------*/
 #define REG_INPUT_START         1001
@@ -71,7 +72,7 @@ static USHORT   usRegInputBuf[REG_INPUT_NREGS];
 static USHORT   usRegHoldingStart = REG_HOLDING_START;
 static USHORT   usRegHoldingBuf[REG_HOLDING_NREGS];
 
-extern float ADC_resultBuf[ADC_RESULT_BUF_LEN];
+extern float ADC_resultBuf[ADC_DCMI_RESULT_BUF_LEN];
 extern SemaphoreHandle_t	xMBSaveSettingsSemaphore;
 
 /*-----------------------Pyro squib vars-------------------------------------*/
@@ -587,6 +588,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												{
 														if(usRegHoldingBuf[ADC_STARTED])
 														{
+																SPI_ADC_ResetIndex();
 																DCMI_ADC_Clock_Start();
 																BaseADC_Started_Flag=1;
 														}

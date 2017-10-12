@@ -88,8 +88,8 @@ osMessageQId ADC_SPI6_QueueHandle;
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 
-extern __IO uint8_t DCMIAdcRxBuff[ADC_BUF_LEN];
-extern uint8_t *ADC_buf_pnt;
+extern __IO uint8_t DCMIAdcRxBuff[ADC_DCMI_BUF_LEN];
+extern uint8_t *ADC_DCMI_buf_pnt;
 
 /* USER CODE END PV */
 
@@ -212,7 +212,7 @@ int main(void)
 		//HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
 		HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_2);
 		HAL_TIM_Base_Start_IT(&htim9);
-//		HAL_DCMI_Start_DMA(&hdcmi,DCMI_MODE_CONTINUOUS,(uint32_t)DCMIAdcRxBuff,ADC_BUF_LEN);
+//		HAL_DCMI_Start_DMA(&hdcmi,DCMI_MODE_CONTINUOUS,(uint32_t)DCMIAdcRxBuff,ADC_DCMI_BUF_LEN);
   /* USER CODE END RTOS_QUEUES */
  
 
@@ -627,7 +627,7 @@ static void MX_TIM9_Init(void)
   htim9.Instance = TIM9;
   htim9.Init.Prescaler = 0;
   htim9.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim9.Init.Period = 4;
+  htim9.Init.Period = 4-1;
   htim9.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim9.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim9) != HAL_OK)

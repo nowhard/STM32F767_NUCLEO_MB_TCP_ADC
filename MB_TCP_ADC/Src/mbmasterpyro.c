@@ -1,4 +1,5 @@
 #include "mbmasterpyro.h"
+#include "main.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "mb.h"
@@ -94,7 +95,7 @@ void MBMaster_RTU_Poll(void *pvParameters)
 					vTaskPrioritySet(RTUTaskHandle,MB_RTU_TASK_PRIO+1);
 					do
 					{
-								vTaskDelayUntil( &xLastWakeTime, 1 );
+								vTaskDelayUntil( &xLastWakeTime, ADC_PYRO_SAMPLING_PERIOD );
 						
 								if( xSemaphoreTake( xMBRTUMutex, portMAX_DELAY ) == pdTRUE )
 								{
@@ -104,7 +105,9 @@ void MBMaster_RTU_Poll(void *pvParameters)
 
 								if(MB_Master_ErrorCode == MB_MRE_NO_ERR)
 								{
+										ADC_PyroBuf_Add((float*)&usMRegInBuf[0][REG_ADC_0]);//эмулируем 1мс опрос
 										ADC_PyroBuf_Add((float*)&usMRegInBuf[0][REG_ADC_0]);
+									
 										ADC_Pyro_Timestamp=DCMI_ADC_GetCurrentTimestamp();
 										ADCPyroBufState=ADC_PYRO_BUF_FILL_START;
 										read_err_cnt=0;

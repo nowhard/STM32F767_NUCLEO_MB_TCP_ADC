@@ -14,8 +14,8 @@ static uint8_t spi6_buf[3];
 
 
 
-stSPI_ADC_Buf SPI3_ADC_Buf;
-stSPI_ADC_Buf SPI6_ADC_Buf;
+stSPI_ADC_Buf SPI3_ADC_Buf={{0},0};
+stSPI_ADC_Buf SPI6_ADC_Buf={{0},0};
 
 uint16_t *currentSPI3_ADC_Buf;
 uint16_t *currentSPI6_ADC_Buf;
@@ -27,6 +27,12 @@ void SPI_ADC_TimerCallback(void)
 		HAL_GPIO_WritePin(U_CS_GPIO_Port, U_CS_Pin, GPIO_PIN_RESET);
 		HAL_SPI_Receive_DMA(&hspi3, spi3_buf, 3);
 		HAL_SPI_Receive_DMA(&hspi6, spi6_buf, 3);
+}
+
+void SPI_ADC_ResetIndex(void)
+{
+		SPI3_ADC_Buf.index=0;
+		SPI6_ADC_Buf.index=0;
 }
 
 void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)

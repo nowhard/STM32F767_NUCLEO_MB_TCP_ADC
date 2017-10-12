@@ -27,8 +27,8 @@ ip_addr_t DestIPaddr;
 extern ip4_addr_t ipaddr;
 
 
-extern uint8_t *ADC_buf_pnt;
-extern __IO uint8_t DCMIAdcRxBuff[ADC_BUF_LEN];
+extern uint8_t *ADC_DCMI_buf_pnt;
+extern __IO uint8_t DCMIAdcRxBuff[ADC_DCMI_BUF_LEN];
 
 extern uint16_t *currentSPI3_ADC_Buf;
 extern uint16_t *currentSPI6_ADC_Buf;
@@ -41,13 +41,16 @@ extern uint64_t ADC_Pyro_Timestamp;
 
 #define UDP_SEND_TASK_STACK_SIZE	1024
 #define UDP_SEND_TASK_PRIO				3
+
+#define UDP_SEND_INTERPACKAGE_PERIOD	1// ms
+
 void UDP_Send_Task( void *pvParameters );
 void udp_client_send_base_buf(float *buf, uint16_t bufSize);
 void udp_client_send_pyro_buf(void);
 
 stPacket UDPPacket;
 
-float ADC_resultBuf[ADC_RESULT_BUF_LEN];
+float ADC_resultBuf[ADC_DCMI_RESULT_BUF_LEN];
 
 
 int socket_fd;
@@ -56,7 +59,7 @@ struct sockaddr_in sa, ra;
 uint8_t socket_err=0;
 void udp_client_init(void)
 {
-	ADC_buf_pnt=DCMIAdcRxBuff;
+	ADC_DCMI_buf_pnt=DCMIAdcRxBuff;
 
   IP4_ADDR( &DestIPaddr, configInfo.IPAdress_Server.ip_addr_0, configInfo.IPAdress_Server.ip_addr_1, configInfo.IPAdress_Server.ip_addr_2, configInfo.IPAdress_Server.ip_addr_3 );
 
@@ -108,6 +111,7 @@ void udp_client_send_base_buf(float *buf, uint16_t bufSize)
 			sendto(socket_fd, &UDPPacket,UDP_BASE_PACKET_SIZE,0,(struct sockaddr*)&ra,sizeof(ra));			
 			adc_buf_offset+=UDP_BASE_DATA_SIZE;
 			UDPPacket.id++;
+			vTaskDelay(UDP_SEND_INTERPACKAGE_PERIOD);
 		}
 
 }
@@ -130,6 +134,7 @@ void udp_client_send_pyro_buf(void)
 			UDPPacket.ADCPyroPacket.size=data_size;
 			sendto(socket_fd, &UDPPacket,UDP_PYRO_MAX_PACKET_SIZE,0,(struct sockaddr*)&ra,sizeof(ra));				
 			UDPPacket.id++;
+			vTaskDelay(UDP_SEND_INTERPACKAGE_PERIOD);
 		}
 		data_size=0;
 	}
@@ -142,7 +147,7 @@ void UDP_Send_Task( void *pvParameters )
 	{
 		xSemaphoreTake( xAdcBuf_Send_Semaphore, portMAX_DELAY );
 		
-		ADC_ConvertBuf(ADC_buf_pnt,(ADC_BUF_LEN>>1),currentSPI6_ADC_Buf,currentSPI3_ADC_Buf,(SPI_ADC_BUF_LEN>>1),ADC_resultBuf, &result_buf_len);
+		ADC_ConvertBuf(ADC_DCMI_buf_pnt,(ADC_DCMI_BUF_LEN>>1),currentSPI6_ADC_Buf,currentSPI3_ADC_Buf,(SPI_ADC_BUF_LEN>>1),ADC_resultBuf, &result_buf_len);
 		udp_client_send_base_buf(ADC_resultBuf,result_buf_len);
 		udp_client_send_pyro_buf();
 	}

@@ -1,8 +1,9 @@
 #ifndef SPI_ADC_H
 #define SPI_ADC_H
 
-#define SPI_ADC_FREQ_DIV	4
-#define SPI_ADC_BUF_LEN	500
+#include "main.h"
+
+
 typedef struct 
 {
 	uint16_t buf[SPI_ADC_BUF_LEN];
@@ -11,6 +12,7 @@ typedef struct
 
 void SPI_ADC_TimerCallback(void);
 
-void SPI_ADC_Init(void);
+//void SPI_ADC_Init(void);
+void SPI_ADC_ResetIndex(void);
 
 #endif

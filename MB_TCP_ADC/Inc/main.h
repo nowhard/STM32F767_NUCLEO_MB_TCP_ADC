@@ -201,12 +201,12 @@
 /* USER CODE BEGIN Private defines */
 
 
-
+/*----------NET SETTINGS-------------------------*/
 
 #define IP_ADDR0   192
 #define IP_ADDR1   168
 #define IP_ADDR2   109
-#define IP_ADDR3   160
+#define IP_ADDR3   150
    
 /*NETMASK*/
 #define NETMASK_ADDR0   255
@@ -227,23 +227,26 @@
 
 #define SERVER_PORT		  1000
 
-#define ADC_DCMI_CHN_NUM	4
-#define ADC_SPI_CHN_NUM		2
 
-#define ADC_CHN_NUM 	6
-#define ADC_BUF_LEN 32000
+/*----------ADC SETTINGS-------------------------*/
+#define ADC_CHN_NUM 		6	//всего каналов ацп 
+#define ADC_UDP_CHN_NUM	3
 
-#define ANALOG_CHN_NUM	3
+//ADC DCMI
+#define ADC_DCMI_HW_CHN_NUM	8
+#define ADC_DCMI_BUF_LEN 		32000
+#define ADC_DCMI_RESULT_BUF_LEN (ADC_DCMI_BUF_LEN/4)
 
-#define ADC_DCMI_MAX_SAMPLERATE		100000
 
-#define MASTER_MACADDR0		0x70
-#define MASTER_MACADDR1		0x4D
-#define MASTER_MACADDR2		0x7B
-#define MASTER_MACADDR3		0x2A
-#define MASTER_MACADDR4		0x4F
-#define MASTER_MACADDR5		0x21
+//ADC SPI
+#define SPI_ADC_FREQ_DIV	4
+#define SPI_ADC_BUF_LEN		(((ADC_DCMI_BUF_LEN/sizeof(uint16_t))/ADC_DCMI_HW_CHN_NUM)/(SPI_ADC_FREQ_DIV))
 
+
+//ADC PYRO
+#define ADC_PYRO_SAMPLING_PERIOD	2// ms
+#define ADC_PYRO_CHN_NUM	8
+#define ADC_PYRO_FIFO_LEN	1024
 /* USER CODE END Private defines */
 
 /**

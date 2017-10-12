@@ -2,7 +2,7 @@
 #define ADC_DCMI_H
 
 #include "stm32f7xx.h"
-#define ADC_RESULT_BUF_LEN (ADC_BUF_LEN/4)
+#include "main.h"
 
 typedef enum
 {

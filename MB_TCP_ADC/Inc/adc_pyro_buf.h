@@ -2,9 +2,8 @@
 #define ADC_PYRO_BUF_H
 
 #include "stm32f7xx_hal.h"
+#include "main.h"
 
-#define ADC_PYRO_CHN_NUM	8
-#define ADC_PYRO_FIFO_LEN	512
 
 typedef enum
 {
