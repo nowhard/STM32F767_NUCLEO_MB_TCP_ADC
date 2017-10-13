@@ -27,19 +27,79 @@ Project File Date:  10/13/2017
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 1 (build 61)', folder: 'C:\Program Files\Keil\ARM\ARMCC\Bin'
 Build target 'MB_TCP_ADC'
-compiling udp_send.c...
+compiling utilities.c...
+../Inc/utilities.h(25): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\Src\utilities.c: 2 warnings, 0 errors
+  }
+compiling discret_out.c...
+../Inc/discret_out.h(26): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Inc/utilities.h(25): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\Src\discret_out.c(85): warning:  #940-D: missing return statement at end of non-void function "DiscretOutputs_StartSequence"
+  }
+..\Src\discret_out.c(123): warning:  #1-D: last line of file ends without a newline
+  }
+..\Src\discret_out.c: 4 warnings, 0 errors
+compiling mbfunc.c...
+../Inc/mbfunc.h(59): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Inc/discret_out.h(26): warning:  #1-D: last line of file ends without a newline
+  #endif
 ../Inc/adc_pyro_buf.h(23): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Inc/system_reset.h(6): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Inc/utilities.h(25): warning:  #1-D: last line of file ends without a newline
   #endif
 ../Inc/spi_adc.h(18): warning:  #1-D: last line of file ends without a newline
   #endif
-..\Src\udp_send.c(127): warning:  #1293-D: assignment in condition
-  		while(dataSize=ADC_PyroBuf_Copy((void *)UDPPacket.ADCPyroPacket.data,
-DP_PYRO_DATA_SIZE))
-..\Src\udp_send.c: 3 warnings, 0 errors
+../Inc/jumpers.h(21): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\Src\mbfunc.c(569): warning:  #188-D: enumerated type mixed with another type
+  															DCMI_ADC_SetSamplerate(usRegHoldingBuf[
+DC_SAMPLERATE]);
+..\Src\mbfunc.c(670): warning:  #188-D: enumerated type mixed with another type
+  														HAL_GPIO_WritePin(
+NABLE_OUT_1_GPIO_Port,
+NABLE_OUT_1_Pin,usRegHoldingBuf[
+EV_ENABLE_OUT_1]);
+..\Src\mbfunc.c(676): warning:  #188-D: enumerated type mixed with another type
+  														HAL_GPIO_WritePin(
+NABLE_OUT_7_GPIO_Port,
+NABLE_OUT_7_Pin,usRegHoldingBuf[
+EV_ENABLE_OUT_7]);
+..\Src\mbfunc.c(682): warning:  #188-D: enumerated type mixed with another type
+  														HAL_GPIO_WritePin(
+N_VCC_250_GPIO_Port,
+N_VCC_250_Pin,usRegHoldingBuf[
+EV_EN_VCC_250]);
+..\Src\mbfunc.c(688): warning:  #188-D: enumerated type mixed with another type
+  														HAL_GPIO_WritePin(
+N_VCC_150_GPIO_Port,
+N_VCC_150_Pin,usRegHoldingBuf[
+EV_EN_VCC_150]);
+..\Src\mbfunc.c(694): warning:  #188-D: enumerated type mixed with another type
+  														HAL_GPIO_WritePin(
+N_VCC_75_GPIO_Port,
+N_VCC_75_Pin,usRegHoldingBuf[
+EV_EN_VCC_75]);
+..\Src\mbfunc.c(700): warning:  #188-D: enumerated type mixed with another type
+  														HAL_GPIO_WritePin(
+N_VCC_7_5_GPIO_Port,
+N_VCC_7_5_Pin,usRegHoldingBuf[
+EV_EN_VCC_7_5]);
+..\Src\mbfunc.c(706): warning:  #188-D: enumerated type mixed with another type
+  														HAL_GPIO_WritePin(
+NABLE_AIR_GPIO_Port,
+NABLE_AIR_Pin,usRegHoldingBuf[
+EV_ENABLE_AIR]);
+..\Src\mbfunc.c: 15 warnings, 0 errors
 linking...
-Program Size: Code=94700 RO-data=1752 RW-data=1104 ZI-data=233168  
+Program Size: Code=94844 RO-data=1752 RW-data=1104 ZI-data=233168  
 FromELF: creating hex file...
-"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 3 Warning(s).
+"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 20 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -57,7 +117,7 @@ Package Vendor: ARM
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.0.1
-Build Time Elapsed:  00:00:07
+Build Time Elapsed:  00:00:13
 </pre>
 </body>
 </html>

@@ -29,7 +29,10 @@ static fd_set   allset;
 
 
 #define MB_TCP_CLIENT_STACK_SIZE	1024
+#define MB_TCP_CLIENT_TASK_PRIO		3
+
 #define MB_TCP_POOL_STACK_SIZE		512
+#define MB_TCP_POOL_TASK_PRIO			2
 
 
 
@@ -110,13 +113,13 @@ xMBTCPPortInit(stMBContext*	  stTCPContext, USHORT usTCPPort )
 				
 				listen(xListenSocket,5);
 				
-				xTaskCreate( xMBTCPPort_PoolTask, "MBTCP HANDLE", MB_TCP_POOL_STACK_SIZE, NULL , 2, NULL );
+				xTaskCreate( xMBTCPPort_PoolTask, "MBTCP HANDLE", MB_TCP_POOL_STACK_SIZE, NULL , MB_TCP_POOL_TASK_PRIO, NULL );
 		
 	 }	
 
 
 
-		xTaskCreate( xMBTCPPort_HandlingTask, "MBTCP HANDLE", MB_TCP_CLIENT_STACK_SIZE, (void*)stTCPContext, 3, NULL );
+		xTaskCreate( xMBTCPPort_HandlingTask, "MBTCP HANDLE", MB_TCP_CLIENT_STACK_SIZE, (void*)stTCPContext, MB_TCP_CLIENT_TASK_PRIO, NULL );
 
     return TRUE;
 }

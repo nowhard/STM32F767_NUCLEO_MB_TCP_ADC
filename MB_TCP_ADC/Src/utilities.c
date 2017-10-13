@@ -1,4 +1,5 @@
 #include "utilities.h"
+#include "math.h"
 
 typedef 		union 
 {
@@ -65,3 +66,15 @@ void UINT16_Buf_To_UINT64(uint16_t * buf, uint64_t *val)
 		conv.buf[3]=buf[3];			
 		*val=conv.val;
 }	
+
+uint8_t FloatCheckEquality(float a, float b, float epsilon)
+{
+		if(fabs(a - b) <= epsilon * fabs(a))
+		{
+				return TRUE;
+		}
+		else
+		{
+				return FALSE;
+		}
+}

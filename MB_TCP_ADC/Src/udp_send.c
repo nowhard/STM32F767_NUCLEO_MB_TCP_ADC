@@ -39,7 +39,7 @@ stPacket UDPPacket;
 #define UDP_SEND_INTERPACKAGE_PERIOD	1// ms
 
 #define UDP_SEND_TASK_STACK_SIZE	1024
-#define UDP_SEND_TASK_PRIO				3
+#define UDP_SEND_TASK_PRIO				4
 void UDP_Send_Task( void *pvParameters );
 
 void UDP_SendBaseBuf(float *buf, uint16_t bufSize);
