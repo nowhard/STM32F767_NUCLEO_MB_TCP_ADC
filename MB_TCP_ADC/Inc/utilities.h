@@ -10,7 +10,7 @@
 #define FALSE                   0
 #endif
 
-#define FLOAT_EQ_EPSILON				0.001
+#define FLOAT_EQ_EPSILON				0.00001
 
 uint64_t ReverseBytes_UINT64(uint64_t val);
 
