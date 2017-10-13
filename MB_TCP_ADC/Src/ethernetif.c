@@ -247,7 +247,7 @@ static void low_level_init(struct netif *netif)
   MACAddr[2] = 0xE2;
   MACAddr[3] = 0x21;
   MACAddr[4] = 0x00;
-  MACAddr[5] = jumpers_dev_addr;//0x00;
+  MACAddr[5] = jumpersDevAddr;//0x00;
   heth.Init.MACAddr = &MACAddr[0];
   heth.Init.RxMode = ETH_RXINTERRUPT_MODE;
   heth.Init.ChecksumMode = ETH_CHECKSUM_BY_HARDWARE;
@@ -262,7 +262,7 @@ static void low_level_init(struct netif *netif)
   MACAddr[2] = 0xE2;
   MACAddr[3] = 0x21;
   MACAddr[4] = 0x00;
-  MACAddr[5] = jumpers_dev_addr;//0x00;
+  MACAddr[5] = jumpersDevAddr;//0x00;
   heth.Init.MACAddr = &MACAddr[0];
   heth.Init.RxMode = ETH_RXINTERRUPT_MODE;
   heth.Init.ChecksumMode = ETH_CHECKSUM_BY_HARDWARE;

@@ -11,21 +11,12 @@ typedef struct
 
 typedef struct
 {
-	uint16_t val_chn0_raw;
-	uint16_t val_chn1_raw;
-	uint16_t val_chn2_raw;
-	uint16_t val_chn3_raw;
-	uint16_t val_chn4_raw;
-	uint16_t val_chn5_raw;
+	uint16_t val_chn_raw[6];
+	float val_current[4];
+	float val_current_conv;
 	
-	float val_250A;
-	float val_150A;
-	float val_75A;
-	float val_7_5A;
-	float val_current;
-	
-	float val_voltage_1;
-	float val_voltage_2;
+	float val_voltage;
+	float val_pressure;
 }stChnCalibrValues;
 
 

@@ -1,16 +1,16 @@
 #include "stm32f7xx_hal.h"
 #include "data_converter.h"
+#include "jumpers.h"
 #include "spi_adc.h"
 #include "cfg_info.h"
 #include "FreeRTOS.h"
 #include "task.h"
 
 
-
-#define CHANNEL_250A_MAX_VAL	250.0
-#define CHANNEL_150A_MAX_VAL	150.0
-#define CHANNEL_75A_MAX_VAL		75.0
-#define CHANNEL_7_5A_MAX_VAL	7.5
+#define CHANNEL_3_CURR_TRESHOLD		250.0
+#define CHANNEL_2_CURR_TRESHOLD		150.0
+#define CHANNEL_1_CURR_TRESHOLD		75.0
+#define CHANNEL_0_CURR_TRESHOLD		7.5
 
 extern uint8_t *ADC_DCMI_buf_pnt;
 extern uint16_t *currentSPI3_ADC_Buf;
@@ -56,34 +56,33 @@ union wordfield{
 stChnCalibrValues ChnCalibrValues;
 
 float ADC_CurrentChannelsConvolution(void);
+float ADC_GetParallelCurrentSensorsValue(void);
 float ADC_GetCalibrateValue(uint8_t channel, uint16_t value);
 
 
 
 inline float ADC_CurrentChannelsConvolution(void)//свертка токовых каналов
 {
-	 if(ChnCalibrValues.val_7_5A>=CHANNEL_7_5A_MAX_VAL)
+	 if(ChnCalibrValues.val_current[0]>=CHANNEL_0_CURR_TRESHOLD)
 	 {
-				if(ChnCalibrValues.val_75A>=CHANNEL_75A_MAX_VAL)
+				if(ChnCalibrValues.val_current[1]>=CHANNEL_1_CURR_TRESHOLD)
 				{
-						if(ChnCalibrValues.val_150A>=CHANNEL_150A_MAX_VAL)
-						{
-								return ChnCalibrValues.val_250A;
-						}	
-						else
-						{
-								return ChnCalibrValues.val_75A;
-						}
+						return ChnCalibrValues.val_current[2];
 				}	
 				else
 				{
-						return ChnCalibrValues.val_75A;
+						return ChnCalibrValues.val_current[1];
 				}
 		}	
 		else
 		{
-				return ChnCalibrValues.val_7_5A;
+				return ChnCalibrValues.val_current[0];
 		}
+}
+
+inline float ADC_GetParallelCurrentSensorsValue(void)
+{
+		return ChnCalibrValues.val_current[0]+ChnCalibrValues.val_current[1];
 }
 
 
@@ -219,28 +218,38 @@ void ADC_ConvertDCMIAndAssembleUDPBuf(float *resultBuf, uint16_t *resultBufLen)
 
 			dcmiBuf+=ADC_DCMI_NUM_BITS;
 		  		
-			ChnCalibrValues.val_chn0_raw=out1.val;
-			ChnCalibrValues.val_chn1_raw=out2.val;
-			ChnCalibrValues.val_chn2_raw=out3.val;
-			ChnCalibrValues.val_chn3_raw=out4.val;
-			ChnCalibrValues.val_chn4_raw=spiBuf_1[cycleCount/SPI_ADC_FREQ_DIV]&0xFFFF;
-			ChnCalibrValues.val_chn5_raw=spiBuf_2[cycleCount/SPI_ADC_FREQ_DIV]&0xFFFF;
+			ChnCalibrValues.val_chn_raw[0]=out1.val;
+			ChnCalibrValues.val_chn_raw[1]=out2.val;
+			ChnCalibrValues.val_chn_raw[2]=out3.val;
+			ChnCalibrValues.val_chn_raw[3]=out4.val;
+			ChnCalibrValues.val_chn_raw[4]=spiBuf_1[cycleCount/SPI_ADC_FREQ_DIV]&0xFFFF;
+			ChnCalibrValues.val_chn_raw[5]=spiBuf_2[cycleCount/SPI_ADC_FREQ_DIV]&0xFFFF;
 			
-			ChnCalibrValues.val_7_5A=ADC_GetCalibrateValue(0,(out1.val&0xFFFF));
-			ChnCalibrValues.val_75A	=ADC_GetCalibrateValue(1,(out2.val&0xFFFF));
-			ChnCalibrValues.val_150A=ADC_GetCalibrateValue(2,(out3.val&0xFFFF));
-			ChnCalibrValues.val_250A=ADC_GetCalibrateValue(3,(out4.val&0xFFFF));
-			ChnCalibrValues.val_voltage_1= ADC_GetCalibrateValue(4,(spiBuf_1[cycleCount/SPI_ADC_FREQ_DIV]&0xFFFF));
-			ChnCalibrValues.val_voltage_2= ADC_GetCalibrateValue(5,(spiBuf_2[cycleCount/SPI_ADC_FREQ_DIV]&0xFFFF));
+			if(jumpersDevSectionType==SECTION_TYPE_1234)
+			{
+					ChnCalibrValues.val_current[0]=ADC_GetCalibrateValue(0,(out1.val&0xFFFF));
+					ChnCalibrValues.val_current[1]=ADC_GetCalibrateValue(1,(out2.val&0xFFFF));
+					ChnCalibrValues.val_current[2]=ADC_GetCalibrateValue(2,(out3.val&0xFFFF));
+					ChnCalibrValues.val_current[3]=ADC_GetCalibrateValue(3,(out4.val&0xFFFF));
+					ChnCalibrValues.val_current_conv=ADC_CurrentChannelsConvolution();
+			}
+			else if(jumpersDevSectionType==SECTION_TYPE_56)
+			{
+					ChnCalibrValues.val_current[0]=(ADC_GetCalibrateValue(0,(out1.val&0xFFFF)))/2;
+					ChnCalibrValues.val_current[1]=(ADC_GetCalibrateValue(1,(out2.val&0xFFFF)))/2;
+					ChnCalibrValues.val_current[2]=0.0;
+					ChnCalibrValues.val_current[3]=0.0;
+					ChnCalibrValues.val_current_conv=ADC_GetParallelCurrentSensorsValue();
+			}
+			ChnCalibrValues.val_voltage	 = ADC_GetCalibrateValue(4,(spiBuf_1[cycleCount/SPI_ADC_FREQ_DIV]&0xFFFF));
+			ChnCalibrValues.val_pressure = ADC_GetCalibrateValue(5,(spiBuf_2[cycleCount/SPI_ADC_FREQ_DIV]&0xFFFF));
+
 			
-			ChnCalibrValues.val_current=ADC_CurrentChannelsConvolution();
-
-
-			*resultBuf=ChnCalibrValues.val_current;
+			*resultBuf=ChnCalibrValues.val_current_conv;
 			resultBuf++;
-			*resultBuf=ChnCalibrValues.val_voltage_1;
+			*resultBuf=ChnCalibrValues.val_voltage;
 			resultBuf++;
-			*resultBuf=ChnCalibrValues.val_voltage_2;
+			*resultBuf=ChnCalibrValues.val_pressure;
 			resultBuf++;	
 	}
 	

@@ -10,6 +10,7 @@
 #include "semphr.h"
 #include "queue.h"
 #include "cfg_info.h"
+#include "spi_adc.h"
 
 
 extern DCMI_HandleTypeDef hdcmi;
@@ -20,7 +21,7 @@ extern TIM_HandleTypeDef htim5;
 
 
 #define RX_BUFF_SIZE	ADC_DCMI_BUF_LEN
-__IO uint8_t DCMIAdcRxBuff[RX_BUFF_SIZE];
+__IO uint8_t DCMIAdcRxBuff[RX_BUFF_SIZE]={0};
 
 
 uint8_t *ADC_DCMI_buf_pnt;
@@ -190,6 +191,7 @@ void DCMI_DMA_TransferCallback(void)
 	
 		lastDCMITimestamp=((((uint64_t)(TIM5->CNT))<<16)|TIM4->CNT);
 	  ADC_DCMI_buf_pnt=&DCMIAdcRxBuff[ADC_DCMI_BUF_LEN>>1];
+		SPI_ADC_ResetIndex();
 		xSemaphoreGiveFromISR( xAdcBuf_Send_Semaphore, &xHigherPriorityTaskWoken);
 	
 		if( xHigherPriorityTaskWoken == pdTRUE )

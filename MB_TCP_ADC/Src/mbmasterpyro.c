@@ -31,7 +31,7 @@ extern stTCPtoRTURegWrite TCPtoRTURegWrite;
 extern stPacket UDPPacket;
 extern enADCPyroBufState ADCPyroBufState;
 extern uint64_t ADC_Pyro_Timestamp;
-extern uint16_t BaseADC_Started_Flag;
+extern uint16_t baseADCStarted;
 
 TaskHandle_t RTUTaskHandle;
 TaskHandle_t RTUPollTaskHandle;

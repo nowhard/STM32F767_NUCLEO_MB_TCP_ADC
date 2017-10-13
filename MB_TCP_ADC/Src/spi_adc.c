@@ -9,16 +9,16 @@
 extern SPI_HandleTypeDef hspi3;
 extern SPI_HandleTypeDef hspi6;
 
-static uint8_t spi3_DMA_buf[3];
-static uint8_t spi6_DMA_buf[3];
+static uint8_t spi3_DMA_buf[3]={0};
+static uint8_t spi6_DMA_buf[3]={0};
 
 
 
 stSPI_ADC_Buf SPI3_ADC_Buf={{0},0};
 stSPI_ADC_Buf SPI6_ADC_Buf={{0},0};
 
-uint16_t *currentSPI3_ADC_Buf;
-uint16_t *currentSPI6_ADC_Buf;
+uint16_t *currentSPI3_ADC_Buf=&SPI3_ADC_Buf.buf[0];
+uint16_t *currentSPI6_ADC_Buf=&SPI6_ADC_Buf.buf[0];
 
 
 void SPI_ADC_TimerCallback(void)
