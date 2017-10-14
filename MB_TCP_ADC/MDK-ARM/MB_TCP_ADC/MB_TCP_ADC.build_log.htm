@@ -5,11 +5,11 @@
 <h2>Tool Versions:</h2>
 IDE-Version: µVision V5.17.0.0
 Copyright (C) 2015 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: noW noW, GEO, LIC=HF8WF-62X2I-WJ96K-ZARRL-VTY53-2R3MP
+License Information: noW noW, geo, LIC=NHY9U-SL21I-KTI3H-W80HX-ENB0V-57A1N
  
 Tool Versions:
 Toolchain:       MDK-ARM Professional  Version: 5.17
-Toolchain Path:  C:\Program Files\Keil\ARM\ARMCC\Bin
+Toolchain Path:  D:\Programs\Keil\ARM\ARMCC\Bin
 C Compiler:      Armcc.exe V5.06 update 1 (build 61)
 Assembler:       Armasm.exe V5.06 update 1 (build 61)
 Linker/Locator:  ArmLink.exe V5.06 update 1 (build 61)
@@ -21,103 +21,39 @@ Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V2.0.18.0
 Dialog DLL:      TCM.DLL V1.14.6.0
  
 <h2>Project:</h2>
-E:\PROJECTS\GIT_REPOSITORY\STM32\STM32F767_NUCLEO_MB_TCP_ADC\MB_TCP_ADC\MDK-ARM\MB_TCP_ADC.uvprojx
-Project File Date:  10/13/2017
+D:\PROJECTS\STM32F767_NUCLEO_MB_TCP_ADC\STM32F767_NUCLEO_MB_TCP_ADC\MB_TCP_ADC\MDK-ARM\MB_TCP_ADC.uvprojx
+Project File Date:  10/12/2017
 
 <h2>Output:</h2>
-*** Using Compiler 'V5.06 update 1 (build 61)', folder: 'C:\Program Files\Keil\ARM\ARMCC\Bin'
+*** Using Compiler 'V5.06 update 1 (build 61)', folder: 'D:\Programs\Keil\ARM\ARMCC\Bin'
 Build target 'MB_TCP_ADC'
-compiling utilities.c...
-../Inc/utilities.h(25): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\Src\utilities.c: 2 warnings, 0 errors
-  }
-compiling discret_out.c...
-../Inc/discret_out.h(26): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Inc/utilities.h(25): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\Src\discret_out.c(85): warning:  #940-D: missing return statement at end of non-void function "DiscretOutputs_StartSequence"
-  }
-..\Src\discret_out.c(123): warning:  #1-D: last line of file ends without a newline
-  }
-..\Src\discret_out.c: 4 warnings, 0 errors
-compiling mbfunc.c...
-../Inc/mbfunc.h(59): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Inc/discret_out.h(26): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Inc/adc_pyro_buf.h(23): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Inc/system_reset.h(6): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Inc/utilities.h(25): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Inc/spi_adc.h(18): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Inc/jumpers.h(21): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\Src\mbfunc.c(569): warning:  #188-D: enumerated type mixed with another type
-  															DCMI_ADC_SetSamplerate(usRegHoldingBuf[
-DC_SAMPLERATE]);
-..\Src\mbfunc.c(670): warning:  #188-D: enumerated type mixed with another type
-  														HAL_GPIO_WritePin(
-NABLE_OUT_1_GPIO_Port,
-NABLE_OUT_1_Pin,usRegHoldingBuf[
-EV_ENABLE_OUT_1]);
-..\Src\mbfunc.c(676): warning:  #188-D: enumerated type mixed with another type
-  														HAL_GPIO_WritePin(
-NABLE_OUT_7_GPIO_Port,
-NABLE_OUT_7_Pin,usRegHoldingBuf[
-EV_ENABLE_OUT_7]);
-..\Src\mbfunc.c(682): warning:  #188-D: enumerated type mixed with another type
-  														HAL_GPIO_WritePin(
-N_VCC_250_GPIO_Port,
-N_VCC_250_Pin,usRegHoldingBuf[
-EV_EN_VCC_250]);
-..\Src\mbfunc.c(688): warning:  #188-D: enumerated type mixed with another type
-  														HAL_GPIO_WritePin(
-N_VCC_150_GPIO_Port,
-N_VCC_150_Pin,usRegHoldingBuf[
-EV_EN_VCC_150]);
-..\Src\mbfunc.c(694): warning:  #188-D: enumerated type mixed with another type
-  														HAL_GPIO_WritePin(
-N_VCC_75_GPIO_Port,
-N_VCC_75_Pin,usRegHoldingBuf[
-EV_EN_VCC_75]);
-..\Src\mbfunc.c(700): warning:  #188-D: enumerated type mixed with another type
-  														HAL_GPIO_WritePin(
-N_VCC_7_5_GPIO_Port,
-N_VCC_7_5_Pin,usRegHoldingBuf[
-EV_EN_VCC_7_5]);
-..\Src\mbfunc.c(706): warning:  #188-D: enumerated type mixed with another type
-  														HAL_GPIO_WritePin(
-NABLE_AIR_GPIO_Port,
-NABLE_AIR_Pin,usRegHoldingBuf[
-EV_ENABLE_AIR]);
-..\Src\mbfunc.c: 15 warnings, 0 errors
+compiling udp_send.c...
+..\Src\udp_send.c(122): warning:  #1293-D: assignment in condition
+  		while(dataSize=ADC_PyroBuf_Copy((void *)UDPPacket.ADCPyroPacket.data,
+DP_PYRO_DATA_SIZE))
+..\Src\udp_send.c: 1 warning, 0 errors
 linking...
-Program Size: Code=94844 RO-data=1752 RW-data=1104 ZI-data=233168  
+Program Size: Code=94680 RO-data=1752 RW-data=1104 ZI-data=233168  
 FromELF: creating hex file...
-"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 20 Warning(s).
+"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 1 Warning(s).
 
 <h2>Software Packages used:</h2>
 
 Package Vendor: ARM
-                http://www.keil.com/pack/ARM.CMSIS.5.0.1.pack
-                ARM::CMSIS:CORE:5.0.1
+                http://www.keil.com/pack/ARM.CMSIS.4.5.0.pack
+                ARM::CMSIS:CORE:4.3.0
                 CMSIS (Cortex Microcontroller Software Interface Standard)
-   * Component: CORE Version: 5.0.1
+   * Component: CORE Version: 4.3.0
 
 <h2>Collection of Component include folders:</h2>
-  E:\PROJECTS\GIT_REPOSITORY\STM32\STM32F767_NUCLEO_MB_TCP_ADC\MB_TCP_ADC\MDK-ARM\RTE
-  C:\Program Files\Keil\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include
-  C:\Program Files\Keil\ARM\PACK\Keil\STM32F7xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F7xx\Include
+  D:\PROJECTS\STM32F767_NUCLEO_MB_TCP_ADC\STM32F767_NUCLEO_MB_TCP_ADC\MB_TCP_ADC\MDK-ARM\RTE
+  D:\Programs\Keil\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include
+  D:\Programs\Keil\ARM\PACK\Keil\STM32F7xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F7xx\Include
 
 <h2>Collection of Component Files used:</h2>
 
-   * Component: ARM::CMSIS:CORE:5.0.1
-Build Time Elapsed:  00:00:13
+   * Component: ARM::CMSIS:CORE:4.3.0
+Build Time Elapsed:  00:00:06
 </pre>
 </body>
 </html>

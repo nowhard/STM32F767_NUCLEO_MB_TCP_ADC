@@ -21,6 +21,6 @@ typedef struct
 
 void DiscretOutputs_Init(void);
 void DiscretOutputs_Set(uint64_t discrOut);
-uint8_t DiscretOutputs_StartSequence(void);
+void DiscretOutputs_StartSequence(void);
 
 #endif

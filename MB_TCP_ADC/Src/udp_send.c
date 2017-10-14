@@ -84,11 +84,11 @@ void UDP_DestAddr_Reinit(void)
 		ra.sin_port = htons(configInfo.IPAdress_Server.port);
 }
 
-uint8_t netErrorCnt=0;
+
 void UDP_SendBaseBuf(float *buf, uint16_t bufSize)
 {
-		err_t err;
-		uint16_t adc_buf_offset=0;
+
+		uint16_t adcBufOffset=0;
 		
 		UDPPacket.id=0;
 		UDPPacket.type=UDP_PACKET_TYPE_BASE;
@@ -96,16 +96,12 @@ void UDP_SendBaseBuf(float *buf, uint16_t bufSize)
 	
 		UDP_DestAddr_Reinit();
 	
-		while(adc_buf_offset<(bufSize*sizeof(float)))
+		while(adcBufOffset<(bufSize*sizeof(float)))
 		{
-			memcpy(&UDPPacket.BasePacket.data,((uint8_t*)buf+adc_buf_offset),UDP_BASE_DATA_SIZE);			
-			err=sendto(socket_fd, &UDPPacket,UDP_BASE_PACKET_SIZE,0,(struct sockaddr*)&ra,sizeof(ra));	
-			if(err==ERR_MEM)
-			{
-				netErrorCnt++;	
-			}
-			
-			adc_buf_offset+=UDP_BASE_DATA_SIZE;
+			memcpy(&UDPPacket.BasePacket.data,((uint8_t*)buf+adcBufOffset),UDP_BASE_DATA_SIZE);			
+			sendto(socket_fd, &UDPPacket,UDP_BASE_PACKET_SIZE,0,(struct sockaddr*)&ra,sizeof(ra));	
+
+			adcBufOffset+=UDP_BASE_DATA_SIZE;
 			UDPPacket.id++;
 			vTaskDelay(UDP_SEND_INTERPACKAGE_PERIOD);
 		}
@@ -114,8 +110,7 @@ void UDP_SendBaseBuf(float *buf, uint16_t bufSize)
 
 void UDP_SendPyroBuf(void)
 {
-	static uint16_t dataSize=0;
-	err_t err;  
+	static uint16_t dataSize=0; 
 	
 	UDP_DestAddr_Reinit();
 	
@@ -127,13 +122,8 @@ void UDP_SendPyroBuf(void)
 		while(dataSize=ADC_PyroBuf_Copy((void *)UDPPacket.ADCPyroPacket.data,UDP_PYRO_DATA_SIZE))
 		{
 			UDPPacket.ADCPyroPacket.size=dataSize;
-			err=sendto(socket_fd, &UDPPacket,UDP_PYRO_MAX_PACKET_SIZE,0,(struct sockaddr*)&ra,sizeof(ra));	
-			
-			if(err==ERR_MEM)
-			{
-				netErrorCnt++;	
-			}
-			
+			sendto(socket_fd, &UDPPacket,UDP_PYRO_MAX_PACKET_SIZE,0,(struct sockaddr*)&ra,sizeof(ra));	
+
 			UDPPacket.id++;
 			vTaskDelay(UDP_SEND_INTERPACKAGE_PERIOD);
 		}

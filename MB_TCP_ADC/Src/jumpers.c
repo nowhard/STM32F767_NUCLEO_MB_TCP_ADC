@@ -25,6 +25,6 @@ void Jumpers_ReadSettings(void)
 			jumpersDevSectionType=SECTION_TYPE_56;
 	}
 	
-	HAL_GPIO_WritePin(BUSE_SYNC_GPIO_Port, BUSE_SYNC_Pin, GPIO_PIN_SET); //Настройка направления дифф. драйверов
-	HAL_GPIO_WritePin(BUSE_SIG_GPIO_Port, BUSE_SIG_Pin, GPIO_PIN_RESET);
+//	HAL_GPIO_WritePin(BUSE_SYNC_GPIO_Port, BUSE_SYNC_Pin, GPIO_PIN_SET); //Настройка направления дифф. драйверов
+//	HAL_GPIO_WritePin(BUSE_SIG_GPIO_Port, BUSE_SIG_Pin, GPIO_PIN_RESET);
 }

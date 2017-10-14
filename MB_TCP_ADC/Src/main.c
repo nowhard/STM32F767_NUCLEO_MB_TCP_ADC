@@ -188,21 +188,12 @@ int main(void)
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* definition and creation of SPI_ADC_Task */
-//  osThreadDef(SPI_ADC_Task, StartSPI_ADC_Task, osPriorityNormal, 0, 256);
-//  SPI_ADC_TaskHandle = osThreadCreate(osThread(SPI_ADC_Task), NULL);
+
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
 
-  /* Create the queue(s) */
-  /* definition and creation of ADC_SPI3_Queue */
-//  osMessageQDef(ADC_SPI3_Queue, 32, uint16_t);
-//  ADC_SPI3_QueueHandle = osMessageCreate(osMessageQ(ADC_SPI3_Queue), NULL);
-
-//  /* definition and creation of ADC_SPI6_Queue */
-//  osMessageQDef(ADC_SPI6_Queue, 32, uint16_t);
-//  ADC_SPI6_QueueHandle = osMessageCreate(osMessageQ(ADC_SPI6_Queue), NULL);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
@@ -742,7 +733,7 @@ static void MX_GPIO_Init(void)
                           |USB_PowerSwitchOn_Pin|EN_VCC_250_Pin|U_CS_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(BUSE_SYNC_GPIO_Port, BUSE_SYNC_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(BUSE_SYNC_GPIO_Port, BUSE_SYNC_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(ENABLE_OUT_7_GPIO_Port, ENABLE_OUT_7_Pin, GPIO_PIN_SET);
@@ -905,17 +896,6 @@ void StartDefaultTask(void const * argument)
   /* USER CODE END 5 */ 
 }
 
-/* StartSPI_ADC_Task function */
-__weak void StartSPI_ADC_Task(void const * argument)
-{
-  /* USER CODE BEGIN StartSPI_ADC_Task */
-  /* Infinite loop */
-//  for(;;)
-//  {
-//    osDelay(1);
-//  }
-  /* USER CODE END StartSPI_ADC_Task */
-}
 
 /**
   * @brief  This function is executed in case of error occurrence.

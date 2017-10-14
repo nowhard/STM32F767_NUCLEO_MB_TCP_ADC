@@ -10,7 +10,7 @@
 #include "stm32f7xx.h"
 
 #define OUTPUTS_REG_ALL_RELAY_OFF		0xFFFFFFFFFFFFFFFF
-#define SPI_OUT_REG_NUM							8
+#define SPI_OUT_BYTES_NUM							8
 
 typedef enum
 {
@@ -71,12 +71,12 @@ void DiscretOutputs_Set(uint64_t discrOut)
 	static  uint64_t temp_out;
 	temp_out=ReverseBytes_UINT64(discrOut);
 	HAL_GPIO_WritePin(STROB_GPIO_Port, STROB_Pin, GPIO_PIN_RESET);	
-	HAL_SPI_Transmit_DMA(&hspi5, (uint8_t*)&temp_out, SPI_OUT_REG_NUM);
+	HAL_SPI_Transmit_DMA(&hspi5, (uint8_t*)&temp_out, SPI_OUT_BYTES_NUM);
 }
 
 
 
-uint8_t DiscretOutputs_StartSequence(void)
+void DiscretOutputs_StartSequence(void)
 {
 	if(!discrOutSequenceProgress)
 	{
@@ -88,28 +88,28 @@ uint8_t DiscretOutputs_StartSequence(void)
 void DiscretOutputs_SetSequence_Task( void *pvParameters )
 {
 	uint16_t cyclesCnt=0;
-	stSetSequenceParams *taskParams;
+	stSetSequenceParams *sequenceParams;
 
 	while(1)
 	{
 			xSemaphoreTake(xOutSequenceSem,portMAX_DELAY);
 			
 			discrOutSequenceProgress=1;
-			taskParams=(stSetSequenceParams*)pvParameters;
+			sequenceParams=(stSetSequenceParams*)pvParameters;
 
-			if(IS_DISCR_OUT_TIME(taskParams->time) && IS_DISCR_OUT_NUM_CYCLES(taskParams->num_cycles))
+			if(IS_DISCR_OUT_TIME(sequenceParams->time) && IS_DISCR_OUT_NUM_CYCLES(sequenceParams->num_cycles))
 			{
-					for(cyclesCnt=0;cyclesCnt<taskParams->num_cycles;cyclesCnt++)
+					for(cyclesCnt=0;cyclesCnt<sequenceParams->num_cycles;cyclesCnt++)
 					{
-							discrOutTempReg=taskParams->state_1;
-							DiscretOutputs_Set(taskParams->state_1);
-							vTaskDelay(taskParams->time);
-							discrOutTempReg=taskParams->state_2;
-							DiscretOutputs_Set(taskParams->state_2);
-							vTaskDelay(taskParams->time);
+							discrOutTempReg=sequenceParams->state_1;
+							DiscretOutputs_Set(sequenceParams->state_1);
+							vTaskDelay(sequenceParams->time);
+							discrOutTempReg=sequenceParams->state_2;
+							DiscretOutputs_Set(sequenceParams->state_2);
+							vTaskDelay(sequenceParams->time);
 					}
-					discrOutTempReg=taskParams->state_end;
-					DiscretOutputs_Set(taskParams->state_end);
+					discrOutTempReg=sequenceParams->state_end;
+					DiscretOutputs_Set(sequenceParams->state_end);
 			}
 			discrOutSequenceProgress=0;
 	}

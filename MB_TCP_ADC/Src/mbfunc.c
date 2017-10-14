@@ -114,7 +114,7 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 {
     eMBErrorCode    eStatus = MB_ENOERR;
     int             iRegIndex;
-		uint64_t temp=0;
+		uint64_t				timestampTemp=0;
 
     if( ( usAddress >= REG_INPUT_START )
         && ( usAddress + usNRegs <= REG_INPUT_START + REG_INPUT_NREGS ) )
@@ -138,8 +138,8 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 				
 				Float_To_UINT16_Buf(ChnCalibrValues.val_current_conv, &usRegInputBuf[ADC_CHANNEL_CONV]);
 			
-				temp=DCMI_ADC_GetLastTimestamp();
-				UINT64_To_UINT16_Buf(temp,&usRegInputBuf[TIMESTAMP_CURRENT]);
+				timestampTemp=DCMI_ADC_GetLastTimestamp();
+				UINT64_To_UINT16_Buf(timestampTemp,&usRegInputBuf[TIMESTAMP_CURRENT]);
 			
 			
 				memcpy((void *)&usRegInputBuf[ADC_PYRO_SQUIB_0],(const void*)&usMRegInBuf[0][0],M_REG_INPUT_NREGS*sizeof(uint16_t));
@@ -254,7 +254,7 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 extern uint64_t	discrOutTempReg;
 extern stADCPyroBuf ADCPyroBuf;
 
-uint16_t baseADCStarted=0;
+uint16_t baseADCStarted=FALSE;
 
 eMBErrorCode
 eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegisterMode eMode )
@@ -354,7 +354,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 							//-----------case WRITE-----------------------------------------------------
 							case MB_REG_WRITE:
 							{
-									uint8_t settingsNeedWrite=0;
+									uint8_t settingsNeedWrite=FALSE;
 									float temp_coef;
 									TCPtoRTURegWrite.regBuf=usMRegTempBuf;
 									TCPtoRTURegWrite.nRegs=0;
@@ -373,7 +373,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 														if(configInfo.IPAdress_Server.ip_addr_0!=usRegHoldingBuf[SERVER_IP_REG_0])
 														{
 															configInfo.IPAdress_Server.ip_addr_0=usRegHoldingBuf[SERVER_IP_REG_0];
-															settingsNeedWrite=1;
+															settingsNeedWrite=TRUE;
 														}
 												}
 												break;
@@ -383,7 +383,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 														if(configInfo.IPAdress_Server.ip_addr_1!=usRegHoldingBuf[SERVER_IP_REG_1])
 														{
 															configInfo.IPAdress_Server.ip_addr_1=usRegHoldingBuf[SERVER_IP_REG_1];
-															settingsNeedWrite=1;
+															settingsNeedWrite=TRUE;
 														}
 												}
 												break;
@@ -393,7 +393,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 														if(configInfo.IPAdress_Server.ip_addr_2!=usRegHoldingBuf[SERVER_IP_REG_2])
 														{
 															configInfo.IPAdress_Server.ip_addr_2=usRegHoldingBuf[SERVER_IP_REG_2];
-															settingsNeedWrite=1;
+															settingsNeedWrite=TRUE;
 														}
 												}
 												break;	
@@ -403,7 +403,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 														if(configInfo.IPAdress_Server.ip_addr_3!=usRegHoldingBuf[SERVER_IP_REG_3])
 														{
 															configInfo.IPAdress_Server.ip_addr_3=usRegHoldingBuf[SERVER_IP_REG_3];
-															settingsNeedWrite=1;
+															settingsNeedWrite=TRUE;
 														}
 												}
 												break;
@@ -413,7 +413,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 														if(configInfo.IPAdress_Server.port!=usRegHoldingBuf[SERVER_PORT_REG_0])
 														{
 															configInfo.IPAdress_Server.port=usRegHoldingBuf[SERVER_PORT_REG_0];
-															settingsNeedWrite=1;
+															settingsNeedWrite=TRUE;
 														}
 												}
 												break;
@@ -425,7 +425,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[0].k,temp_coef,FLOAT_EQ_EPSILON)==FALSE)
 														{
 																configInfo.ConfigADC.calibrChannel[0].k=temp_coef;
-																settingsNeedWrite=1;
+																settingsNeedWrite=TRUE;
 														}														
 												}
 												break;
@@ -437,7 +437,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[0].b, temp_coef, FLOAT_EQ_EPSILON)==FALSE)
 														{
 																configInfo.ConfigADC.calibrChannel[0].b=temp_coef;
-																settingsNeedWrite=1;
+																settingsNeedWrite=TRUE;
 														}	
 												}
 												break;
@@ -449,7 +449,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[1].k, temp_coef, FLOAT_EQ_EPSILON)==FALSE)
 														{
 																configInfo.ConfigADC.calibrChannel[1].k=temp_coef;
-																settingsNeedWrite=1;
+																settingsNeedWrite=TRUE;
 														}											
 												}
 												break;
@@ -461,7 +461,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[1].b, temp_coef, FLOAT_EQ_EPSILON)==FALSE)
 														{
 																configInfo.ConfigADC.calibrChannel[1].b=temp_coef;
-																settingsNeedWrite=1;
+																settingsNeedWrite=TRUE;
 														}										
 												}
 												break;	
@@ -473,7 +473,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[2].k, temp_coef, FLOAT_EQ_EPSILON)==FALSE)
 														{
 																configInfo.ConfigADC.calibrChannel[2].k=temp_coef;
-																settingsNeedWrite=1;
+																settingsNeedWrite=TRUE;
 														}											
 												}
 												break;
@@ -485,7 +485,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[2].b, temp_coef, FLOAT_EQ_EPSILON)==FALSE)
 														{
 																configInfo.ConfigADC.calibrChannel[2].b=temp_coef;
-																settingsNeedWrite=1;
+																settingsNeedWrite=TRUE;
 														}										
 												}
 												break;	
@@ -497,7 +497,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[3].k, temp_coef, FLOAT_EQ_EPSILON)==FALSE)
 														{
 																configInfo.ConfigADC.calibrChannel[3].k=temp_coef;
-																settingsNeedWrite=1;
+																settingsNeedWrite=TRUE;
 														}										
 												}
 												break;
@@ -509,7 +509,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[3].b, temp_coef, FLOAT_EQ_EPSILON)==FALSE)
 														{
 																configInfo.ConfigADC.calibrChannel[3].b=temp_coef;
-																settingsNeedWrite=1;
+																settingsNeedWrite=TRUE;
 														}										
 												}
 												break;	
@@ -521,7 +521,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[4].k, temp_coef, FLOAT_EQ_EPSILON)==FALSE)
 														{
 																configInfo.ConfigADC.calibrChannel[4].k=temp_coef;
-																settingsNeedWrite=1;
+																settingsNeedWrite=TRUE;
 														}										
 												}
 												break;
@@ -533,7 +533,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[4].b, temp_coef, FLOAT_EQ_EPSILON)==FALSE)
 														{
 																configInfo.ConfigADC.calibrChannel[4].b=temp_coef;
-																settingsNeedWrite=1;
+																settingsNeedWrite=TRUE;
 														}										
 												}
 												break;	
@@ -545,7 +545,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[5].k, temp_coef, FLOAT_EQ_EPSILON)==FALSE)
 														{
 																configInfo.ConfigADC.calibrChannel[5].k=temp_coef;
-																settingsNeedWrite=1;
+																settingsNeedWrite=TRUE;
 														}										
 												}
 												break;
@@ -557,17 +557,17 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[5].b, temp_coef, FLOAT_EQ_EPSILON)==FALSE)
 														{
 																configInfo.ConfigADC.calibrChannel[5].b=temp_coef;
-																settingsNeedWrite=1;
+																settingsNeedWrite=TRUE;
 														}	
 												}
 												break;
 
 												case ADC_SAMPLERATE:
 												{
-														if(FloatCheckEquality(configInfo.ConfigADC.sampleRate, usRegHoldingBuf[ADC_SAMPLERATE], FLOAT_EQ_EPSILON)==FALSE)
+														if(configInfo.ConfigADC.sampleRate!=usRegHoldingBuf[ADC_SAMPLERATE])
 														{
 															DCMI_ADC_SetSamplerate(usRegHoldingBuf[ADC_SAMPLERATE]);
-															settingsNeedWrite=1;	
+															settingsNeedWrite=TRUE;	
 														}															
 												}
 												break;	
@@ -579,7 +579,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 														if(FloatCheckEquality(configInfo.ConfigADC.freqCorrectionFactor, temp_coef, FLOAT_EQ_EPSILON)==FALSE)
 														{
 																configInfo.ConfigADC.freqCorrectionFactor=temp_coef;
-																settingsNeedWrite=1;
+																settingsNeedWrite=TRUE;
 														}															
 												}
 												break;
@@ -595,7 +595,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 																		DCMI_ADC_Clock_Start();
 																}
 																
-																baseADCStarted=1;
+																baseADCStarted=TRUE;
 														}
 														else
 														{
@@ -604,7 +604,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 																		DCMI_ADC_Clock_Stop();
 																}
 																
-																baseADCStarted=0;
+																baseADCStarted=FALSE;
 														}
 														usRegHoldingBuf[ADC_STARTED]=0;
 												}

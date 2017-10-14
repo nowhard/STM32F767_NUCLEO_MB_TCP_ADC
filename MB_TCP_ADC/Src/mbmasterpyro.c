@@ -22,7 +22,7 @@
 #define SLAVE_PYRO_SQUIB_TIMEOUT			100
 #define SLAVE_PYRO_SQUIB_POLL_PERIOD	1
 
-#define MODBUS_M_BAUDRATE			921600
+#define MODBUS_M_BAUDRATE							921600
 
 xSemaphoreHandle xStartReadPyroADCSem;
 xSemaphoreHandle xMBRTUMutex;
@@ -53,7 +53,6 @@ void MBMaster_RTU_Init(void)
 
 void MBMaster_RTU_Task(void *pvParameters)
 {
-
 	while (1)
 	{
 		eMBMasterPoll();
@@ -79,9 +78,8 @@ extern USHORT   usMRegInBuf[MB_MASTER_TOTAL_SLAVE_NUM][M_REG_INPUT_NREGS];
 
 void MBMaster_RTU_Poll(void *pvParameters)
 {
-	static uint16_t tick_counter=0;
 	portTickType xLastWakeTime;
-	uint8_t read_err_cnt=0;
+	uint8_t readErrCnt=0;
 	
 	
 	while (1)
@@ -89,7 +87,7 @@ void MBMaster_RTU_Poll(void *pvParameters)
 			if( xSemaphoreTake( xStartReadPyroADCSem, SLAVE_REGS_POLL_PERIOD ) == pdTRUE )
 			{//проверяем состояние пиропатрона, если включен-заполняем буфер
 					xLastWakeTime = xTaskGetTickCount();
-					read_err_cnt=0;
+					readErrCnt=0;
 
 					vTaskPrioritySet(RTUPollTaskHandle,MB_RTU_POLL_TASK_PRIO+1);
 					vTaskPrioritySet(RTUTaskHandle,MB_RTU_TASK_PRIO+1);
@@ -110,13 +108,13 @@ void MBMaster_RTU_Poll(void *pvParameters)
 									
 										ADC_Pyro_Timestamp=DCMI_ADC_GetCurrentTimestamp();
 										ADCPyroBufState=ADC_PYRO_BUF_FILL_START;
-										read_err_cnt=0;
+										readErrCnt=0;
 								}
 								else
 								{
 										ADCPyroBufState=ADC_PYRO_BUF_FILL_STOP;
-										read_err_cnt++;
-										if(read_err_cnt>=READ_ERR_MAX)
+										readErrCnt++;
+										if(readErrCnt>=READ_ERR_MAX)
 										{
 												break;
 										}

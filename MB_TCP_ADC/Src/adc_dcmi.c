@@ -133,17 +133,17 @@ void DCMI_ADC_SetSamplerate(enADCSamplerate sampleRate)
   HAL_TIM_Base_Init(&htim2);
 }
 
-uint32_t DCMI_ADC_GetSamplerate(void)
+inline uint32_t DCMI_ADC_GetSamplerate(void)
 {
 		return configInfo.ConfigADC.sampleRate;
 }
 
-uint64_t DCMI_ADC_GetLastTimestamp(void)
+inline uint64_t DCMI_ADC_GetLastTimestamp(void)
 {
 	return lastDCMITimestamp;
 }
 
-uint64_t DCMI_ADC_GetCurrentTimestamp(void)
+inline uint64_t DCMI_ADC_GetCurrentTimestamp(void)
 {
 	return ((((uint64_t)(TIM5->CNT))<<16)|TIM4->CNT);
 }
@@ -174,7 +174,7 @@ void DCMI_DMA_HalfTransferCallback(void)
 		static portBASE_TYPE xHigherPriorityTaskWoken;
     xHigherPriorityTaskWoken = pdFALSE;
 	
-		lastDCMITimestamp=((((uint64_t)(TIM5->CNT))<<16)|TIM4->CNT);
+		lastDCMITimestamp=DCMI_ADC_GetCurrentTimestamp();
 		ADC_DCMI_buf_pnt=&DCMIAdcRxBuff[0];
 		xSemaphoreGiveFromISR( xAdcBuf_Send_Semaphore, &xHigherPriorityTaskWoken );
 	
@@ -189,7 +189,7 @@ void DCMI_DMA_TransferCallback(void)
 		static portBASE_TYPE xHigherPriorityTaskWoken;
     xHigherPriorityTaskWoken = pdFALSE;
 	
-		lastDCMITimestamp=((((uint64_t)(TIM5->CNT))<<16)|TIM4->CNT);
+		lastDCMITimestamp=DCMI_ADC_GetCurrentTimestamp();
 	  ADC_DCMI_buf_pnt=&DCMIAdcRxBuff[ADC_DCMI_BUF_LEN>>1];
 		SPI_ADC_ResetIndex();
 		xSemaphoreGiveFromISR( xAdcBuf_Send_Semaphore, &xHigherPriorityTaskWoken);

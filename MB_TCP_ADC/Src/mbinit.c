@@ -8,7 +8,7 @@
 #define MB_TCP_TASK_STACK_SIZE	2048
 #define MB_TCP_TASK_PRIO				2
 
-#define MB_TCP_CLIENT_NUM					2
+#define MB_TCP_CLIENT_NUM				2
 
 stMBContext stTCPContext[MB_TCP_CLIENT_NUM];
 
