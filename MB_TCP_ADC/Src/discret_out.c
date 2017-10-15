@@ -20,7 +20,7 @@ typedef enum
 
 
 
-uint8_t 	discrOutSequenceProgress=0;
+uint8_t 	discrOutSequenceProgress=FALSE;
 uint64_t	discrOutTempReg=OUTPUTS_REG_ALL_RELAY_OFF; 
 stSetSequenceParams	discrOutSequenceParams={OUTPUTS_REG_ALL_RELAY_OFF,OUTPUTS_REG_ALL_RELAY_OFF,OUTPUTS_REG_ALL_RELAY_OFF,10,1};
 
@@ -75,7 +75,6 @@ void DiscretOutputs_Set(uint64_t discrOut)
 }
 
 
-
 void DiscretOutputs_StartSequence(void)
 {
 	if(!discrOutSequenceProgress)
@@ -94,7 +93,7 @@ void DiscretOutputs_SetSequence_Task( void *pvParameters )
 	{
 			xSemaphoreTake(xOutSequenceSem,portMAX_DELAY);
 			
-			discrOutSequenceProgress=1;
+			discrOutSequenceProgress=TRUE;
 			sequenceParams=(stSetSequenceParams*)pvParameters;
 
 			if(IS_DISCR_OUT_TIME(sequenceParams->time) && IS_DISCR_OUT_NUM_CYCLES(sequenceParams->num_cycles))
@@ -111,7 +110,7 @@ void DiscretOutputs_SetSequence_Task( void *pvParameters )
 					discrOutTempReg=sequenceParams->state_end;
 					DiscretOutputs_Set(sequenceParams->state_end);
 			}
-			discrOutSequenceProgress=0;
+			discrOutSequenceProgress=FALSE;
 	}
 
 }

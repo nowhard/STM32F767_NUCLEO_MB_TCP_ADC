@@ -74,7 +74,7 @@ static USHORT   usRegInputBuf[REG_INPUT_NREGS];
 static USHORT   usRegHoldingStart = REG_HOLDING_START;
 static USHORT   usRegHoldingBuf[REG_HOLDING_NREGS];
 
-extern float ADC_resultBuf[ADC_DCMI_RESULT_BUF_LEN];
+
 extern SemaphoreHandle_t	xMBSaveSettingsSemaphore;
 
 /*-----------------------Pyro squib vars-------------------------------------*/
@@ -84,19 +84,16 @@ extern xSemaphoreHandle xStartReadPyroADCSem;
 extern xSemaphoreHandle xMBRTUMutex;
 
 uint16_t 				usMRegTempBuf[M_REG_HOLDING_NREGS];
-extern eMBMasterReqErrCode MBMaster_RTU_WriteRegs(stTCPtoRTURegWrite *regs);
 /*---------------------------------------------------------------------------*/
 
-extern stChnCalibrValues ChnCalibrValues;
+extern stChnCalibrValues 			ChnCalibrValues;
 
-stTCPtoRTURegWrite TCPtoRTURegWrite;
+stTCPtoRTURegWrite 						TCPtoRTURegWrite;
 
-
-extern uint32_t udp_send_counter;
 extern eMBMasterReqErrCode    MB_Master_ErrorCode;
 
-extern stSetSequenceParams	discrOutSequenceParams;
-extern uint8_t 	discrOutSequenceProgress;
+extern stSetSequenceParams		discrOutSequenceParams;
+extern uint8_t 								discrOutSequenceProgress;
 
 /* ----------------------- Time of process ---------------------------------*/
 typedef struct
@@ -252,8 +249,6 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 #define DEV_PROC_TIME_SECOND						94
 
 extern uint64_t	discrOutTempReg;
-extern stADCPyroBuf ADCPyroBuf;
-
 uint16_t baseADCStarted=FALSE;
 
 eMBErrorCode
@@ -355,7 +350,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 							case MB_REG_WRITE:
 							{
 									uint8_t settingsNeedWrite=FALSE;
-									float temp_coef;
+									float tempCoef;
 									TCPtoRTURegWrite.regBuf=usMRegTempBuf;
 									TCPtoRTURegWrite.nRegs=0;
 									TCPtoRTURegWrite.regAddr=0;
@@ -420,11 +415,11 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_0_K+(1):
 												{
-														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_0_K],&temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_0_K],&tempCoef);
 													
-														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[0].k,temp_coef,FLOAT_EQ_EPSILON)==FALSE)
+														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[0].k,tempCoef,FLOAT_EQ_EPSILON)==FALSE)
 														{
-																configInfo.ConfigADC.calibrChannel[0].k=temp_coef;
+																configInfo.ConfigADC.calibrChannel[0].k=tempCoef;
 																settingsNeedWrite=TRUE;
 														}														
 												}
@@ -432,11 +427,11 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_0_B+(1):
 												{
-														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_0_B],&temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_0_B],&tempCoef);
 													
-														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[0].b, temp_coef, FLOAT_EQ_EPSILON)==FALSE)
+														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[0].b, tempCoef, FLOAT_EQ_EPSILON)==FALSE)
 														{
-																configInfo.ConfigADC.calibrChannel[0].b=temp_coef;
+																configInfo.ConfigADC.calibrChannel[0].b=tempCoef;
 																settingsNeedWrite=TRUE;
 														}	
 												}
@@ -444,11 +439,11 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_1_K+(1):
 												{
-														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_1_K],&temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_1_K],&tempCoef);
 													
-														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[1].k, temp_coef, FLOAT_EQ_EPSILON)==FALSE)
+														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[1].k, tempCoef, FLOAT_EQ_EPSILON)==FALSE)
 														{
-																configInfo.ConfigADC.calibrChannel[1].k=temp_coef;
+																configInfo.ConfigADC.calibrChannel[1].k=tempCoef;
 																settingsNeedWrite=TRUE;
 														}											
 												}
@@ -456,11 +451,11 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_1_B+(1):
 												{
-														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_1_B],&temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_1_B],&tempCoef);
 													
-														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[1].b, temp_coef, FLOAT_EQ_EPSILON)==FALSE)
+														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[1].b, tempCoef, FLOAT_EQ_EPSILON)==FALSE)
 														{
-																configInfo.ConfigADC.calibrChannel[1].b=temp_coef;
+																configInfo.ConfigADC.calibrChannel[1].b=tempCoef;
 																settingsNeedWrite=TRUE;
 														}										
 												}
@@ -468,11 +463,11 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_2_K+(1):
 												{
-														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_2_K],&temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_2_K],&tempCoef);
 													
-														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[2].k, temp_coef, FLOAT_EQ_EPSILON)==FALSE)
+														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[2].k, tempCoef, FLOAT_EQ_EPSILON)==FALSE)
 														{
-																configInfo.ConfigADC.calibrChannel[2].k=temp_coef;
+																configInfo.ConfigADC.calibrChannel[2].k=tempCoef;
 																settingsNeedWrite=TRUE;
 														}											
 												}
@@ -480,11 +475,11 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_2_B+(1):
 												{
-														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_2_B],&temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_2_B],&tempCoef);
 													
-														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[2].b, temp_coef, FLOAT_EQ_EPSILON)==FALSE)
+														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[2].b, tempCoef, FLOAT_EQ_EPSILON)==FALSE)
 														{
-																configInfo.ConfigADC.calibrChannel[2].b=temp_coef;
+																configInfo.ConfigADC.calibrChannel[2].b=tempCoef;
 																settingsNeedWrite=TRUE;
 														}										
 												}
@@ -492,11 +487,11 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_3_K+(1):
 												{
-														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_3_K],&temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_3_K],&tempCoef);
 													
-														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[3].k, temp_coef, FLOAT_EQ_EPSILON)==FALSE)
+														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[3].k, tempCoef, FLOAT_EQ_EPSILON)==FALSE)
 														{
-																configInfo.ConfigADC.calibrChannel[3].k=temp_coef;
+																configInfo.ConfigADC.calibrChannel[3].k=tempCoef;
 																settingsNeedWrite=TRUE;
 														}										
 												}
@@ -504,11 +499,11 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_3_B+(1):
 												{
-														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_3_B],&temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_3_B],&tempCoef);
 													
-														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[3].b, temp_coef, FLOAT_EQ_EPSILON)==FALSE)
+														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[3].b, tempCoef, FLOAT_EQ_EPSILON)==FALSE)
 														{
-																configInfo.ConfigADC.calibrChannel[3].b=temp_coef;
+																configInfo.ConfigADC.calibrChannel[3].b=tempCoef;
 																settingsNeedWrite=TRUE;
 														}										
 												}
@@ -516,11 +511,11 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_4_K+(1):
 												{
-														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_4_K],&temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_4_K],&tempCoef);
 													
-														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[4].k, temp_coef, FLOAT_EQ_EPSILON)==FALSE)
+														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[4].k, tempCoef, FLOAT_EQ_EPSILON)==FALSE)
 														{
-																configInfo.ConfigADC.calibrChannel[4].k=temp_coef;
+																configInfo.ConfigADC.calibrChannel[4].k=tempCoef;
 																settingsNeedWrite=TRUE;
 														}										
 												}
@@ -528,11 +523,11 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_4_B+(1):
 												{
-														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_4_B],&temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_4_B],&tempCoef);
 													
-														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[4].b, temp_coef, FLOAT_EQ_EPSILON)==FALSE)
+														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[4].b, tempCoef, FLOAT_EQ_EPSILON)==FALSE)
 														{
-																configInfo.ConfigADC.calibrChannel[4].b=temp_coef;
+																configInfo.ConfigADC.calibrChannel[4].b=tempCoef;
 																settingsNeedWrite=TRUE;
 														}										
 												}
@@ -540,11 +535,11 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_5_K+(1):
 												{
-														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_5_K],&temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_5_K],&tempCoef);
 													
-														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[5].k, temp_coef, FLOAT_EQ_EPSILON)==FALSE)
+														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[5].k, tempCoef, FLOAT_EQ_EPSILON)==FALSE)
 														{
-																configInfo.ConfigADC.calibrChannel[5].k=temp_coef;
+																configInfo.ConfigADC.calibrChannel[5].k=tempCoef;
 																settingsNeedWrite=TRUE;
 														}										
 												}
@@ -552,11 +547,11 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case ADC_CHANNEL_5_B+(1):
 												{
-														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_5_B],&temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_CHANNEL_5_B],&tempCoef);
 													
-														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[5].b, temp_coef, FLOAT_EQ_EPSILON)==FALSE)
+														if(FloatCheckEquality(configInfo.ConfigADC.calibrChannel[5].b, tempCoef, FLOAT_EQ_EPSILON)==FALSE)
 														{
-																configInfo.ConfigADC.calibrChannel[5].b=temp_coef;
+																configInfo.ConfigADC.calibrChannel[5].b=tempCoef;
 																settingsNeedWrite=TRUE;
 														}	
 												}
@@ -574,11 +569,11 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												
 												case ADC_SAMPLERATE_FREQ_CORRECTION_FACTOR+(1):
 												{
-														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_SAMPLERATE_FREQ_CORRECTION_FACTOR],&temp_coef);
+														UINT16_Buf_To_Float(&usRegHoldingBuf[ADC_SAMPLERATE_FREQ_CORRECTION_FACTOR],&tempCoef);
 													
-														if(FloatCheckEquality(configInfo.ConfigADC.freqCorrectionFactor, temp_coef, FLOAT_EQ_EPSILON)==FALSE)
+														if(FloatCheckEquality(configInfo.ConfigADC.freqCorrectionFactor, tempCoef, FLOAT_EQ_EPSILON)==FALSE)
 														{
-																configInfo.ConfigADC.freqCorrectionFactor=temp_coef;
+																configInfo.ConfigADC.freqCorrectionFactor=tempCoef;
 																settingsNeedWrite=TRUE;
 														}															
 												}

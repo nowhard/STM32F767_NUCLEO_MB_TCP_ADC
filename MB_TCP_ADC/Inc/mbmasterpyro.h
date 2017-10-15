@@ -1,6 +1,7 @@
 #ifndef MBMASTERINIT_H
 #define MBMASTERINIT_H
-
+#include "mb.h"
+#include "mb_m.h"
 
 //input regs 
 #define REG_PIR_ADC_0						0
@@ -35,7 +36,14 @@
 #define REG_PIR_4_CALIBR_CURRENT_K	23
 #define REG_PIR_4_CALIBR_CURRENT_B	25
 
-void MBMaster_RTU_Init(void);
+typedef struct 
+{
+		uint16_t *regBuf;
+		uint16_t regAddr;
+		uint16_t nRegs;
+} stTCPtoRTURegWrite;
 
+void MBMaster_RTU_Init(void);
+eMBMasterReqErrCode MBMaster_RTU_WriteRegs(stTCPtoRTURegWrite *regs);
 
 #endif

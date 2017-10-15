@@ -3,12 +3,7 @@
 
 #include "stm32f7xx_hal.h"
 
-typedef struct 
-{
-		uint16_t *regBuf;
-		uint16_t regAddr;
-		uint16_t nRegs;
-} stTCPtoRTURegWrite;
+
  
 #ifdef __cplusplus
 PR_BEGIN_EXTERN_C
