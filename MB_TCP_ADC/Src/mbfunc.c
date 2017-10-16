@@ -104,6 +104,10 @@ typedef struct
 }stTimeProc;
 
 static stTimeProc TimeProc={0,0,0};
+
+#define IS_TIME_HOURS(__TIME__) (((__TIME__) >=0) && ((__TIME__) <= 23))
+#define IS_TIME_MINUTS(__TIME__) (((__TIME__) >=0) && ((__TIME__) <= 59))
+#define IS_TIME_SECONDS(__TIME__) (((__TIME__) >=0) && ((__TIME__) <= 59))
 /*--------------------------------------------------------------------------*/
 
 eMBErrorCode
@@ -902,19 +906,28 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												
 												case DEV_PROC_TIME_HOUR:
 												{
-														TimeProc.hour=usRegHoldingBuf[DEV_PROC_TIME_HOUR];
+														if(IS_TIME_HOURS(usRegHoldingBuf[DEV_PROC_TIME_HOUR]))
+														{
+																TimeProc.hour=usRegHoldingBuf[DEV_PROC_TIME_HOUR];
+														}
 												}
 												break;
 												
 												case DEV_PROC_TIME_MINUTE:
 												{
-														TimeProc.minute=usRegHoldingBuf[DEV_PROC_TIME_MINUTE];
+														if(IS_TIME_MINUTS(usRegHoldingBuf[DEV_PROC_TIME_MINUTE]))
+														{	
+															TimeProc.minute=usRegHoldingBuf[DEV_PROC_TIME_MINUTE];
+														}
 												}
 												break;	
 												
 												case DEV_PROC_TIME_SECOND:
 												{
-														TimeProc.second=usRegHoldingBuf[DEV_PROC_TIME_SECOND];
+														if(IS_TIME_SECONDS(usRegHoldingBuf[DEV_PROC_TIME_SECOND]))
+														{															
+															TimeProc.second=usRegHoldingBuf[DEV_PROC_TIME_SECOND];
+														}
 												}
 												break;		
 
