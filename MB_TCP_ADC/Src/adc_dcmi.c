@@ -18,6 +18,8 @@ extern DMA_HandleTypeDef hdma_dcmi;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim4;
 extern TIM_HandleTypeDef htim5;
+extern TIM_HandleTypeDef htim3;
+extern TIM_HandleTypeDef htim9;
 
 
 #define RX_BUFF_SIZE	ADC_DCMI_BUF_LEN
@@ -42,7 +44,7 @@ void DCMI_DMA_TransferCallback(void);
 void DCMI_ADC_Init(void)
 {
 	ADC_DCMI_buf_pnt=&DCMIAdcRxBuff[0];
-	//Set mode and format of data
+	//Set mode and format of data ADC
 	//Mode -HI SPEED MODE=00
 	 HAL_GPIO_WritePin(GPIO0_ADC_GPIO_Port, GPIO0_ADC_Pin, GPIO_PIN_RESET);
 	 HAL_GPIO_WritePin(GPIO1_ADC_GPIO_Port, GPIO1_ADC_Pin, GPIO_PIN_RESET);
@@ -67,6 +69,9 @@ void DCMI_ADC_Init(void)
 	HAL_TIM_Base_Start(&htim5);
 	
 	HAL_DCMI_Start_DMA(&hdcmi,DCMI_MODE_CONTINUOUS,(uint32_t)DCMIAdcRxBuff,RX_BUFF_SIZE>>2);
+	
+	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_2);
+	HAL_TIM_Base_Start_IT(&htim9);
 }
 
 void DCMI_ADC_SetSamplerate(enADCSamplerate sampleRate)

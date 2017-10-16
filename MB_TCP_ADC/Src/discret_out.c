@@ -10,14 +10,13 @@
 #include "stm32f7xx.h"
 
 #define OUTPUTS_REG_ALL_RELAY_OFF		0xFFFFFFFFFFFFFFFF
-#define SPI_OUT_BYTES_NUM							8
+#define SPI_OUT_BYTES_NUM						8
 
 typedef enum
 {
   DISCR_OUT_DISABLE = 0,
   DISCR_OUT_ENABLE
 }enDiscrOutState;
-
 
 
 uint8_t 	discrOutSequenceProgress=FALSE;
@@ -112,7 +111,6 @@ void DiscretOutputs_SetSequence_Task( void *pvParameters )
 			}
 			discrOutSequenceProgress=FALSE;
 	}
-
 }
 
 

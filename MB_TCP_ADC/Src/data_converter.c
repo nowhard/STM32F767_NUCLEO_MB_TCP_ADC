@@ -82,7 +82,28 @@ inline float ADC_CurrentChannelsConvolution(void)//свертка токовых каналов
 
 inline float ADC_GetParallelCurrentSensorsValue(void)
 {
-		return ChnCalibrValues.val_current[0]+ChnCalibrValues.val_current[1];
+		float current_1=0.0;
+		float current_2=0.0;
+	
+	 if(ChnCalibrValues.val_current[0]>=CHANNEL_0_CURR_TRESHOLD)//shunt 1
+	 {
+			current_1=ChnCalibrValues.val_current[1];
+	 }
+	 else
+	 {
+			current_1=ChnCalibrValues.val_current[0];
+	 }
+	 
+	 if(ChnCalibrValues.val_current[2]>=CHANNEL_0_CURR_TRESHOLD)//shunt 2
+	 {
+			current_2=ChnCalibrValues.val_current[3];
+	 }
+	 else
+	 {
+			current_2=ChnCalibrValues.val_current[2];
+	 }
+	
+		return (current_1+current_2);
 }
 
 
@@ -230,15 +251,15 @@ void ADC_ConvertDCMIAndAssembleUDPBuf(float *resultBuf, uint16_t *resultBufLen)
 					ChnCalibrValues.val_current[0]=ADC_GetCalibrateValue(0,(out1.val&0xFFFF));
 					ChnCalibrValues.val_current[1]=ADC_GetCalibrateValue(1,(out2.val&0xFFFF));
 					ChnCalibrValues.val_current[2]=ADC_GetCalibrateValue(2,(out3.val&0xFFFF));
-					ChnCalibrValues.val_current[3]=ADC_GetCalibrateValue(3,(out4.val&0xFFFF));
+					ChnCalibrValues.val_current[3]=0.0;//ADC_GetCalibrateValue(3,(out4.val&0xFFFF));
 					ChnCalibrValues.val_current_conv=ADC_CurrentChannelsConvolution();
 			}
 			else if(jumpersDevSectionType==SECTION_TYPE_56)
 			{
-					ChnCalibrValues.val_current[0]=(ADC_GetCalibrateValue(0,(out1.val&0xFFFF)))/2;
-					ChnCalibrValues.val_current[1]=(ADC_GetCalibrateValue(1,(out2.val&0xFFFF)))/2;
-					ChnCalibrValues.val_current[2]=0.0;
-					ChnCalibrValues.val_current[3]=0.0;
+					ChnCalibrValues.val_current[0]=ADC_GetCalibrateValue(0,(out1.val&0xFFFF));
+					ChnCalibrValues.val_current[1]=ADC_GetCalibrateValue(1,(out2.val&0xFFFF));
+					ChnCalibrValues.val_current[2]=ADC_GetCalibrateValue(2,(out3.val&0xFFFF));
+					ChnCalibrValues.val_current[3]=ADC_GetCalibrateValue(3,(out4.val&0xFFFF));
 					ChnCalibrValues.val_current_conv=ADC_GetParallelCurrentSensorsValue();
 			}
 			ChnCalibrValues.val_voltage	 = ADC_GetCalibrateValue(4,(spiBuf_1[cycleCount/SPI_ADC_FREQ_DIV]&0xFFFF));

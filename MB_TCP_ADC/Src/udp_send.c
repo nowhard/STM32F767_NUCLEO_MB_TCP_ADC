@@ -47,14 +47,12 @@ void UDP_SendPyroBuf(void);
 void UDP_DestAddr_Reinit(void);
 
 
-uint8_t socket_err=0;
 void UDP_Send_Init(void)
 {
 	socket_fd = socket(PF_INET, SOCK_DGRAM, 0);
 
 	if ( socket_fd < 0 )
 	{
-		socket_err=1;
 		return;
 	}
 
@@ -66,7 +64,6 @@ void UDP_Send_Init(void)
 	if (bind(socket_fd, (struct sockaddr *)&sa, sizeof(struct sockaddr_in)) == -1)
 	{
 		close(socket_fd);
-		socket_err=1;
 		return;
 	}
 
