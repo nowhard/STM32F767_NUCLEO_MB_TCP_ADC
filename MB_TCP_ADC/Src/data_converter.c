@@ -256,10 +256,10 @@ void ADC_ConvertDCMIAndAssembleUDPBuf(float *resultBuf, uint16_t *resultBufLen)
 			}
 			else if(jumpersDevSectionType==SECTION_TYPE_56)
 			{
-					ChnCalibrValues.val_current[0]=ADC_GetCalibrateValue(0,(out1.val&0xFFFF));
-					ChnCalibrValues.val_current[1]=ADC_GetCalibrateValue(1,(out2.val&0xFFFF));
-					ChnCalibrValues.val_current[2]=ADC_GetCalibrateValue(2,(out3.val&0xFFFF));
-					ChnCalibrValues.val_current[3]=ADC_GetCalibrateValue(3,(out4.val&0xFFFF));
+					ChnCalibrValues.val_current[0]=ADC_GetCalibrateValue(0,(out1.val&0xFFFF))/2;
+					ChnCalibrValues.val_current[1]=ADC_GetCalibrateValue(1,(out2.val&0xFFFF))/2;
+					ChnCalibrValues.val_current[2]=ADC_GetCalibrateValue(2,(out3.val&0xFFFF))/2;
+					ChnCalibrValues.val_current[3]=ADC_GetCalibrateValue(3,(out4.val&0xFFFF))/2;
 					ChnCalibrValues.val_current_conv=ADC_GetParallelCurrentSensorsValue();
 			}
 			ChnCalibrValues.val_voltage	 = ADC_GetCalibrateValue(4,(spiBuf_1[cycleCount/SPI_ADC_FREQ_DIV]&0xFFFF));
