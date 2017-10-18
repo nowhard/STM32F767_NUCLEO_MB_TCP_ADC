@@ -83,7 +83,7 @@
 /*----- Default Value for MEMP_NUM_TCP_PCB_LISTEN: 8 ---*/
 #define MEMP_NUM_TCP_PCB_LISTEN 10
 /*----- Default Value for MEMP_NUM_TCP_SEG: 16 ---*/
-#define MEMP_NUM_TCP_SEG 17
+#define MEMP_NUM_TCP_SEG 128
 /*----- Default Value for MEMP_NUM_LOCALHOSTLIST: 1 ---*/
 #define MEMP_NUM_LOCALHOSTLIST 10
 /*----- Value in opt.h for LWIP_ETHERNET: LWIP_ARP || PPPOE_SUPPORT -*/
@@ -95,7 +95,7 @@
 /*----- Default Value for TCP_MSS: 536 ---*/
 #define TCP_MSS 1460
 /*----- Default Value for TCP_SND_BUF: 2920 ---*/
-#define TCP_SND_BUF 5840
+#define TCP_SND_BUF 16080
 /*----- Default Value for MEMP_NUM_TCP_PCB: 5 ---*/
 #define MEMP_NUM_TCP_PCB 10
 /*----- Value in opt.h for TCPIP_THREAD_STACKSIZE: 0 -----*/

@@ -48,7 +48,7 @@
 
 /* USER CODE BEGIN Includes */
 #include "mbinit.h"
-#include "udp_send.h"
+#include "tcp_send.h"
 #include "adc_dcmi.h"
 #include "cfg_info.h"
 #include "discret_out.h"
@@ -889,7 +889,7 @@ void StartDefaultTask(void const * argument)
   /* USER CODE BEGIN 5 */
 	MB_TCP_Init();
 	MBMaster_RTU_Init();
-	UDP_Send_Init();
+	TCPClient_Init();
 	vTaskDelete(NULL);
 
   /* USER CODE END 5 */ 
