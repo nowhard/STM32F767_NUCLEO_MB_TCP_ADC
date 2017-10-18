@@ -28,5 +28,5 @@ typedef struct
 
 #define TCP_PACKET_HEADER_SIZE	(sizeof(stPacket)-(PACKET_BUF_SIZE*sizeof(float)))
 
-void TCPClient_Init(void);
+uint8_t TCP_ADC_Server_Init( uint16_t usTCPPort );
 #endif

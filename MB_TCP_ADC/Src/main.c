@@ -889,7 +889,7 @@ void StartDefaultTask(void const * argument)
   /* USER CODE BEGIN 5 */
 	MB_TCP_Init();
 	MBMaster_RTU_Init();
-	TCPClient_Init();
+	TCP_ADC_Server_Init(0);
 	vTaskDelete(NULL);
 
   /* USER CODE END 5 */ 

@@ -3,11 +3,13 @@
 #include "lwip/stats.h"
 #include "lwip/api.h"
 #include "lwip/tcp.h"
+#include <socket.h>
 #include "main.h"
 #include "memp.h"
 #include "main.h"
 #include <stdio.h>
 #include <string.h>
+#include "mbcontext.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -31,16 +33,9 @@ extern SemaphoreHandle_t xAdcBuf_Send_Semaphore;
 extern enADCPyroBufState ADCPyroBufState;
 extern uint64_t ADC_Pyro_Timestamp;
 extern sConfigInfo configInfo;	
-//float ADC_resultBuf[ADC_DCMI_RESULT_BUF_LEN];
 
-SemaphoreHandle_t xTCPClient_Connected_Semaphore=NULL;
-SemaphoreHandle_t xTCPClient_Sent_Semaphore=NULL;
 
 stPacket TCPPacket;
-
-#define TCP_CLIENT_TASK_STACK_SIZE	1024
-#define TCP_CLIENT_TASK_PRIO				4
-void TCP_ADC_Server_Task( void *pvParameters );
 
 
 
@@ -49,182 +44,213 @@ void TCP_ADC_Server_Task( void *pvParameters );
 #define TCP_BUF_DEFAULT_PORT 1000 
 
 /* ----------------------- Static variables ---------------------------------*/
-static struct tcp_pcb *pxPCBListen;
-static struct tcp_pcb *pxPCBClient;
-/* ----------------------- Functions ---------------------------------*/
-uint8_t TCP_ADC_Server_Init( uint16_t usTCPPort );
-void TCP_ADC_Server_ReleaseClient( struct tcp_pcb *pxPCB );
-uint8_t TCP_ADC_Server_SendBuf( const uint8_t * adcBuf, uint16_t adcBufLength );
+SOCKET          xADCServListenSocket=INVALID_SOCKET;
+SOCKET 					xClientSocket;
+uint8_t    			aucTCPBuf[100];
+uint16_t   			usTCPBufPos;
+uint16_t   			usTCPFrameBytesLeft;	
 
-static err_t    TCP_ADC_Server_Accept( void *pvArg, struct tcp_pcb *pxPCB, err_t xErr );
-static void     TCP_ADC_Server_Error( void *pvArg, err_t xErr );
+static fd_set   allset;
+/* ----------------------- Functions ---------------------------------*/
+
+void TCP_ADC_Server_ReleaseClient(void);
+BOOL TCP_ADC_Server_SendBuf(const uint8_t * pucTCPFrame, uint16_t usTCPLength );
+BOOL TCP_ADC_Server_AcceptClient(void);
+//void TCP_ADC_Server_Handling(void);
+
+#define TCP_ADC_SERVER_TASK_STACK_SIZE	1024
+#define TCP_ADC_SERVER_TASK_PRIO				4
+void TCP_ADC_Server_Task( void *pvParameters );
 /* ----------------------- Begin implementation -----------------------------*/
+
+static void 		usleep(uint32_t time)
+{
+		while(time)
+		{
+				time--;
+		}
+}
+
 uint8_t TCP_ADC_Server_Init( uint16_t usTCPPort )
 {
-    struct tcp_pcb *pxPCBListenNew, *pxPCBListenOld;
-    uint8_t            bOkay = FALSE;
-    uint16_t          usPort;
+   uint16_t          usPort;
+   struct sockaddr_in serveraddr;
+	
+//	 int timeoutTimeInMiliSeconds=100;
+	
+			usTCPBufPos=0;
+			usTCPFrameBytesLeft=0;
+			xClientSocket=INVALID_SOCKET;
+		
+	  if(xADCServListenSocket==INVALID_SOCKET)
+	  {
+				if( usTCPPort == 0 )
+				{
+						usPort = TCP_BUF_DEFAULT_PORT;
+				}
+				else
+				{
+						usPort = ( uint16_t ) usTCPPort;
+				}
+				memset( &serveraddr, 0, sizeof( serveraddr ) );
+				serveraddr.sin_family = AF_INET;
+				serveraddr.sin_addr.s_addr = htonl( INADDR_ANY );
+				serveraddr.sin_port = htons( usPort );
+				
+				if( ( xADCServListenSocket = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP ) ) == -1 )//create socket failed
+				{
+						return FALSE;
+				}
+		//		else if(setsockopt( xADCServListenSocket, SOL_SOCKET, SO_RCVTIMEO,&timeoutTimeInMiliSeconds, sizeof(int)) == -1)//Set timeout socket failed
+		//		{
+		//        return FALSE;
+		//		}
+				else if( bind( xADCServListenSocket, ( struct sockaddr * )&serveraddr, sizeof( serveraddr ) ) == -1 )//bind  socket failed
+				{
+						return FALSE;
+				}
+				else if( listen( xADCServListenSocket, 5 ) == -1 )//listen socket failed
+				{
+						return FALSE;
+				}
+				FD_ZERO( &allset );
+				FD_SET( xADCServListenSocket, &allset );
+				
+				listen(xADCServListenSocket,5);		
+	 }	
 
-    if( usTCPPort == 0 )
-    {
-        usPort = TCP_BUF_DEFAULT_PORT;
-    }
-    else
-    {
-        usPort = ( uint16_t ) usTCPPort;
-    }
+		xTaskCreate( TCP_ADC_Server_Task, "MBTCP HANDLE", TCP_ADC_SERVER_TASK_STACK_SIZE, NULL, TCP_ADC_SERVER_TASK_PRIO, NULL );
 
-    if( ( pxPCBListenNew = pxPCBListenOld = tcp_new(  ) ) == NULL )
-    {
-        /* Can't create TCP socket. */
-        bOkay = FALSE;
-    }
-    else if( tcp_bind( pxPCBListenNew, IP_ADDR_ANY, ( u16_t ) usPort ) != ERR_OK )
-    {
-        /* Bind failed - Maybe illegal port value or in use. */
-        ( void )tcp_close( pxPCBListenOld );
-        bOkay = FALSE;
-    }
-    else if( ( pxPCBListenNew = tcp_listen( pxPCBListenNew ) ) == NULL )
-    {
-        ( void )tcp_close( pxPCBListenOld );
-        bOkay = FALSE;
-    }
-    else
-    {
-        /* Register callback function for new clients. */
-        tcp_accept( pxPCBListenNew, TCP_ADC_Server_Accept );
-
-        /* Everything okay. Set global variable. */
-        pxPCBListen = pxPCBListenNew;
-    }
-    bOkay = TRUE;
-    return bOkay;
-}
-
-void TCP_ADC_Server_ReleaseClient( struct tcp_pcb *pxPCB )
-{
-    if( pxPCB != NULL )
-    {
-        if( tcp_close( pxPCB ) != ERR_OK )
-        {
-            tcp_abort( pxPCB );
-        }
-
-        if( pxPCB == pxPCBClient )
-        {
-            pxPCBClient = NULL;
-        }
-        if( pxPCB == pxPCBListen )
-        {
-            pxPCBListen = NULL;
-        }
-    }
+    return TRUE;
 }
 
 
-err_t TCP_ADC_Server_Accept( void *pvArg, struct tcp_pcb *pxPCB, err_t xErr )
+
+#define TCP_ADC_READ_TIMEOUT 1000        /* Maximum timeout to wait for packets. */
+#define TCP_ADC_READ_CYCLE   100 /* Time between checking for new data. */
+
+#define TCP_ADC_MAX_MSG_LEN		1000
+
+BOOL TCP_ADC_Server_SendBuf(const uint8_t * pucTCPFrame, uint16_t usTCPLength )
 {
-    err_t           error;
+    BOOL            bFrameSent = FALSE;
+    BOOL            bAbort = FALSE;
+    int             res;
+    int             iBytesSent = 0;
+    int             iTimeOut = TCP_ADC_READ_TIMEOUT;
+	
+		if(xClientSocket==INVALID_SOCKET)
+		{
+				return FALSE;
+		}
 
-    if( xErr != ERR_OK )
+    do
     {
-        return xErr;
-    }
-
-    /* We can handle only one client. */
-    if( pxPCBClient == NULL )
-    {
-        /* Register the client. */
-        pxPCBClient = pxPCB;
-
-        /* Set up the receive function prvxMBTCPPortReceive( ) to be called when data
-         * arrives.
-         */
-        tcp_recv( pxPCB, NULL );
-
-        /* Register error handler. */
-        tcp_err( pxPCB, TCP_ADC_Server_Error );
-
-        /* Set callback argument later used in the error handler. */
-        tcp_arg( pxPCB, pxPCB );
-
-        error = ERR_OK;
-    }
-    else
-    {
-        TCP_ADC_Server_ReleaseClient( pxPCB );
-        error = ERR_OK;
-    }
-    return error;
-}
-
-/* Called in case of an unrecoverable error. In any case we drop the client
- * connection. */
-void TCP_ADC_Server_Error( void *pvArg, err_t xErr )
-{
-    struct tcp_pcb *pxPCB = pvArg;
-
-    if( pxPCB != NULL )
-    {
-        TCP_ADC_Server_ReleaseClient( pxPCB );
-    }
-}
-
-
-uint8_t TCP_ADC_Server_SendBuf( const uint8_t * adcBuf, uint16_t adcBufLength )
-{
-    uint8_t            bFrameSent = FALSE;
-
-    if( pxPCBClient )
-    {
-        /* Make sure we can send the packet. */
-        //assert( tcp_sndbuf( pxPCBClient ) >= adcBufLength );
-
-        if( tcp_write( pxPCBClient, adcBuf, ( u16_t ) adcBufLength, TCP_WRITE_FLAG_COPY ) == ERR_OK )
+				if((usTCPLength - iBytesSent)>=TCP_ADC_MAX_MSG_LEN)
+				{
+						res = send(xClientSocket, &pucTCPFrame[iBytesSent], TCP_ADC_MAX_MSG_LEN, 0 );
+				}
+				else
+				{
+						res = send(xClientSocket, &pucTCPFrame[iBytesSent], usTCPLength - iBytesSent, 0 );
+				}
+				
+        switch ( res )
         {
-            /* Make sure data gets sent immediately. */
-            ( void )tcp_output( pxPCBClient );
-            bFrameSent = TRUE;
-        }
-        else
-        {
-            /* Drop the connection in case of an write error. */
-            TCP_ADC_Server_ReleaseClient( pxPCBClient );
+        case -1:
+            if( iTimeOut > 0 )
+            {
+                iTimeOut -= TCP_ADC_READ_CYCLE;
+                usleep( TCP_ADC_READ_CYCLE );
+            }
+            else
+            {
+                bAbort = TRUE;
+            }
+            break;
+        case 0:
+            TCP_ADC_Server_ReleaseClient( );
+            bAbort = TRUE;
+            break;
+        default:
+            iBytesSent += res;
+            break;
         }
     }
+    while( ( iBytesSent != usTCPLength ) && !bAbort );
+
+    bFrameSent = iBytesSent == usTCPLength ? TRUE : FALSE;
+
     return bFrameSent;
 }
 
+void TCP_ADC_Server_ReleaseClient(void)
+{
+//    ( void )recv( stTCPContext->xClientSocket, &stTCPContext->aucTCPBuf[0], MB_TCP_BUF_SIZE, 0 );
 
+    ( void )close(xClientSocket );
+    xClientSocket = INVALID_SOCKET;
+}
 
-#define TCP_CLIENT_CONNECTED_TIMEOUT	100
-#define TCP_CLIENT_SENT_TIMEOUT				100
+BOOL TCP_ADC_Server_AcceptClient(void)
+{
+    SOCKET          xNewSocket;
+    BOOL            bOkay;
 
+    /* Check if we can handle a new connection. */
+
+    if(xClientSocket != INVALID_SOCKET )//can't accept new client
+    {				
+        bOkay = FALSE;
+    }
+    else if( ( xNewSocket = accept( xADCServListenSocket, NULL, NULL ) ) == INVALID_SOCKET )
+    {
+        bOkay = FALSE;
+    }
+    else
+    {
+        xClientSocket = xNewSocket;
+        usTCPBufPos = 0;
+        usTCPFrameBytesLeft = 0;
+        bOkay = TRUE;
+    }
+    return bOkay;
+}
 
 
 void TCP_ADC_Server_Task( void *pvParameters )
 {
-	uint16_t resultBufLen=0;
-	err_t err = ERR_OK;
+	uint16_t resultBufLen=3000;
+	BOOL frameSent=FALSE;
 	
 	while(1)
 	{
-			if(TCP_ADC_Server_Init(TCP_BUF_DEFAULT_PORT)==TRUE)
-			{
-					err = ERR_OK;
-					while(err == ERR_OK)
-					{
+				if(xClientSocket==INVALID_SOCKET) //wait new client
+				{				
+						if(TCP_ADC_Server_AcceptClient()==TRUE)
+						{
+								continue;
+						}
+				}			
+				else
+				{	
 						//Заполним структуру пакета данными
-						ADC_ConvertDCMIAndAssembleUDPBuf(TCPPacket.data, &resultBufLen);		
+//						ADC_ConvertDCMIAndAssembleUDPBuf(TCPPacket.data, &resultBufLen);		
 						TCPPacket.size=resultBufLen*sizeof(float);
 						TCPPacket.type=PACKET_TYPE_BASE;
-						TCPPacket.timestamp=DCMI_ADC_GetLastTimestamp();
-						
-						err=TCP_ADC_Server_SendBuf((uint8_t *)&TCPPacket,TCP_PACKET_HEADER_SIZE+resultBufLen*sizeof(float));
-					}
-			}
-			vTaskDelay(100);
+						TCPPacket.timestamp=0xFFFF;//DCMI_ADC_GetLastTimestamp();			
+					
+						frameSent=TCP_ADC_Server_SendBuf((uint8_t *)&TCPPacket,TCP_PACKET_HEADER_SIZE+resultBufLen*sizeof(float));
+					
+						if(frameSent)
+						{
+								vTaskDelay(5000);
+						}
+						else
+						{
+								TCP_ADC_Server_ReleaseClient();
+						}					
+				}
 	}
 }
 
