@@ -181,8 +181,6 @@ xMBTCPPortGetRequest(stMBContext*	  stTCPContext, UCHAR ** ppucMBTCPFrame, USHOR
 }
 
 
-uint8_t activeSocket=0;
-
 BOOL
 xMBTCPPortSendResponse( stMBContext*	  stTCPContext, const UCHAR * pucMBTCPFrame, USHORT usTCPLength )
 {
