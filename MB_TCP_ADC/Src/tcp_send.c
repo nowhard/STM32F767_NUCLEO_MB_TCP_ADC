@@ -1,6 +1,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "lwip/debug.h"
 #include "lwip/stats.h"
+#include "lwip/api.h"
 #include "lwip/tcp.h"
 #include "main.h"
 #include "memp.h"
@@ -21,20 +22,10 @@
 #include "spi_adc.h"
 #include "cfg_info.h"
 #include "tcp_send.h"
+#include "utilities.h"
 
 #if LWIP_TCP
 
-typedef enum
-{
-		TCP_CLIENT_DISCONNECTED=0,
-		TCP_CLIENT_CONNECTED,
-	
-}enTCPClientState;
-
-static enTCPClientState TCPClientState=TCP_CLIENT_DISCONNECTED;
-
-struct tcp_pcb *clientPcb;
-static err_t cbErr=ERR_OK;
 
 extern SemaphoreHandle_t xAdcBuf_Send_Semaphore;
 extern enADCPyroBufState ADCPyroBufState;
@@ -49,150 +40,191 @@ stPacket TCPPacket;
 
 #define TCP_CLIENT_TASK_STACK_SIZE	1024
 #define TCP_CLIENT_TASK_PRIO				4
-void TCPClient_Task( void *pvParameters );
+void TCP_ADC_Server_Task( void *pvParameters );
 
-/* Private function prototypes -----------------------------------------------*/
-static err_t TCPClient_Connect(void);
-static err_t TCPClient_ConnectionClose(struct tcp_pcb *tpcb);
-static err_t TCPClient_Sent_CB(void *arg, struct tcp_pcb *tpcb, u16_t len);
-static err_t TCPClient_SendBuf(struct tcp_pcb *tpcb, uint8_t *buf, uint16_t bufSize);
-static err_t TCPClient_Connected_CB(void *arg, struct tcp_pcb *tpcb, err_t err);
-/* Private functions ---------------------------------------------------------*/
 
-void TCPClient_Init(void)
+
+
+/* ----------------------- Defines  -----------------------------------------*/
+#define TCP_BUF_DEFAULT_PORT 1000 
+
+/* ----------------------- Static variables ---------------------------------*/
+static struct tcp_pcb *pxPCBListen;
+static struct tcp_pcb *pxPCBClient;
+/* ----------------------- Functions ---------------------------------*/
+uint8_t TCP_ADC_Server_Init( uint16_t usTCPPort );
+void TCP_ADC_Server_ReleaseClient( struct tcp_pcb *pxPCB );
+uint8_t TCP_ADC_Server_SendBuf( const uint8_t * adcBuf, uint16_t adcBufLength );
+
+static err_t    TCP_ADC_Server_Accept( void *pvArg, struct tcp_pcb *pxPCB, err_t xErr );
+static void     TCP_ADC_Server_Error( void *pvArg, err_t xErr );
+/* ----------------------- Begin implementation -----------------------------*/
+uint8_t TCP_ADC_Server_Init( uint16_t usTCPPort )
 {
-	xTCPClient_Connected_Semaphore=xSemaphoreCreateBinary();
-	xTCPClient_Sent_Semaphore=xSemaphoreCreateBinary();
-	xTaskCreate( TCPClient_Task, "TCP Client Task", TCP_CLIENT_TASK_STACK_SIZE, NULL, TCP_CLIENT_TASK_PRIO, NULL );
+    struct tcp_pcb *pxPCBListenNew, *pxPCBListenOld;
+    uint8_t            bOkay = FALSE;
+    uint16_t          usPort;
+
+    if( usTCPPort == 0 )
+    {
+        usPort = TCP_BUF_DEFAULT_PORT;
+    }
+    else
+    {
+        usPort = ( uint16_t ) usTCPPort;
+    }
+
+    if( ( pxPCBListenNew = pxPCBListenOld = tcp_new(  ) ) == NULL )
+    {
+        /* Can't create TCP socket. */
+        bOkay = FALSE;
+    }
+    else if( tcp_bind( pxPCBListenNew, IP_ADDR_ANY, ( u16_t ) usPort ) != ERR_OK )
+    {
+        /* Bind failed - Maybe illegal port value or in use. */
+        ( void )tcp_close( pxPCBListenOld );
+        bOkay = FALSE;
+    }
+    else if( ( pxPCBListenNew = tcp_listen( pxPCBListenNew ) ) == NULL )
+    {
+        ( void )tcp_close( pxPCBListenOld );
+        bOkay = FALSE;
+    }
+    else
+    {
+        /* Register callback function for new clients. */
+        tcp_accept( pxPCBListenNew, TCP_ADC_Server_Accept );
+
+        /* Everything okay. Set global variable. */
+        pxPCBListen = pxPCBListenNew;
+    }
+    bOkay = TRUE;
+    return bOkay;
 }
 
-static err_t TCPClient_Connect(void)
+void TCP_ADC_Server_ReleaseClient( struct tcp_pcb *pxPCB )
 {
-	err_t err = ERR_OK;
-  ip_addr_t DestIPaddr;
-  clientPcb = tcp_new();
-  if (clientPcb != NULL)
-  {
-    IP4_ADDR( &DestIPaddr, configInfo.IPAdress_Server.ip_addr_0, configInfo.IPAdress_Server.ip_addr_1, configInfo.IPAdress_Server.ip_addr_2, configInfo.IPAdress_Server.ip_addr_3 );
-    err=tcp_connect(clientPcb,&DestIPaddr,configInfo.IPAdress_Server.port,TCPClient_Connected_CB);
-  }
-	
-	return err;
+    if( pxPCB != NULL )
+    {
+        if( tcp_close( pxPCB ) != ERR_OK )
+        {
+            tcp_abort( pxPCB );
+        }
+
+        if( pxPCB == pxPCBClient )
+        {
+            pxPCBClient = NULL;
+        }
+        if( pxPCB == pxPCBListen )
+        {
+            pxPCBListen = NULL;
+        }
+    }
 }
 
-static err_t TCPClient_ConnectionClose(struct tcp_pcb *tpcb)
+
+err_t TCP_ADC_Server_Accept( void *pvArg, struct tcp_pcb *pxPCB, err_t xErr )
 {
-	err_t err = ERR_OK;
-  tcp_sent(tpcb, NULL);
-  err=tcp_close(tpcb);
-	TCPClientState=TCP_CLIENT_DISCONNECTED;
-	
-	return err;
+    err_t           error;
+
+    if( xErr != ERR_OK )
+    {
+        return xErr;
+    }
+
+    /* We can handle only one client. */
+    if( pxPCBClient == NULL )
+    {
+        /* Register the client. */
+        pxPCBClient = pxPCB;
+
+        /* Set up the receive function prvxMBTCPPortReceive( ) to be called when data
+         * arrives.
+         */
+        tcp_recv( pxPCB, NULL );
+
+        /* Register error handler. */
+        tcp_err( pxPCB, TCP_ADC_Server_Error );
+
+        /* Set callback argument later used in the error handler. */
+        tcp_arg( pxPCB, pxPCB );
+
+        error = ERR_OK;
+    }
+    else
+    {
+        TCP_ADC_Server_ReleaseClient( pxPCB );
+        error = ERR_OK;
+    }
+    return error;
 }
 
-/*****************************************************************************
-												TCP connected callback
-******************************************************************************/
-static err_t TCPClient_Connected_CB(void *arg, struct tcp_pcb *tpcb, err_t err)
+/* Called in case of an unrecoverable error. In any case we drop the client
+ * connection. */
+void TCP_ADC_Server_Error( void *pvArg, err_t xErr )
 {
-  if (err == ERR_OK)
-  {
-       tcp_sent(tpcb, TCPClient_Sent_CB);
-			 TCPClientState=TCP_CLIENT_CONNECTED;
-  }
-  else
-  {
-	  	 TCPClient_ConnectionClose(tpcb);
-			 TCPClientState=TCP_CLIENT_DISCONNECTED;
-  }
-	
-	cbErr=err;
-	xSemaphoreGive(xTCPClient_Connected_Semaphore);
-  return err;
-}
-/*****************************************************************************
-												TCP sent callback
-******************************************************************************/
-static err_t TCPClient_Sent_CB(void *arg, struct tcp_pcb *tpcb, u16_t len)
-{
-  LWIP_UNUSED_ARG(len);
-	xSemaphoreGive(xTCPClient_Sent_Semaphore);
+    struct tcp_pcb *pxPCB = pvArg;
 
-  return ERR_OK;
+    if( pxPCB != NULL )
+    {
+        TCP_ADC_Server_ReleaseClient( pxPCB );
+    }
 }
+
+
+uint8_t TCP_ADC_Server_SendBuf( const uint8_t * adcBuf, uint16_t adcBufLength )
+{
+    uint8_t            bFrameSent = FALSE;
+
+    if( pxPCBClient )
+    {
+        /* Make sure we can send the packet. */
+        //assert( tcp_sndbuf( pxPCBClient ) >= adcBufLength );
+
+        if( tcp_write( pxPCBClient, adcBuf, ( u16_t ) adcBufLength, TCP_WRITE_FLAG_COPY ) == ERR_OK )
+        {
+            /* Make sure data gets sent immediately. */
+            ( void )tcp_output( pxPCBClient );
+            bFrameSent = TRUE;
+        }
+        else
+        {
+            /* Drop the connection in case of an write error. */
+            TCP_ADC_Server_ReleaseClient( pxPCBClient );
+        }
+    }
+    return bFrameSent;
+}
+
+
 
 #define TCP_CLIENT_CONNECTED_TIMEOUT	100
 #define TCP_CLIENT_SENT_TIMEOUT				100
-static err_t TCPClient_SendBuf(struct tcp_pcb *tpcb, uint8_t *buf, uint16_t bufSize)
-{
-	err_t err = ERR_OK;
-
-		if(TCPClientState!=TCP_CLIENT_CONNECTED)
-		{
-					err=TCPClient_Connect();
-					
-					if(err!=ERR_OK)
-					{
-							return err;
-					}
-					
-					if(xSemaphoreTake( xTCPClient_Connected_Semaphore, TCP_CLIENT_CONNECTED_TIMEOUT ))
-					{
-							if(cbErr!=ERR_OK)
-							{
-									return cbErr;
-							}	
-					}
-					else
-					{
-						return ERR_CONN;	
-					}
-					TCPClientState=TCP_CLIENT_CONNECTED;
-		}
-	
-	err = tcp_write(tpcb, (uint8_t*)buf,bufSize,0);
-	
-	if(err!=ERR_OK)
-	{
-			//TCPClientState=TCP_CLIENT_DISCONNECTED;
-			return err;
-	}
-	
-	err=tcp_output(tpcb);
-	
-	if(err!=ERR_OK)
-	{
-			return err;
-	}
-	
-	if(xSemaphoreTake( xTCPClient_Sent_Semaphore, TCP_CLIENT_SENT_TIMEOUT ))
-	{
-
-	}
-	else
-	{
-		return ERR_CONN;	
-	}
-	
-	return err;
-}
 
 
-void TCPClient_Task( void *pvParameters )
+
+void TCP_ADC_Server_Task( void *pvParameters )
 {
 	uint16_t resultBufLen=0;
 	err_t err = ERR_OK;
+	
 	while(1)
 	{
-		xSemaphoreTake( xAdcBuf_Send_Semaphore, portMAX_DELAY );
-		
-		//Заполним структуру пакета данными
-		ADC_ConvertDCMIAndAssembleUDPBuf(TCPPacket.data, &resultBufLen);		
-		TCPPacket.size=resultBufLen*sizeof(float);
-		TCPPacket.type=PACKET_TYPE_BASE;
-		TCPPacket.timestamp=DCMI_ADC_GetLastTimestamp();
-		
-		err=TCPClient_SendBuf(clientPcb,(uint8_t *)&TCPPacket,TCP_PACKET_HEADER_SIZE+resultBufLen*sizeof(float));
+			if(TCP_ADC_Server_Init(TCP_BUF_DEFAULT_PORT)==TRUE)
+			{
+					err = ERR_OK;
+					while(err == ERR_OK)
+					{
+						//Заполним структуру пакета данными
+						ADC_ConvertDCMIAndAssembleUDPBuf(TCPPacket.data, &resultBufLen);		
+						TCPPacket.size=resultBufLen*sizeof(float);
+						TCPPacket.type=PACKET_TYPE_BASE;
+						TCPPacket.timestamp=DCMI_ADC_GetLastTimestamp();
+						
+						err=TCP_ADC_Server_SendBuf((uint8_t *)&TCPPacket,TCP_PACKET_HEADER_SIZE+resultBufLen*sizeof(float));
+					}
+			}
+			vTaskDelay(100);
 	}
 }
 

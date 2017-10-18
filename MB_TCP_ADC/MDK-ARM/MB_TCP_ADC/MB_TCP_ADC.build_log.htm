@@ -28,14 +28,17 @@ Project File Date:  10/18/2017
 *** Using Compiler 'V5.06 update 1 (build 61)', folder: 'C:\Program Files\Keil\ARM\ARMCC\Bin'
 Build target 'MB_TCP_ADC'
 compiling tcp_send.c...
-..\Src\tcp_send.c(184): warning:  #550-D: variable "err" was set but never used
-  	err_t err = ERR_OK;
-..\Src\tcp_send.c: 1 warning, 0 errors
-compiling main.c...
+compiling porttcp.c...
+..\Middlewares\Third_Party\Modbus\port\porttcp.c(71): warning:  #177-D: variable "timeoutTimeInMiliSeconds" was declared but never referenced
+  			int timeoutTimeInMiliSeconds=100;
+..\Middlewares\Third_Party\Modbus\port\porttcp.c(400): warning:  #1-D: last line of file ends without a newline
+  }
+..\Middlewares\Third_Party\Modbus\port\porttcp.c: 2 warnings, 0 errors
 linking...
-Program Size: Code=95060 RO-data=1752 RW-data=1108 ZI-data=233884  
-FromELF: creating hex file...
-"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 1 Warning(s).
+MB_TCP_ADC\MB_TCP_ADC.axf: Error: L6218E: Undefined symbol TCPClient_Init (referred from main.o).
+Not enough information to list image symbols.
+Finished: 1 information, 0 warning and 1 error messages.
+"MB_TCP_ADC\MB_TCP_ADC.axf" - 1 Error(s), 2 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -53,7 +56,8 @@ Package Vendor: ARM
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.0.1
-Build Time Elapsed:  00:00:25
+Target not created.
+Build Time Elapsed:  00:00:22
 </pre>
 </body>
 </html>
