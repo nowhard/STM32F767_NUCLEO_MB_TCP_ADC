@@ -127,17 +127,43 @@ void UDP_SendPyroBuf(void)
 	}
 }
 
+/****************************************
+*****************************************/
+#define UDP_TEST_NUMPACKETS_IN_ONE_TIME	 8
+uint8_t testBuf[UDP_BASE_DATA_SIZE]={0xCC};
+void UDP_SendTestBuf(uint8_t *buf)
+{		
+		uint8_t packetCnt=0;
+		UDP_DestAddr_Reinit();
 
+		memcpy(&UDPPacket.BasePacket.data,buf,UDP_BASE_DATA_SIZE);
+		
+		for(packetCnt=0;packetCnt<UDP_TEST_NUMPACKETS_IN_ONE_TIME;packetCnt++)
+		{
+				sendto(socket_fd, &UDPPacket,UDP_BASE_PACKET_SIZE,0,(struct sockaddr*)&ra,sizeof(ra));	
+				UDPPacket.timestamp++;
+				vTaskDelay(1);
+		}
+		
+}
+
+#define UDP_TEST_SEND_PERIOD	100
 void UDP_Send_Task( void *pvParameters )
 {
-	static uint16_t resultBufLen=0;
+
+	UDPPacket.timestamp=0;
+	UDPPacket.id=0;
+	UDPPacket.type=UDP_PACKET_TYPE_BASE;
+	
 	while(1)
 	{
-		xSemaphoreTake( xAdcBuf_Send_Semaphore, portMAX_DELAY );
-		
-		ADC_ConvertDCMIAndAssembleUDPBuf(ADC_resultBuf, &resultBufLen);
-		UDP_SendBaseBuf(ADC_resultBuf,resultBufLen);
-		UDP_SendPyroBuf();
+//		xSemaphoreTake( xAdcBuf_Send_Semaphore, portMAX_DELAY );
+//		
+//		ADC_ConvertDCMIAndAssembleUDPBuf(ADC_resultBuf, &resultBufLen);
+//		UDP_SendBaseBuf(ADC_resultBuf,resultBufLen);
+//		UDP_SendPyroBuf();
+		UDP_SendTestBuf(testBuf);
+		vTaskDelay(UDP_TEST_SEND_PERIOD);
 	}
 }
 
