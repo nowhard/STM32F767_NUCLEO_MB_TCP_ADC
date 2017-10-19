@@ -54,6 +54,7 @@
 #include "discret_out.h"
 #include "jumpers.h"
 #include "mbmasterpyro.h"
+#include "data_converter.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -167,6 +168,7 @@ int main(void)
 	Jumpers_ReadSettings();
 	DiscretOutputs_Init();
 	DCMI_ADC_Init();
+	ADC_Convert_Init();
  
   /* USER CODE END 2 */
 

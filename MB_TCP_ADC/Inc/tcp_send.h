@@ -1,7 +1,7 @@
 #ifndef TCP_SEND_H
 #define TCP_SEND_H
 #include "stm32f7xx_hal.h"
-
+#include "port.h"
 
 #pragma anon_unions
 
@@ -30,6 +30,7 @@ typedef struct
 #pragma pack(pop)
 
 #define TCP_PACKET_HEADER_SIZE	(sizeof(stPacket)-PACKET_BUF_SIZE)
-
 uint8_t TCP_ADC_Server_Init( uint16_t usTCPPort );
+BOOL TCP_ADC_Send_BaseBuf(stPacket *TCPPacket);
+BOOL TCP_ADC_Send_PyroBuf(stPacket *TCPPacket);
 #endif

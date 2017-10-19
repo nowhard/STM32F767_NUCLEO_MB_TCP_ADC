@@ -34,12 +34,6 @@ extern enADCPyroBufState ADCPyroBufState;
 extern uint64_t ADC_Pyro_Timestamp;
 extern sConfigInfo configInfo;	
 
-
-static stPacket TCPPacket;
-
-
-
-
 /* ----------------------- Defines  -----------------------------------------*/
 #define TCP_BUF_DEFAULT_PORT 1000 
 
@@ -56,7 +50,7 @@ BOOL TCP_ADC_Server_SendBuf(const uint8_t * pucTCPFrame, uint16_t usTCPLength );
 BOOL TCP_ADC_Server_AcceptClient(void);
 //void TCP_ADC_Server_Handling(void);
 
-#define TCP_ADC_SERVER_TASK_STACK_SIZE	2048
+#define TCP_ADC_SERVER_TASK_STACK_SIZE	1024
 #define TCP_ADC_SERVER_TASK_PRIO				4
 void TCP_ADC_Server_Task( void *pvParameters );
 /* ----------------------- Begin implementation -----------------------------*/
@@ -110,7 +104,7 @@ uint8_t TCP_ADC_Server_Init( uint16_t usTCPPort )
 				listen(xADCServListenSocket,5);		
 	 }	
 
-		xTaskCreate( TCP_ADC_Server_Task, "MBTCP HANDLE", TCP_ADC_SERVER_TASK_STACK_SIZE, NULL, TCP_ADC_SERVER_TASK_PRIO, NULL );
+		xTaskCreate( TCP_ADC_Server_Task, "TCP SERVER HANDLE", TCP_ADC_SERVER_TASK_STACK_SIZE, NULL, TCP_ADC_SERVER_TASK_PRIO, NULL );
 
     return TRUE;
 }
@@ -204,45 +198,64 @@ BOOL TCP_ADC_Server_AcceptClient(void)
     return bOkay;
 }
 
-BOOL TCP_ADC_Send_BaseBuf(uint8_t *buf, uint16_t len)
+BOOL TCP_ADC_Send_BaseBuf(stPacket *TCPPacket)
 {
 		BOOL frameSent=FALSE;
 	
-		TCPPacket.startOfFrame=TCP_ADC_START_FRAME_MAGIC;
-		TCPPacket.type=PACKET_TYPE_BASE;
-		TCPPacket.timestamp=DCMI_ADC_GetLastTimestamp();		
+		if(xClientSocket==INVALID_SOCKET)
+		{
+				return FALSE;
+		}
+	
+		TCPPacket->startOfFrame=TCP_ADC_START_FRAME_MAGIC;
+		TCPPacket->type=PACKET_TYPE_BASE;
+		TCPPacket->timestamp=DCMI_ADC_GetLastTimestamp();		
 		
-		frameSent=TCP_ADC_Server_SendBuf(buf,len);
+		frameSent=TCP_ADC_Server_SendBuf((uint8_t*)TCPPacket,TCP_PACKET_HEADER_SIZE+TCPPacket->size);
+	
+		if(!frameSent)
+		{
+				TCP_ADC_Server_ReleaseClient();
+		}
+		
 		return frameSent;
 }
 
-BOOL TCP_ADC_Send_PyroBuf(void)
+BOOL TCP_ADC_Send_PyroBuf(stPacket *TCPPacket)
 {
 		BOOL frameSent=FALSE;
 	
-		TCPPacket.startOfFrame=TCP_ADC_START_FRAME_MAGIC;
-		TCPPacket.type=PACKET_TYPE_ADC_PYRO;
-		TCPPacket.timestamp=ADC_Pyro_Timestamp;		
+		if(xClientSocket==INVALID_SOCKET)
+		{
+				return FALSE;
+		}
+		
+		TCPPacket->startOfFrame=TCP_ADC_START_FRAME_MAGIC;
+		TCPPacket->type=PACKET_TYPE_ADC_PYRO;
+		TCPPacket->timestamp=ADC_Pyro_Timestamp;		
 	
 		if((ADCPyroBufState==ADC_PYRO_BUF_FILL_STOP) && ADC_PyroBuf_GetCurrentLength())//передача данных ацп пиропатрона закончена
 		{
-			TCPPacket.size=ADC_PyroBuf_Copy((void *)TCPPacket.data,PACKET_BUF_SIZE);
-			frameSent=TCP_ADC_Server_SendBuf((uint8_t *)&TCPPacket,TCP_PACKET_HEADER_SIZE+TCPPacket.size);
+			TCPPacket->size=ADC_PyroBuf_Copy((void *)TCPPacket->data,PACKET_BUF_SIZE);
+			frameSent=TCP_ADC_Server_SendBuf((uint8_t *)TCPPacket,TCP_PACKET_HEADER_SIZE+TCPPacket->size);
 		}
 		else
 		{
 				frameSent=TRUE;
+		}
+		
+		if(!frameSent)
+		{
+				TCP_ADC_Server_ReleaseClient();
 		}
 			
 		return frameSent;
 }
 
 
+#define SERVER_TASK_IDLE_CYCLE		100
 void TCP_ADC_Server_Task( void *pvParameters )
 {
-	uint16_t resultBufLen=0;
-	BOOL frameSent=FALSE;
-	
 	while(1)
 	{
 				if(xClientSocket==INVALID_SOCKET) //wait new client
@@ -253,26 +266,8 @@ void TCP_ADC_Server_Task( void *pvParameters )
 						}
 				}			
 				else
-				{						
-						xSemaphoreTake( xAdcBuf_Send_Semaphore, portMAX_DELAY );
-					
-						ADC_ConvertDCMIAndAssembleUDPBuf(TCPPacket.data, &resultBufLen);							
-						frameSent=TCP_ADC_Send_BaseBuf((uint8_t *)&TCPPacket,TCP_PACKET_HEADER_SIZE+resultBufLen);
-					
-						if(!frameSent)
-						{
-								TCP_ADC_Server_ReleaseClient();
-								continue;
-						}	
-
-						frameSent=TCP_ADC_Send_PyroBuf();
-						
-						if(!frameSent)
-						{
-								TCP_ADC_Server_ReleaseClient();
-								continue;
-						}							
-						
+				{	
+						vTaskDelay(SERVER_TASK_IDLE_CYCLE);									
 				}
 	}
 }

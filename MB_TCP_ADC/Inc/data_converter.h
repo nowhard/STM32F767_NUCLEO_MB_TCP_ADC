@@ -20,5 +20,5 @@ typedef struct
 }stChnCalibrValues;
 
 
-void ADC_ConvertDCMIAndAssembleUDPBuf(uint8_t *resultBuf, uint16_t *resultBufLen);
+void ADC_Convert_Init(void);
 #endif

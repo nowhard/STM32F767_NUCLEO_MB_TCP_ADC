@@ -4,8 +4,10 @@
 #include "spi_adc.h"
 #include "cfg_info.h"
 #include "FreeRTOS.h"
+#include "semphr.h"
 #include "task.h"
 #include "utilities.h"
+#include "tcp_send.h"
 
 
 #define CHANNEL_3_CURR_TRESHOLD		250.0
@@ -16,6 +18,8 @@
 extern uint8_t *ADC_DCMI_buf_pnt;
 extern uint16_t *currentSPI3_ADC_Buf;
 extern uint16_t *currentSPI6_ADC_Buf;
+
+extern SemaphoreHandle_t xAdcBuf_Send_Semaphore;
 
 #pragma anon_unions
 union bytefield{
@@ -59,7 +63,16 @@ stChnCalibrValues ChnCalibrValues;
 float ADC_CurrentChannelsConvolution(void);
 float ADC_GetParallelCurrentSensorsValue(void);
 float ADC_GetCalibrateValue(uint8_t channel, uint16_t value);
+void ADC_ConvertDCMIAndAssembleBuf(uint8_t *resultBuf, uint16_t *resultBufLen);
 
+#define ADC_CONVERT_TASK_STACK_SIZE	1024
+#define ADC_CONVERT_TASK_PRIO				4
+void ADC_Convert_Task( void *pvParameters );
+
+void ADC_Convert_Init(void)
+{
+		xTaskCreate( ADC_Convert_Task, "ADC Convert Task", ADC_CONVERT_TASK_STACK_SIZE, NULL, ADC_CONVERT_TASK_PRIO, NULL );
+}
 
 
 inline float ADC_CurrentChannelsConvolution(void)//свертка токовых каналов
@@ -114,7 +127,7 @@ inline float ADC_GetCalibrateValue(uint8_t channel, uint16_t value)
 }
 
 
-void ADC_ConvertDCMIAndAssembleUDPBuf(uint8_t *resultBuf, uint16_t *resultBufLen)
+void ADC_ConvertDCMIAndAssembleBuf(uint8_t *resultBuf, uint16_t *resultBufLen)
 {
 	uint16_t cycleCount;
 	uint8_t *dcmiBuf=ADC_DCMI_buf_pnt;
@@ -272,15 +285,23 @@ void ADC_ConvertDCMIAndAssembleUDPBuf(uint8_t *resultBuf, uint16_t *resultBufLen
 			Float_To_UINT8_Buf(ChnCalibrValues.val_voltage,resultBuf);
 			resultBuf+=sizeof(float);
 			Float_To_UINT8_Buf(ChnCalibrValues.val_pressure,resultBuf);
-			resultBuf+=sizeof(float);
-			
-//			*resultBuf=ChnCalibrValues.val_current_conv;
-//			resultBuf++;
-//			*resultBuf=ChnCalibrValues.val_voltage;
-//			resultBuf++;
-//			*resultBuf=ChnCalibrValues.val_pressure;
-//			resultBuf++;	
+			resultBuf+=sizeof(float);		
 	}
 	
 	*resultBufLen=cycleCount*ADC_UDP_CHN_NUM*sizeof(float);	
+}
+
+static stPacket TCPPacket;
+
+void ADC_Convert_Task( void *pvParameters )
+{
+	uint16_t resultBufLen=0;
+
+	while(1)
+	{					
+			xSemaphoreTake( xAdcBuf_Send_Semaphore, portMAX_DELAY );		
+			ADC_ConvertDCMIAndAssembleBuf(TCPPacket.data, &TCPPacket.size);		
+			TCP_ADC_Send_BaseBuf(&TCPPacket);
+			TCP_ADC_Send_PyroBuf(&TCPPacket);
+	}
 }
