@@ -46,9 +46,7 @@ stPacket TCPPacket;
 /* ----------------------- Static variables ---------------------------------*/
 SOCKET          xADCServListenSocket=INVALID_SOCKET;
 SOCKET 					xClientSocket;
-uint8_t    			aucTCPBuf[100];
-uint16_t   			usTCPBufPos;
-uint16_t   			usTCPFrameBytesLeft;	
+
 
 static fd_set   allset;
 /* ----------------------- Functions ---------------------------------*/
@@ -76,11 +74,8 @@ uint8_t TCP_ADC_Server_Init( uint16_t usTCPPort )
    uint16_t          usPort;
    struct sockaddr_in serveraddr;
 	
-//	 int timeoutTimeInMiliSeconds=100;
-	
-			usTCPBufPos=0;
-			usTCPFrameBytesLeft=0;
-			xClientSocket=INVALID_SOCKET;
+
+		xClientSocket=INVALID_SOCKET;
 		
 	  if(xADCServListenSocket==INVALID_SOCKET)
 	  {
@@ -101,10 +96,6 @@ uint8_t TCP_ADC_Server_Init( uint16_t usTCPPort )
 				{
 						return FALSE;
 				}
-		//		else if(setsockopt( xADCServListenSocket, SOL_SOCKET, SO_RCVTIMEO,&timeoutTimeInMiliSeconds, sizeof(int)) == -1)//Set timeout socket failed
-		//		{
-		//        return FALSE;
-		//		}
 				else if( bind( xADCServListenSocket, ( struct sockaddr * )&serveraddr, sizeof( serveraddr ) ) == -1 )//bind  socket failed
 				{
 						return FALSE;
@@ -186,8 +177,6 @@ BOOL TCP_ADC_Server_SendBuf(const uint8_t * pucTCPFrame, uint16_t usTCPLength )
 
 void TCP_ADC_Server_ReleaseClient(void)
 {
-//    ( void )recv( stTCPContext->xClientSocket, &stTCPContext->aucTCPBuf[0], MB_TCP_BUF_SIZE, 0 );
-
     ( void )close(xClientSocket );
     xClientSocket = INVALID_SOCKET;
 }
@@ -210,17 +199,43 @@ BOOL TCP_ADC_Server_AcceptClient(void)
     else
     {
         xClientSocket = xNewSocket;
-        usTCPBufPos = 0;
-        usTCPFrameBytesLeft = 0;
         bOkay = TRUE;
     }
     return bOkay;
 }
 
+BOOL TCP_ADC_Send_BaseBuf(uint8_t *buf, uint16_t len)
+{
+		BOOL frameSent=FALSE;
+	
+		TCPPacket.size=len;
+		TCPPacket.type=PACKET_TYPE_BASE;
+		TCPPacket.timestamp=DCMI_ADC_GetLastTimestamp();		
+		
+		frameSent=TCP_ADC_Server_SendBuf(buf,len);
+		return frameSent;
+}
+
+BOOL TCP_ADC_Send_PyroBuf(void)
+{
+		BOOL frameSent=FALSE;
+	
+		TCPPacket.type=PACKET_TYPE_ADC_PYRO;
+		TCPPacket.timestamp=ADC_Pyro_Timestamp;		
+	
+		if((ADCPyroBufState==ADC_PYRO_BUF_FILL_STOP) && ADC_PyroBuf_GetCurrentLength())//передача данных ацп пиропатрона закончена
+		{
+			TCPPacket.size=ADC_PyroBuf_Copy((void *)TCPPacket.data,PACKET_BUF_SIZE);
+			frameSent=TCP_ADC_Server_SendBuf((uint8_t *)&TCPPacket,TCP_PACKET_HEADER_SIZE+TCPPacket.size);
+		}
+			
+		return frameSent;
+}
+
 
 void TCP_ADC_Server_Task( void *pvParameters )
 {
-	uint16_t resultBufLen=3000;
+	uint16_t resultBufLen=0;
 	BOOL frameSent=FALSE;
 	
 	while(1)
@@ -234,22 +249,23 @@ void TCP_ADC_Server_Task( void *pvParameters )
 				}			
 				else
 				{	
-						//«аполним структуру пакета данными
-//						ADC_ConvertDCMIAndAssembleUDPBuf(TCPPacket.data, &resultBufLen);		
-						TCPPacket.size=resultBufLen*sizeof(float);
-						TCPPacket.type=PACKET_TYPE_BASE;
-						TCPPacket.timestamp=0xFFFF;//DCMI_ADC_GetLastTimestamp();			
+						ADC_ConvertDCMIAndAssembleUDPBuf(TCPPacket.data, &resultBufLen);							
+						frameSent=TCP_ADC_Send_BaseBuf((uint8_t *)&TCPPacket,TCP_PACKET_HEADER_SIZE+resultBufLen*sizeof(float));
 					
-						frameSent=TCP_ADC_Server_SendBuf((uint8_t *)&TCPPacket,TCP_PACKET_HEADER_SIZE+resultBufLen*sizeof(float));
-					
-						if(frameSent)
-						{
-								vTaskDelay(5000);
-						}
-						else
+						if(!frameSent)
 						{
 								TCP_ADC_Server_ReleaseClient();
-						}					
+								continue;
+						}	
+
+						frameSent=TCP_ADC_Send_PyroBuf();
+						
+						if(!frameSent)
+						{
+								TCP_ADC_Server_ReleaseClient();
+								continue;
+						}							
+						
 				}
 	}
 }
