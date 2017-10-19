@@ -5,6 +5,7 @@
 #include "cfg_info.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "utilities.h"
 
 
 #define CHANNEL_3_CURR_TRESHOLD		250.0
@@ -113,7 +114,7 @@ inline float ADC_GetCalibrateValue(uint8_t channel, uint16_t value)
 }
 
 
-void ADC_ConvertDCMIAndAssembleUDPBuf(float *resultBuf, uint16_t *resultBufLen)
+void ADC_ConvertDCMIAndAssembleUDPBuf(uint8_t *resultBuf, uint16_t *resultBufLen)
 {
 	uint16_t cycleCount;
 	uint8_t *dcmiBuf=ADC_DCMI_buf_pnt;
@@ -266,13 +267,20 @@ void ADC_ConvertDCMIAndAssembleUDPBuf(float *resultBuf, uint16_t *resultBufLen)
 			ChnCalibrValues.val_pressure = ADC_GetCalibrateValue(5,(spiBuf_2[cycleCount/SPI_ADC_FREQ_DIV]&0xFFFF));
 
 			
-			*resultBuf=ChnCalibrValues.val_current_conv;
-			resultBuf++;
-			*resultBuf=ChnCalibrValues.val_voltage;
-			resultBuf++;
-			*resultBuf=ChnCalibrValues.val_pressure;
-			resultBuf++;	
+			Float_To_UINT8_Buf(ChnCalibrValues.val_current_conv,resultBuf);
+			resultBuf+=sizeof(float);
+			Float_To_UINT8_Buf(ChnCalibrValues.val_voltage,resultBuf);
+			resultBuf+=sizeof(float);
+			Float_To_UINT8_Buf(ChnCalibrValues.val_pressure,resultBuf);
+			resultBuf+=sizeof(float);
+			
+//			*resultBuf=ChnCalibrValues.val_current_conv;
+//			resultBuf++;
+//			*resultBuf=ChnCalibrValues.val_voltage;
+//			resultBuf++;
+//			*resultBuf=ChnCalibrValues.val_pressure;
+//			resultBuf++;	
 	}
 	
-	*resultBufLen=cycleCount*ADC_UDP_CHN_NUM;	
+	*resultBufLen=cycleCount*ADC_UDP_CHN_NUM*sizeof(float);	
 }

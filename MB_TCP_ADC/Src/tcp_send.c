@@ -35,7 +35,7 @@ extern uint64_t ADC_Pyro_Timestamp;
 extern sConfigInfo configInfo;	
 
 
-stPacket TCPPacket;
+static stPacket TCPPacket;
 
 
 
@@ -44,8 +44,8 @@ stPacket TCPPacket;
 #define TCP_BUF_DEFAULT_PORT 1000 
 
 /* ----------------------- Static variables ---------------------------------*/
-SOCKET          xADCServListenSocket=INVALID_SOCKET;
-SOCKET 					xClientSocket;
+static SOCKET          xADCServListenSocket=INVALID_SOCKET;
+static SOCKET 					xClientSocket;
 
 
 static fd_set   allset;
@@ -56,7 +56,7 @@ BOOL TCP_ADC_Server_SendBuf(const uint8_t * pucTCPFrame, uint16_t usTCPLength );
 BOOL TCP_ADC_Server_AcceptClient(void);
 //void TCP_ADC_Server_Handling(void);
 
-#define TCP_ADC_SERVER_TASK_STACK_SIZE	1024
+#define TCP_ADC_SERVER_TASK_STACK_SIZE	2048
 #define TCP_ADC_SERVER_TASK_PRIO				4
 void TCP_ADC_Server_Task( void *pvParameters );
 /* ----------------------- Begin implementation -----------------------------*/
@@ -208,7 +208,7 @@ BOOL TCP_ADC_Send_BaseBuf(uint8_t *buf, uint16_t len)
 {
 		BOOL frameSent=FALSE;
 	
-		TCPPacket.size=len;
+		TCPPacket.startOfFrame=TCP_ADC_START_FRAME_MAGIC;
 		TCPPacket.type=PACKET_TYPE_BASE;
 		TCPPacket.timestamp=DCMI_ADC_GetLastTimestamp();		
 		
@@ -220,6 +220,7 @@ BOOL TCP_ADC_Send_PyroBuf(void)
 {
 		BOOL frameSent=FALSE;
 	
+		TCPPacket.startOfFrame=TCP_ADC_START_FRAME_MAGIC;
 		TCPPacket.type=PACKET_TYPE_ADC_PYRO;
 		TCPPacket.timestamp=ADC_Pyro_Timestamp;		
 	
@@ -227,6 +228,10 @@ BOOL TCP_ADC_Send_PyroBuf(void)
 		{
 			TCPPacket.size=ADC_PyroBuf_Copy((void *)TCPPacket.data,PACKET_BUF_SIZE);
 			frameSent=TCP_ADC_Server_SendBuf((uint8_t *)&TCPPacket,TCP_PACKET_HEADER_SIZE+TCPPacket.size);
+		}
+		else
+		{
+				frameSent=TRUE;
 		}
 			
 		return frameSent;
@@ -248,9 +253,11 @@ void TCP_ADC_Server_Task( void *pvParameters )
 						}
 				}			
 				else
-				{	
+				{						
+						xSemaphoreTake( xAdcBuf_Send_Semaphore, portMAX_DELAY );
+					
 						ADC_ConvertDCMIAndAssembleUDPBuf(TCPPacket.data, &resultBufLen);							
-						frameSent=TCP_ADC_Send_BaseBuf((uint8_t *)&TCPPacket,TCP_PACKET_HEADER_SIZE+resultBufLen*sizeof(float));
+						frameSent=TCP_ADC_Send_BaseBuf((uint8_t *)&TCPPacket,TCP_PACKET_HEADER_SIZE+resultBufLen);
 					
 						if(!frameSent)
 						{

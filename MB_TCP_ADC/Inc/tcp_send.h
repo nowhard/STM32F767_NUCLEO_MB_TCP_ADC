@@ -5,8 +5,10 @@
 
 #pragma anon_unions
 
-#define PACKET_BUF_SIZE				8000
+#define PACKET_BUF_SIZE				32000
 //#define SENDER_PORT_NUM				1001
+
+#define TCP_ADC_START_FRAME_MAGIC	0x55AA55AA;
 
 typedef enum
 {
@@ -18,15 +20,16 @@ typedef enum
 
 typedef struct
 {
+	uint32_t 			startOfFrame;
 	enPacketType 	type;//тип-базовые данне или данные пиропатронов
 	uint64_t 			timestamp; //штамп времени последнего значения последнего пакета	
 	uint16_t  		size;
-	float					data[PACKET_BUF_SIZE];
+	uint8_t				data[PACKET_BUF_SIZE];
 }stPacket;
 
 #pragma pack(pop)
 
-#define TCP_PACKET_HEADER_SIZE	(sizeof(stPacket)-(PACKET_BUF_SIZE*sizeof(float)))
+#define TCP_PACKET_HEADER_SIZE	(sizeof(stPacket)-PACKET_BUF_SIZE)
 
 uint8_t TCP_ADC_Server_Init( uint16_t usTCPPort );
 #endif
