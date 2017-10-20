@@ -3,7 +3,7 @@
 <title>Static Call Graph - [MB_TCP_ADC\MB_TCP_ADC.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image MB_TCP_ADC\MB_TCP_ADC.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060061: Last Updated: Thu Oct 19 18:46:21 2017
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060061: Last Updated: Fri Oct 20 13:38:22 2017
 <BR><P>
 <H3>Maximum Stack Usage =        776 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -680,10 +680,8 @@ Global Symbols
 
 <P><STRONG><a name="[337]"></a>__aeabi_memset8</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, memseta.o(.text), UNUSED)
 
-<P><STRONG><a name="[da]"></a>__aeabi_memclr</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, memseta.o(.text))
+<P><STRONG><a name="[da]"></a>__aeabi_memclr</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, memseta.o(.text), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[db]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memset
-</UL>
-<BR>[Called By]<UL><LI><a href="#[f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_PyroBuf_Copy
 </UL>
 
 <P><STRONG><a name="[255]"></a>__aeabi_memclr4</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, memseta.o(.text))
@@ -868,11 +866,10 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MBMaster_RTU_Poll
 </UL>
 
-<P><STRONG><a name="[f6]"></a>ADC_PyroBuf_Copy</STRONG> (Thumb, 128 bytes, Stack size 56 bytes, adc_pyro_buf.o(i.ADC_PyroBuf_Copy))
+<P><STRONG><a name="[f6]"></a>ADC_PyroBuf_Copy</STRONG> (Thumb, 120 bytes, Stack size 56 bytes, adc_pyro_buf.o(i.ADC_PyroBuf_Copy))
 <BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = ADC_PyroBuf_Copy
 </UL>
-<BR>[Calls]<UL><LI><a href="#[da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr
-<LI><a href="#[f5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
+<BR>[Calls]<UL><LI><a href="#[f5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 <LI><a href="#[f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
 </UL>
 <BR>[Called By]<UL><LI><a href="#[f3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TCP_ADC_Send_PyroBuf

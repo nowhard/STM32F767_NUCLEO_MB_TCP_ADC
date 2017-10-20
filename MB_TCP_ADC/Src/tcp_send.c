@@ -207,7 +207,7 @@ BOOL TCP_ADC_Send_BaseBuf(stPacket *TCPPacket)
 				return FALSE;
 		}
 	
-		TCPPacket->startOfFrame=TCP_ADC_START_FRAME_MAGIC;
+		TCPPacket->startOfFrame=TCP_ADC_START_PACKET_MAGIC;
 		TCPPacket->type=PACKET_TYPE_BASE;
 		TCPPacket->timestamp=DCMI_ADC_GetLastTimestamp();		
 		
@@ -230,7 +230,7 @@ BOOL TCP_ADC_Send_PyroBuf(stPacket *TCPPacket)
 				return FALSE;
 		}
 		
-		TCPPacket->startOfFrame=TCP_ADC_START_FRAME_MAGIC;
+		TCPPacket->startOfFrame=TCP_ADC_START_PACKET_MAGIC;
 		TCPPacket->type=PACKET_TYPE_ADC_PYRO;
 		TCPPacket->timestamp=ADC_Pyro_Timestamp;		
 	

@@ -27,57 +27,12 @@ Project File Date:  10/19/2017
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 1 (build 61)', folder: 'C:\Program Files\Keil\ARM\ARMCC\Bin'
 Build target 'MB_TCP_ADC'
-compiling mbfunc.c...
-..\Src\mbfunc.c(568): warning:  #188-D: enumerated type mixed with another type
-  															DCMI_ADC_SetSamplerate(usRegHoldingBuf[
-DC_SAMPLERATE]);
-..\Src\mbfunc.c(669): warning:  #188-D: enumerated type mixed with another type
-  														HAL_GPIO_WritePin(
-NABLE_OUT_1_GPIO_Port,
-NABLE_OUT_1_Pin,usRegHoldingBuf[
-EV_ENABLE_OUT_1]);
-..\Src\mbfunc.c(675): warning:  #188-D: enumerated type mixed with another type
-  														HAL_GPIO_WritePin(
-NABLE_OUT_7_GPIO_Port,
-NABLE_OUT_7_Pin,usRegHoldingBuf[
-EV_ENABLE_OUT_7]);
-..\Src\mbfunc.c(681): warning:  #188-D: enumerated type mixed with another type
-  														HAL_GPIO_WritePin(
-N_VCC_250_GPIO_Port,
-N_VCC_250_Pin,usRegHoldingBuf[
-EV_EN_VCC_250]);
-..\Src\mbfunc.c(687): warning:  #188-D: enumerated type mixed with another type
-  														HAL_GPIO_WritePin(
-N_VCC_150_GPIO_Port,
-N_VCC_150_Pin,usRegHoldingBuf[
-EV_EN_VCC_150]);
-..\Src\mbfunc.c(693): warning:  #188-D: enumerated type mixed with another type
-  														HAL_GPIO_WritePin(
-N_VCC_75_GPIO_Port,
-N_VCC_75_Pin,usRegHoldingBuf[
-EV_EN_VCC_75]);
-..\Src\mbfunc.c(699): warning:  #188-D: enumerated type mixed with another type
-  														HAL_GPIO_WritePin(
-N_VCC_7_5_GPIO_Port,
-N_VCC_7_5_Pin,usRegHoldingBuf[
-EV_EN_VCC_7_5]);
-..\Src\mbfunc.c(705): warning:  #188-D: enumerated type mixed with another type
-  														HAL_GPIO_WritePin(
-NABLE_AIR_GPIO_Port,
-NABLE_AIR_Pin,usRegHoldingBuf[
-EV_ENABLE_AIR]);
-..\Src\mbfunc.c(909): warning:  #186-D: pointless comparison of unsigned integer with zero
-  														if(
-S_TIME_HOURS(usRegHoldingBuf[DEV_PROC_TIME_HOUR]))
-..\Src\mbfunc.c(918): warning:  #186-D: pointless comparison of unsigned integer with zero
-  														if(
-S_TIME_MINUTS(usRegHoldingBuf[DEV_PROC_TIME_MINUTE]))
-..\Src\mbfunc.c(927): warning:  #186-D: pointless comparison of unsigned integer with zero
-  														if(
-S_TIME_SECONDS(usRegHoldingBuf[DEV_PROC_TIME_SECOND]))
-..\Src\mbfunc.c: 11 warnings, 0 errors
-compiling lwip.c...
-compiling main.c...
+compiling adc_pyro_buf.c...
+../Inc/fifo.h(52): warning:  #1-D: last line of file ends without a newline
+  #endif //FIFO__H
+..\Src\adc_pyro_buf.c(50): warning:  #1-D: last line of file ends without a newline
+  }
+..\Src\adc_pyro_buf.c: 2 warnings, 0 errors
 compiling data_converter.c...
 ..\Src\data_converter.c(80): warning:  #1035-D: single-precision operand implicitly converted to double-precision
   	 if(ChnCalibrValues.val_current[0]>=
@@ -104,33 +59,12 @@ HANNEL_0_CURR_TRESHOLD)//shunt 2
 ..\Src\data_converter.c(298): warning:  #177-D: variable "resultBufLen" was declared but never referenced
   	uint16_t resultBufLen=0;
 ..\Src\data_converter.c: 10 warnings, 0 errors
-compiling spi_adc.c...
-compiling mbinit.c...
-compiling cfg_info.c...
-compiling adc_dcmi.c...
-..\Src\adc_dcmi.c(46): warning:  #513-D: a value of type "volatile uint8_t *" cannot be assigned to an entity of type "uint8_t *"
-  	ADC_DCMI_buf_pnt=&DCMIAdcRxBuff[0];
-..\Src\adc_dcmi.c(65): warning:  #167-D: argument of type "void (*)(void)" is incompatible with parameter of type "void (*)(DMA_HandleTypeDef *)"
-  	HAL_DMA_RegisterCallback(&hdma_dcmi,HAL_DMA_XFER_HALFCPLT_CB_ID,DCMI_DMA_HalfTransferCallback);
-..\Src\adc_dcmi.c(66): warning:  #167-D: argument of type "void (*)(void)" is incompatible with parameter of type "void (*)(DMA_HandleTypeDef *)"
-  	HAL_DMA_RegisterCallback(&hdma_dcmi,HAL_DMA_XFER_CPLT_CB_ID,DCMI_DMA_TransferCallback);
-..\Src\adc_dcmi.c(79): warning:  #177-D: variable "sClockSourceConfig" was declared but never referenced
-  	TIM_ClockConfigTypeDef sClockSourceConfig;
-..\Src\adc_dcmi.c(80): warning:  #177-D: variable "sMasterConfig" was declared but never referenced
-    TIM_MasterConfigTypeDef sMasterConfig;
-..\Src\adc_dcmi.c(81): warning:  #177-D: variable "sConfigOC" was declared but never referenced
-    TIM_OC_InitTypeDef sConfigOC;
-..\Src\adc_dcmi.c(183): warning:  #513-D: a value of type "volatile uint8_t *" cannot be assigned to an entity of type "uint8_t *"
-  		ADC_DCMI_buf_pnt=&DCMIAdcRxBuff[0];
-..\Src\adc_dcmi.c(198): warning:  #513-D: a value of type "volatile uint8_t *" cannot be assigned to an entity of type "uint8_t *"
-  	  ADC_DCMI_buf_pnt=&DCMIAdcRxBuff[
-DC_DCMI_BUF_LEN>>1];
-..\Src\adc_dcmi.c: 8 warnings, 0 errors
+compiling main.c...
 compiling tcp_send.c...
 linking...
-Program Size: Code=95232 RO-data=1752 RW-data=1100 ZI-data=233892  
+Program Size: Code=95224 RO-data=1752 RW-data=1100 ZI-data=233892  
 FromELF: creating hex file...
-"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 29 Warning(s).
+"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 12 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -148,7 +82,7 @@ Package Vendor: ARM
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.0.1
-Build Time Elapsed:  00:00:35
+Build Time Elapsed:  00:00:25
 </pre>
 </body>
 </html>

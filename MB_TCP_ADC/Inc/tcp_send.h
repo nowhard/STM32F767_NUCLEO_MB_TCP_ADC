@@ -8,7 +8,7 @@
 #define PACKET_BUF_SIZE				32000
 //#define SENDER_PORT_NUM				1001
 
-#define TCP_ADC_START_FRAME_MAGIC	0x55AA55AA;
+#define TCP_ADC_START_PACKET_MAGIC	0x55AA55AA;
 
 typedef enum
 {
