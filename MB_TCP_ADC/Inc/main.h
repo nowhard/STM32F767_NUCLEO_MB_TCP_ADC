@@ -205,7 +205,7 @@
 
 #define IP_ADDR0   192
 #define IP_ADDR1   168
-#define IP_ADDR2   109
+#define IP_ADDR2   0
 #define IP_ADDR3   150
    
 /*NETMASK*/
@@ -217,13 +217,13 @@
 /*Gateway Address*/
 #define GW_ADDR0   192
 #define GW_ADDR1   168
-#define GW_ADDR2   109
-#define GW_ADDR3   8 
+#define GW_ADDR2  	0
+#define GW_ADDR3   3 
 
 #define SERVER_IP_ADDR0   192
 #define SERVER_IP_ADDR1   168
-#define SERVER_IP_ADDR2   109
-#define SERVER_IP_ADDR3   140
+#define SERVER_IP_ADDR2   0
+#define SERVER_IP_ADDR3   10
 
 #define SERVER_PORT		  1000
 
