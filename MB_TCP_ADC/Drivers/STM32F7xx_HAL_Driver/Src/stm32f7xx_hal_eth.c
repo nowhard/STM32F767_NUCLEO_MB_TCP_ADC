@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    stm32f7xx_hal_eth.c
   * @author  MCD Application Team
-  * @version V1.2.0
-  * @date    30-December-2016
   * @brief   ETH HAL module driver.
   *          This file provides firmware functions to manage the following 
   *          functionalities of the Ethernet (ETH) peripheral:
@@ -68,7 +66,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -665,6 +663,10 @@ __weak void HAL_ETH_MspDeInit(ETH_HandleTypeDef *heth)
   * @param  FrameLength: Amount of data to be sent
   * @retval HAL status
   */
+	
+uint32_t mess_cnt=0;
+uint32_t udp_cnt=0;
+uint32_t err_cnt=0;
 HAL_StatusTypeDef HAL_ETH_TransmitFrame(ETH_HandleTypeDef *heth, uint32_t FrameLength)
 {
   uint32_t bufcount = 0, size = 0, i = 0;
@@ -708,7 +710,11 @@ HAL_StatusTypeDef HAL_ETH_TransmitFrame(ETH_HandleTypeDef *heth, uint32_t FrameL
     }
   }
   else 
-  {  
+  { 
+			if(FrameLength>1000)
+			{
+					udp_cnt++;
+			}
     bufcount = 1;
   }
   if (bufcount == 1)
@@ -760,6 +766,7 @@ HAL_StatusTypeDef HAL_ETH_TransmitFrame(ETH_HandleTypeDef *heth, uint32_t FrameL
     (heth->Instance)->DMASR = ETH_DMASR_TBUS;
     /* Resume DMA transmission*/
     (heth->Instance)->DMATPDR = 0;
+		err_cnt++;
   }
   
   /* Set ETH HAL State to Ready */
@@ -769,6 +776,7 @@ HAL_StatusTypeDef HAL_ETH_TransmitFrame(ETH_HandleTypeDef *heth, uint32_t FrameL
   __HAL_UNLOCK(heth);
   
   /* Return function status */
+	mess_cnt++;
   return HAL_OK;
 }
 

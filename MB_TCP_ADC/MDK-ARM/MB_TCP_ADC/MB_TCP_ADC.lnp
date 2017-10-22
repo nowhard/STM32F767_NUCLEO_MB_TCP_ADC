@@ -124,6 +124,7 @@
 "mb_tcp_adc\mbmasterpyro.o"
 "mb_tcp_adc\system_reset.o"
 "mb_tcp_adc\utilities.o"
+"mb_tcp_adc\freertos.o"
 "mb_tcp_adc\mb.o"
 "mb_tcp_adc\mbtcp.o"
 "mb_tcp_adc\portevent.o"

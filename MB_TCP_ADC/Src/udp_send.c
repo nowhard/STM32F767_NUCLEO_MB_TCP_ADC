@@ -129,9 +129,10 @@ void UDP_SendPyroBuf(void)
 
 /****************************************
 *****************************************/
-#define UDP_TEST_NUMPACKETS_IN_ONE_TIME	 8
-uint8_t testBuf[UDP_BASE_DATA_SIZE]={0xCC};
-void UDP_SendTestBuf(uint8_t *buf)
+extern ETH_HandleTypeDef heth;
+#define UDP_TEST_NUMPACKETS_IN_ONE_TIME	 100
+const uint8_t testBuf[UDP_BASE_DATA_SIZE]={0x11,0x22,0x33,0x44,0x55,0x66,0x77,0x88,0x99,0xAA,0xBB,0xCC,0xDD,0xEE,0xFF};
+void UDP_SendTestBuf(const uint8_t *buf)
 {		
 		uint8_t packetCnt=0;
 		UDP_DestAddr_Reinit();
@@ -140,14 +141,20 @@ void UDP_SendTestBuf(uint8_t *buf)
 		
 		for(packetCnt=0;packetCnt<UDP_TEST_NUMPACKETS_IN_ONE_TIME;packetCnt++)
 		{
+				UDPPacket.eth_packet_sent=heth.Instance->MMCTGFCR;
+				
 				sendto(socket_fd, &UDPPacket,UDP_BASE_PACKET_SIZE,0,(struct sockaddr*)&ra,sizeof(ra));	
+			
 				UDPPacket.timestamp++;
-				vTaskDelay(1);
+				
+				//vTaskDelay(2);
 		}
 		
 }
 
-#define UDP_TEST_SEND_PERIOD	100
+#define UDP_TEST_SEND_PERIOD	5
+
+#define TESTPACKET_CYCLES		1000
 void UDP_Send_Task( void *pvParameters )
 {
 
@@ -155,15 +162,22 @@ void UDP_Send_Task( void *pvParameters )
 	UDPPacket.id=0;
 	UDPPacket.type=UDP_PACKET_TYPE_BASE;
 	
+	uint32_t cycles=0;
+	
 	while(1)
 	{
-//		xSemaphoreTake( xAdcBuf_Send_Semaphore, portMAX_DELAY );
-//		
-//		ADC_ConvertDCMIAndAssembleUDPBuf(ADC_resultBuf, &resultBufLen);
-//		UDP_SendBaseBuf(ADC_resultBuf,resultBufLen);
-//		UDP_SendPyroBuf();
-		UDP_SendTestBuf(testBuf);
+		vTaskDelay(5000);
+		UDPPacket.timestamp=0;
+		for(cycles=0;cycles<TESTPACKET_CYCLES;cycles++)
+		{
+				UDP_SendTestBuf(testBuf);
+		}		
 		vTaskDelay(UDP_TEST_SEND_PERIOD);
+		
+		while(1)
+		{
+				vTaskDelay(1000);
+		}
 	}
 }
 

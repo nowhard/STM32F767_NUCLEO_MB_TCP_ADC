@@ -34,6 +34,7 @@ typedef struct
 	enUDPPacketType type;//тип-базовые данне или данные пиропатронов
 	uint8_t 	id;				 //пор€дковый номер пакета в группе пакетов
 	uint64_t 	timestamp; //штамп времени последнего значени€ последнего пакета	
+	uint32_t	eth_packet_sent;
 	union
 	{
 		stBasePacket BasePacket;
@@ -43,8 +44,8 @@ typedef struct
 
 #pragma pack(pop)
 
-#define UDP_BASE_PACKET_SIZE				(sizeof(enUDPPacketType)+sizeof(uint8_t)+sizeof(uint64_t)+UDP_BASE_DATA_SIZE)		
-#define UDP_PYRO_MAX_PACKET_SIZE		(sizeof(enUDPPacketType)+sizeof(uint8_t)+sizeof(uint64_t)+sizeof(stADCPyroPacket))		
+#define UDP_BASE_PACKET_SIZE				(sizeof(enUDPPacketType)+sizeof(uint8_t)+sizeof(uint64_t)+sizeof(uint32_t)+UDP_BASE_DATA_SIZE)		
+#define UDP_PYRO_MAX_PACKET_SIZE		(sizeof(enUDPPacketType)+sizeof(uint8_t)+sizeof(uint64_t)+sizeof(uint32_t)+sizeof(stADCPyroPacket))		
 
 void UDP_Send_Init(void);
 

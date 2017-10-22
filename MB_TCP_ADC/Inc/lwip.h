@@ -4,6 +4,11 @@
   * Description        : This file provides code for the configuration
   *                      of the LWIP.
   ******************************************************************************
+  * This notice applies to any and all portions of this file
+  * that are not between comment pairs USER CODE BEGIN and
+  * USER CODE END. Other portions of this file, whether 
+  * inserted by the user or by software development tools
+  * are owned by their respective copyright owners.
   *
   * Copyright (c) 2017 STMicroelectronics International N.V. 
   * All rights reserved.
@@ -75,6 +80,7 @@ extern ETH_HandleTypeDef heth;
 /* LWIP init function */	
 void MX_LWIP_Init(void);
 
+#if !WITH_RTOS
 /* USER CODE BEGIN 1 */
 /* Function defined in lwip.c to:
  *   - Read a received packet from the Ethernet buffers 
@@ -84,6 +90,7 @@ void MX_LWIP_Init(void);
 void MX_LWIP_Process(void);
 
 /* USER CODE END 1 */
+#endif /* WITH_RTOS */
 
 #ifdef __cplusplus
 }

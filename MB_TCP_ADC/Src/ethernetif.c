@@ -4,6 +4,11 @@
   * Description        : This file provides code for the configuration
   *                      of the ethernetif.c MiddleWare.
   ******************************************************************************
+  * This notice applies to any and all portions of this file
+  * that are not between comment pairs USER CODE BEGIN and
+  * USER CODE END. Other portions of this file, whether 
+  * inserted by the user or by software development tools
+  * are owned by their respective copyright owners.
   *
   * Copyright (c) 2017 STMicroelectronics International N.V. 
   * All rights reserved.
@@ -53,7 +58,6 @@
 #include "ethernetif.h"
 #include <string.h>
 #include "cmsis_os.h"
-
 /* Within 'USER CODE' section, code will be kept by default at each generation */
 /* USER CODE BEGIN 0 */
 #include "jumpers.h"
@@ -64,7 +68,6 @@
 #define TIME_WAITING_FOR_INPUT ( portMAX_DELAY )
 /* Stack size of the interface thread */
 #define INTERFACE_THREAD_STACK_SIZE ( 350 )
-
 /* Network interface name */
 #define IFNAME0 's'
 #define IFNAME1 't'
@@ -100,8 +103,7 @@ __ALIGN_BEGIN uint8_t Tx_Buff[ETH_TXBUFNB][ETH_TX_BUF_SIZE] __ALIGN_END; /* Ethe
 
 /* Semaphore to signal incoming packets */
 osSemaphoreId s_xSemaphore = NULL;
-
-/* Global Ethernet handle*/
+/* Global Ethernet handle */
 ETH_HandleTypeDef heth;
 
 /* USER CODE BEGIN 3 */
@@ -245,9 +247,9 @@ static void low_level_init(struct netif *netif)
   MACAddr[0] = 0x00;
   MACAddr[1] = 0x80;
   MACAddr[2] = 0xE2;
-  MACAddr[3] = 0x21;
+  MACAddr[3] = 0x20;
   MACAddr[4] = 0x00;
-  MACAddr[5] = jumpersDevAddr;//0x00;
+  MACAddr[5] = 0x00;
   heth.Init.MACAddr = &MACAddr[0];
   heth.Init.RxMode = ETH_RXINTERRUPT_MODE;
   heth.Init.ChecksumMode = ETH_CHECKSUM_BY_HARDWARE;
@@ -266,7 +268,11 @@ static void low_level_init(struct netif *netif)
   heth.Init.MACAddr = &MACAddr[0];
   heth.Init.RxMode = ETH_RXINTERRUPT_MODE;
   heth.Init.ChecksumMode = ETH_CHECKSUM_BY_HARDWARE;
-  heth.Init.MediaInterface = ETH_MEDIA_INTERFACE_RMII;   
+  heth.Init.MediaInterface = ETH_MEDIA_INTERFACE_RMII;  
+
+	heth.Init.DuplexMode = ETH_MODE_FULLDUPLEX;  
+	heth.Init.Speed = ETH_SPEED_100M;
+	heth.Init.AutoNegotiation = ETH_AUTONEGOTIATION_DISABLE;
   /* USER CODE END MACADDRESS */
 
   hal_eth_init_status = HAL_ETH_Init(&heth);
@@ -313,7 +319,6 @@ static void low_level_init(struct netif *netif)
 /* create the task that handles the ETH_MAC */
   osThreadDef(EthIf, ethernetif_input, osPriorityRealtime, 0, INTERFACE_THREAD_STACK_SIZE);
   osThreadCreate (osThread(EthIf), netif);
- 
   /* Enable MAC and DMA transmission and reception */
   HAL_ETH_Start(&heth);
 
@@ -321,7 +326,7 @@ static void low_level_init(struct netif *netif)
     
 /* USER CODE END PHY_PRE_CONFIG */
   
- 
+
   /* Read Register Configuration */
   HAL_ETH_ReadPHYRegister(&heth, PHY_ISFR, &regvalue);
   regvalue |= (PHY_ISFR_INT4);
@@ -331,7 +336,6 @@ static void low_level_init(struct netif *netif)
   
   /* Read Register Configuration */
   HAL_ETH_ReadPHYRegister(&heth, PHY_ISFR , &regvalue);
- 
 
 /* USER CODE BEGIN PHY_POST_CONFIG */ 
     
@@ -534,9 +538,7 @@ static struct pbuf * low_level_input(struct netif *netif)
  * @param netif the lwip network interface structure for this ethernetif
  */
 void ethernetif_input( void const * argument ) 
- 
 {
- 
   struct pbuf *p;
   struct netif *netif = (struct netif *) argument;
   
@@ -556,7 +558,6 @@ void ethernetif_input( void const * argument )
         }
       } while(p!=NULL);
     }
- 
   }
 }
 
@@ -567,7 +568,7 @@ void ethernetif_input( void const * argument )
  * @param netif the lwip network interface structure for this ethernetif
  * @return ERR_OK if ...
  */
-static err_t low_level_output_arp_off(struct netif *netif, struct pbuf *q, ip_addr_t *ipaddr)
+static err_t low_level_output_arp_off(struct netif *netif, struct pbuf *q, const ip4_addr_t *ipaddr)
 {  
   err_t errval;
   errval = ERR_OK;
@@ -657,13 +658,6 @@ u32_t sys_now(void)
 }
 
 /* USER CODE END 6 */
-
-/**
-  * @brief  This function sets the netif link status.
-  * @param  netif: the network interface
-  * @retval None
-  */
- 
 
 /* USER CODE BEGIN 7 */
 
