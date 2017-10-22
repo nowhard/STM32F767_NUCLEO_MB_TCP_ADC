@@ -36,7 +36,7 @@ int socket_fd;
 struct sockaddr_in sa, ra;
 stPacket UDPPacket;
 
-#define UDP_SEND_INTERPACKAGE_PERIOD	1// ms
+#define UDP_SEND_INTERPACKAGE_PERIOD	4// ms
 
 #define UDP_SEND_TASK_STACK_SIZE	1024
 #define UDP_SEND_TASK_PRIO				4

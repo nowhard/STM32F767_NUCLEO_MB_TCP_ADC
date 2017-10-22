@@ -4,6 +4,11 @@
   * Description        : This file provides code for the MSP Initialization 
   *                      and de-Initialization codes.
   ******************************************************************************
+  * This notice applies to any and all portions of this file
+  * that are not between comment pairs USER CODE BEGIN and
+  * USER CODE END. Other portions of this file, whether 
+  * inserted by the user or by software development tools
+  * are owned by their respective copyright owners.
   *
   * Copyright (c) 2017 STMicroelectronics International N.V. 
   * All rights reserved.
@@ -56,7 +61,7 @@ extern DMA_HandleTypeDef hdma_usart1_rx;
 
 extern DMA_HandleTypeDef hdma_usart1_tx;
 
-extern void Error_Handler(void);
+extern void _Error_Handler(char *, int);
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
@@ -145,8 +150,8 @@ void HAL_DCMI_MspInit(DCMI_HandleTypeDef* hdcmi)
     GPIO_InitStruct.Alternate = GPIO_AF13_DCMI;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-    /* Peripheral DMA init*/
-  
+    /* DCMI DMA Init */
+    /* DCMI Init */
     hdma_dcmi.Instance = DMA2_Stream1;
     hdma_dcmi.Init.Channel = DMA_CHANNEL_1;
     hdma_dcmi.Init.Direction = DMA_PERIPH_TO_MEMORY;
@@ -159,7 +164,7 @@ void HAL_DCMI_MspInit(DCMI_HandleTypeDef* hdcmi)
     hdma_dcmi.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
     if (HAL_DMA_Init(&hdma_dcmi) != HAL_OK)
     {
-      Error_Handler();
+      _Error_Handler(__FILE__, __LINE__);
     }
 
     __HAL_LINKDMA(hdcmi,DMA_Handle,hdma_dcmi);
@@ -203,12 +208,12 @@ void HAL_DCMI_MspDeInit(DCMI_HandleTypeDef* hdcmi)
 
     HAL_GPIO_DeInit(GPIOB, DATA5_Pin|GPIO_PIN_7);
 
-    /* Peripheral DMA DeInit*/
+    /* DCMI DMA DeInit */
     HAL_DMA_DeInit(hdcmi->DMA_Handle);
-  }
   /* USER CODE BEGIN DCMI_MspDeInit 1 */
 
   /* USER CODE END DCMI_MspDeInit 1 */
+  }
 
 }
 
@@ -235,8 +240,8 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     GPIO_InitStruct.Alternate = GPIO_AF6_SPI3;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-    /* Peripheral DMA init*/
-  
+    /* SPI3 DMA Init */
+    /* SPI3_RX Init */
     hdma_spi3_rx.Instance = DMA1_Stream0;
     hdma_spi3_rx.Init.Channel = DMA_CHANNEL_0;
     hdma_spi3_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
@@ -249,7 +254,7 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     hdma_spi3_rx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
     if (HAL_DMA_Init(&hdma_spi3_rx) != HAL_OK)
     {
-      Error_Handler();
+      _Error_Handler(__FILE__, __LINE__);
     }
 
     __HAL_LINKDMA(hspi,hdmarx,hdma_spi3_rx);
@@ -277,8 +282,8 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     GPIO_InitStruct.Alternate = GPIO_AF5_SPI5;
     HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
-    /* Peripheral DMA init*/
-  
+    /* SPI5 DMA Init */
+    /* SPI5_TX Init */
     hdma_spi5_tx.Instance = DMA2_Stream4;
     hdma_spi5_tx.Init.Channel = DMA_CHANNEL_2;
     hdma_spi5_tx.Init.Direction = DMA_MEMORY_TO_PERIPH;
@@ -291,7 +296,7 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     hdma_spi5_tx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
     if (HAL_DMA_Init(&hdma_spi5_tx) != HAL_OK)
     {
-      Error_Handler();
+      _Error_Handler(__FILE__, __LINE__);
     }
 
     __HAL_LINKDMA(hspi,hdmatx,hdma_spi5_tx);
@@ -326,8 +331,8 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     GPIO_InitStruct.Alternate = GPIO_AF5_SPI6;
     HAL_GPIO_Init(U_MISO_GPIO_Port, &GPIO_InitStruct);
 
-    /* Peripheral DMA init*/
-  
+    /* SPI6 DMA Init */
+    /* SPI6_RX Init */
     hdma_spi6_rx.Instance = DMA2_Stream6;
     hdma_spi6_rx.Init.Channel = DMA_CHANNEL_1;
     hdma_spi6_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
@@ -340,7 +345,7 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     hdma_spi6_rx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
     if (HAL_DMA_Init(&hdma_spi6_rx) != HAL_OK)
     {
-      Error_Handler();
+      _Error_Handler(__FILE__, __LINE__);
     }
 
     __HAL_LINKDMA(hspi,hdmarx,hdma_spi6_rx);
@@ -369,7 +374,7 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* hspi)
     */
     HAL_GPIO_DeInit(GPIOC, AIR_SCLK_Pin|AIR_MISO_Pin);
 
-    /* Peripheral DMA DeInit*/
+    /* SPI3 DMA DeInit */
     HAL_DMA_DeInit(hspi->hdmarx);
   /* USER CODE BEGIN SPI3_MspDeInit 1 */
 
@@ -389,7 +394,7 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* hspi)
     */
     HAL_GPIO_DeInit(GPIOF, CLK_Pin|DATALED_Pin);
 
-    /* Peripheral DMA DeInit*/
+    /* SPI5 DMA DeInit */
     HAL_DMA_DeInit(hspi->hdmatx);
   /* USER CODE BEGIN SPI5_MspDeInit 1 */
 
@@ -411,7 +416,7 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* hspi)
 
     HAL_GPIO_DeInit(U_MISO_GPIO_Port, U_MISO_Pin);
 
-    /* Peripheral DMA DeInit*/
+    /* SPI6 DMA DeInit */
     HAL_DMA_DeInit(hspi->hdmarx);
   /* USER CODE BEGIN SPI6_MspDeInit 1 */
 
@@ -505,7 +510,7 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
   /* USER CODE END TIM6_MspInit 0 */
     /* Peripheral clock enable */
     __HAL_RCC_TIM6_CLK_ENABLE();
-    /* Peripheral interrupt init */
+    /* TIM6 interrupt Init */
     HAL_NVIC_SetPriority(TIM6_DAC_IRQn, 5, 0);
     HAL_NVIC_EnableIRQ(TIM6_DAC_IRQn);
   /* USER CODE BEGIN TIM6_MspInit 1 */
@@ -530,7 +535,7 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
     GPIO_InitStruct.Alternate = GPIO_AF3_TIM9;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-    /* Peripheral interrupt init */
+    /* TIM9 interrupt Init */
     HAL_NVIC_SetPriority(TIM1_BRK_TIM9_IRQn, 5, 0);
     HAL_NVIC_EnableIRQ(TIM1_BRK_TIM9_IRQn);
   /* USER CODE BEGIN TIM9_MspInit 1 */
@@ -662,9 +667,8 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* htim_base)
     /* Peripheral clock disable */
     __HAL_RCC_TIM6_CLK_DISABLE();
 
-    /* Peripheral interrupt DeInit*/
+    /* TIM6 interrupt DeInit */
     HAL_NVIC_DisableIRQ(TIM6_DAC_IRQn);
-
   /* USER CODE BEGIN TIM6_MspDeInit 1 */
 
   /* USER CODE END TIM6_MspDeInit 1 */
@@ -682,9 +686,8 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* htim_base)
     */
     HAL_GPIO_DeInit(GPIOA, GPIO_PIN_3);
 
-    /* Peripheral interrupt DeInit*/
+    /* TIM9 interrupt DeInit */
     HAL_NVIC_DisableIRQ(TIM1_BRK_TIM9_IRQn);
-
   /* USER CODE BEGIN TIM9_MspDeInit 1 */
 
   /* USER CODE END TIM9_MspDeInit 1 */
@@ -715,8 +718,8 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
     GPIO_InitStruct.Alternate = GPIO_AF4_USART1;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-    /* Peripheral DMA init*/
-  
+    /* USART1 DMA Init */
+    /* USART1_RX Init */
     hdma_usart1_rx.Instance = DMA2_Stream2;
     hdma_usart1_rx.Init.Channel = DMA_CHANNEL_4;
     hdma_usart1_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
@@ -729,11 +732,12 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
     hdma_usart1_rx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
     if (HAL_DMA_Init(&hdma_usart1_rx) != HAL_OK)
     {
-      Error_Handler();
+      _Error_Handler(__FILE__, __LINE__);
     }
 
     __HAL_LINKDMA(huart,hdmarx,hdma_usart1_rx);
 
+    /* USART1_TX Init */
     hdma_usart1_tx.Instance = DMA2_Stream7;
     hdma_usart1_tx.Init.Channel = DMA_CHANNEL_4;
     hdma_usart1_tx.Init.Direction = DMA_MEMORY_TO_PERIPH;
@@ -746,12 +750,12 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
     hdma_usart1_tx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
     if (HAL_DMA_Init(&hdma_usart1_tx) != HAL_OK)
     {
-      Error_Handler();
+      _Error_Handler(__FILE__, __LINE__);
     }
 
     __HAL_LINKDMA(huart,hdmatx,hdma_usart1_tx);
 
-    /* Peripheral interrupt init */
+    /* USART1 interrupt Init */
     HAL_NVIC_SetPriority(USART1_IRQn, 5, 0);
     HAL_NVIC_EnableIRQ(USART1_IRQn);
   /* USER CODE BEGIN USART1_MspInit 1 */
@@ -778,17 +782,16 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* huart)
     */
     HAL_GPIO_DeInit(GPIOB, USART_TX_Pin|USART_RX_Pin);
 
-    /* Peripheral DMA DeInit*/
+    /* USART1 DMA DeInit */
     HAL_DMA_DeInit(huart->hdmarx);
     HAL_DMA_DeInit(huart->hdmatx);
 
-    /* Peripheral interrupt DeInit*/
+    /* USART1 interrupt DeInit */
     HAL_NVIC_DisableIRQ(USART1_IRQn);
-
-  }
   /* USER CODE BEGIN USART1_MspDeInit 1 */
 
   /* USER CODE END USART1_MspDeInit 1 */
+  }
 
 }
 
