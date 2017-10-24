@@ -35,6 +35,8 @@ LR_IROM3 0x08004000 0x00004000  {    ; load region size_region
 
 #define LABEL_CFG_SECTOR	"CFG_SECTOR"
 
+#define LOAD_RESISTORS_NUM		14
+
 typedef struct
 {
 	uint8_t ip_addr_0;
@@ -60,6 +62,7 @@ typedef struct
 	char Label[16];           
 	sIPAddress IPAdress_Server;
 	sConfigADC ConfigADC;
+	float resistors[LOAD_RESISTORS_NUM];//список нагрузочных резисторов (Ом)
 } sConfigInfo;
 
 extern sConfigInfo configInfo;			// структура для хранения конфигурации прибора в ОЗУ
