@@ -2,9 +2,9 @@
 #include "main.h"
 #include "stm32f7xx_hal.h"
 
-uint8_t jumpersDevAddr=0;
-uint8_t	jumpersDevIsMaster=FALSE;
-uint8_t jumpersDevSectionType=SECTION_TYPE_1234;
+static uint8_t jumpersDevAddr=0;
+static uint8_t	jumpersDevIsMaster=FALSE;
+static uint8_t jumpersDevSectionType=SECTION_TYPE_1234;
 
 
 void Jumpers_ReadSettings(void)
@@ -23,8 +23,20 @@ void Jumpers_ReadSettings(void)
 	if(HAL_GPIO_ReadPin(ADR4_GPIO_Port, ADR4_Pin)) //section (1-2-3-4)or (5-6)
 	{
 			jumpersDevSectionType=SECTION_TYPE_56;
-	}
-	
-//	HAL_GPIO_WritePin(BUSE_SYNC_GPIO_Port, BUSE_SYNC_Pin, GPIO_PIN_SET); //Настройка направления дифф. драйверов
-//	HAL_GPIO_WritePin(BUSE_SIG_GPIO_Port, BUSE_SIG_Pin, GPIO_PIN_RESET);
+	}	
+}
+
+uint8_t Jumpers_DevIsMaster(void)
+{
+		return jumpersDevIsMaster;
+}
+
+uint8_t Jumpers_GetDevAddr(void)
+{
+		return jumpersDevAddr;
+}
+
+uint8_t Jumpers_GetDevSectionType(void)
+{
+		return jumpersDevSectionType;
 }

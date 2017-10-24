@@ -89,8 +89,6 @@ osThreadId defaultTaskHandle;
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 
-//extern __IO uint8_t DCMIAdcRxBuff[ADC_DCMI_BUF_LEN];
-//extern uint8_t *ADC_DCMI_buf_pnt;
 
 /* USER CODE END PV */
 

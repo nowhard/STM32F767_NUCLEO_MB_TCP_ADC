@@ -11,6 +11,7 @@
 #include "queue.h"
 #include "cfg_info.h"
 #include "spi_adc.h"
+#include "utilities.h"
 
 
 extern DCMI_HandleTypeDef hdcmi;
@@ -23,11 +24,10 @@ extern TIM_HandleTypeDef htim9;
 
 
 #define RX_BUFF_SIZE	ADC_DCMI_BUF_LEN
-__IO uint8_t DCMIAdcRxBuff[RX_BUFF_SIZE]={0};
-
-
-uint8_t *ADC_DCMI_buf_pnt;
-uint64_t lastDCMITimestamp=0;
+static __IO uint8_t DCMIAdcRxBuff[RX_BUFF_SIZE]={0};
+static uint8_t *ADC_DCMI_buf_ptr;
+static uint64_t lastDCMITimestamp=0;
+static uint8_t DCMIADCStarted=FALSE;
 
 SemaphoreHandle_t xAdcBuf_Send_Semaphore=NULL;
 QueueHandle_t xADC_MB_Queue;
@@ -43,7 +43,7 @@ void DCMI_DMA_TransferCallback(void);
 
 void DCMI_ADC_Init(void)
 {
-	ADC_DCMI_buf_pnt=&DCMIAdcRxBuff[0];
+	ADC_DCMI_buf_ptr=&DCMIAdcRxBuff[0];
 	//Set mode and format of data ADC
 	//Mode -HI SPEED MODE=00
 	 HAL_GPIO_WritePin(GPIO0_ADC_GPIO_Port, GPIO0_ADC_Pin, GPIO_PIN_RESET);
@@ -59,7 +59,7 @@ void DCMI_ADC_Init(void)
 	HAL_GPIO_WritePin(SYNC_ADC_GPIO_Port, SYNC_ADC_Pin, GPIO_PIN_SET);
 	
 	xAdcBuf_Send_Semaphore=xSemaphoreCreateBinary();
-	DCMI_ADC_SetSamplerate(configInfo.ConfigADC.sampleRate);
+	DCMI_ADC_SetSamplerate(ADC_SAMPLERATE_1KHz);
 	
 
 	HAL_DMA_RegisterCallback(&hdma_dcmi,HAL_DMA_XFER_HALFCPLT_CB_ID,DCMI_DMA_HalfTransferCallback);
@@ -91,37 +91,37 @@ void DCMI_ADC_SetSamplerate(enADCSamplerate sampleRate)
 		}
 		break;
 		
-//		case ADC_SAMPLERATE_10KHz:
-//		{
-//				htim2.Init.Prescaler = 0;
-//				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_10KHz;
-//				period=(uint16_t)((108000000/10000)-1);
-//		}
-//		break;
-//		
-//		case ADC_SAMPLERATE_20KHz:
-//		{
-//			htim2.Init.Prescaler = 0;
-//			configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_20KHz;
-//			period=(uint16_t)((108000000/20000)-1);
-//		}
-//		break;
+		case ADC_SAMPLERATE_10KHz:
+		{
+				htim2.Init.Prescaler = 0;
+				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_10KHz;
+				period=(uint16_t)((108000000/10000)-1);
+		}
+		break;
+		
+		case ADC_SAMPLERATE_20KHz:
+		{
+			htim2.Init.Prescaler = 0;
+			configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_20KHz;
+			period=(uint16_t)((108000000/20000)-1);
+		}
+		break;
 
-//		case ADC_SAMPLERATE_50KHz:
-//		{
-//				htim2.Init.Prescaler = 0;
-//				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_50KHz;
-//				period=(uint16_t)((108000000/50000)-1);
-//		}
-//		break;
+		case ADC_SAMPLERATE_50KHz:
+		{
+				htim2.Init.Prescaler = 0;
+				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_50KHz;
+				period=(uint16_t)((108000000/50000)-1);
+		}
+		break;
 
-//		case ADC_SAMPLERATE_100KHz:
-//		{
-//				htim2.Init.Prescaler = 0;
-//				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_100KHz;
-//				period=(uint16_t)((108000000/100000)-1);
-//		}
-//		break;		
+		case ADC_SAMPLERATE_100KHz:
+		{
+				htim2.Init.Prescaler = 0;
+				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_100KHz;
+				period=(uint16_t)((108000000/100000)-1);
+		}
+		break;		
 		
 		default:
 		{
@@ -153,6 +153,10 @@ inline uint64_t DCMI_ADC_GetCurrentTimestamp(void)
 	return ((((uint64_t)(TIM5->CNT))<<16)|TIM4->CNT);
 }
 
+void DCMI_ADC_GetCurrentBufPtr(uint8_t *buf)
+{
+		buf=ADC_DCMI_buf_ptr;
+}
 
 void DCMI_ADC_ResetTimestamp(void)
 {
@@ -167,11 +171,18 @@ void DCMI_ADC_ResetTimestamp(void)
 void DCMI_ADC_Clock_Start(void)
 {
 		HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
+		DCMIADCStarted=TRUE;
 }
 
 void DCMI_ADC_Clock_Stop(void)
 {
 		HAL_TIM_PWM_Stop(&htim2,TIM_CHANNEL_1);
+		DCMIADCStarted=FALSE;
+}
+
+uint8_t DCMI_ADC_Started(void)
+{
+		return DCMIADCStarted;
 }
 
 void DCMI_DMA_HalfTransferCallback(void)
@@ -180,7 +191,7 @@ void DCMI_DMA_HalfTransferCallback(void)
     xHigherPriorityTaskWoken = pdFALSE;
 	
 		lastDCMITimestamp=DCMI_ADC_GetCurrentTimestamp();
-		ADC_DCMI_buf_pnt=&DCMIAdcRxBuff[0];
+		ADC_DCMI_buf_ptr=&DCMIAdcRxBuff[0];
 		xSemaphoreGiveFromISR( xAdcBuf_Send_Semaphore, &xHigherPriorityTaskWoken );
 	
 	  if( xHigherPriorityTaskWoken == pdTRUE )
@@ -195,7 +206,7 @@ void DCMI_DMA_TransferCallback(void)
     xHigherPriorityTaskWoken = pdFALSE;
 	
 		lastDCMITimestamp=DCMI_ADC_GetCurrentTimestamp();
-	  ADC_DCMI_buf_pnt=&DCMIAdcRxBuff[ADC_DCMI_BUF_LEN>>1];
+	  ADC_DCMI_buf_ptr=&DCMIAdcRxBuff[ADC_DCMI_BUF_LEN>>1];
 		SPI_ADC_ResetIndex();
 		xSemaphoreGiveFromISR( xAdcBuf_Send_Semaphore, &xHigherPriorityTaskWoken);
 	
@@ -204,5 +215,7 @@ void DCMI_DMA_TransferCallback(void)
 			portEND_SWITCHING_ISR( xHigherPriorityTaskWoken );
 		}
 }
+
+
 
 

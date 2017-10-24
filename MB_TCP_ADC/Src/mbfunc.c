@@ -15,56 +15,8 @@
 #include "spi_adc.h"
 #include "string.h"
 #include "jumpers.h"
+#include "mb_tcp_regs.h"
 
-/* ----------------------- Defines ------------------------------------------*/
-
-
-#define REG_INPUT_START         1001
-#define REG_INPUT_NREGS         64
-#define REG_HOLDING_START       2001
-#define REG_HOLDING_NREGS       128
-
-//-------ADC RESULT REGS--------
-#define ADC_CHANNEL_0_RAW	 							 0
-#define ADC_CHANNEL_1_RAW	 							 1
-#define ADC_CHANNEL_2_RAW	 							 2
-#define ADC_CHANNEL_3_RAW	 							 3
-#define ADC_CHANNEL_4_RAW	 							 4
-#define ADC_CHANNEL_5_RAW	 							 5
-#define ADC_CHANNEL_0_RESULT	 					 6
-#define ADC_CHANNEL_1_RESULT	 					 8
-#define ADC_CHANNEL_2_RESULT	 					10 
-#define ADC_CHANNEL_3_RESULT	 					12
-#define ADC_CHANNEL_4_RESULT	 					14
-#define ADC_CHANNEL_5_RESULT	 					16
-#define ADC_CHANNEL_CONV	 							18
-
-#define ADC_TIMESTAMP_CURRENT		 				20
-#define ADC_SAMPLING_FREQ_STATE					24
-
-#define DEV_SET_OUTPUTS_SEQUENCE_IN_PROGRESS	 25
-//---------PYRO SQUIB REGS------------
-#define ADC_PYRO_SQUIB_0		 						26
-#define ADC_PYRO_SQUIB_1	 							28
-#define ADC_PYRO_SQUIB_2		 						30
-#define ADC_PYRO_SQUIB_3		 						32
-#define ADC_PYRO_SQUIB_4		 						34
-#define ADC_PYRO_SQUIB_5		 						36
-#define ADC_PYRO_SQUIB_6		 						38
-#define ADC_PYRO_SQUIB_7		 						40
-
-
-#define PYRO_SQUIB_PIR_STATE						 42
-#define PYRO_SQUIB_PIR_IN_LINE					 43
-//--------ERROR & FAULT SIGNALS--------
-#define PYRO_SQUIB_PIR_ERROR	 					 44
-#define PYRO_SQUIB_MB_CONNECT_ERROR	 		 45
-#define FAULT_OUT_1_SIG	 								 46
-#define FAULT_OUT_7_SIG	 								 47
-#define FAULT_250A_SIG	 								 48
-#define FAULT_150A_SIG	 								 49
-#define FAULT_75A_SIG	 									 50
-#define FAULT_7_5A_SIG	 								 51
 
 
 
@@ -75,39 +27,30 @@ static USHORT   usRegHoldingStart = REG_HOLDING_START;
 static USHORT   usRegHoldingBuf[REG_HOLDING_NREGS];
 
 
-extern SemaphoreHandle_t	xMBSaveSettingsSemaphore;
 
 /*-----------------------Pyro squib vars-------------------------------------*/
 extern USHORT   usMRegInBuf[MB_MASTER_TOTAL_SLAVE_NUM][M_REG_INPUT_NREGS];
 extern USHORT   usMRegHoldBuf[MB_MASTER_TOTAL_SLAVE_NUM][M_REG_HOLDING_NREGS];
+
 extern xSemaphoreHandle xStartReadPyroADCSem;
 extern xSemaphoreHandle xMBRTUMutex;
 
 uint16_t 				usMRegTempBuf[M_REG_HOLDING_NREGS];
 /*---------------------------------------------------------------------------*/
 
-extern stChnCalibrValues 			ChnCalibrValues;
 
 stTCPtoRTURegWrite 						TCPtoRTURegWrite;
 
-extern eMBMasterReqErrCode    MB_Master_ErrorCode;
 
-extern stSetSequenceParams		discrOutSequenceParams;
-extern uint8_t 								discrOutSequenceProgress;
+
+
 
 /* ----------------------- Time of process ---------------------------------*/
-typedef struct
-{
-	uint16_t hour;
-	uint16_t minute;
-	uint16_t second;
-}stTimeProc;
+
 
 static stTimeProc TimeProc={0,0,0};
 
-#define IS_TIME_HOURS(__TIME__) (((__TIME__) >=0) && ((__TIME__) <= 23))
-#define IS_TIME_MINUTS(__TIME__) (((__TIME__) >=0) && ((__TIME__) <= 59))
-#define IS_TIME_SECONDS(__TIME__) (((__TIME__) >=0) && ((__TIME__) <= 59))
+
 /*--------------------------------------------------------------------------*/
 
 eMBErrorCode
@@ -116,28 +59,36 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
     eMBErrorCode    eStatus = MB_ENOERR;
     int             iRegIndex;
 		uint64_t				timestampTemp=0;
+		float						tempADCVal=0;
 
     if( ( usAddress >= REG_INPUT_START )
         && ( usAddress + usNRegs <= REG_INPUT_START + REG_INPUT_NREGS ) )
     {
         iRegIndex = ( int )( usAddress - usRegInputStart );
 			
-				usRegInputBuf[ADC_CHANNEL_0_RAW]=ChnCalibrValues.val_chn_raw[0];
-				usRegInputBuf[ADC_CHANNEL_1_RAW]=ChnCalibrValues.val_chn_raw[1];
-				usRegInputBuf[ADC_CHANNEL_2_RAW]=ChnCalibrValues.val_chn_raw[2];
-				usRegInputBuf[ADC_CHANNEL_3_RAW]=ChnCalibrValues.val_chn_raw[3];
-				usRegInputBuf[ADC_CHANNEL_4_RAW]=ChnCalibrValues.val_chn_raw[4];
-				usRegInputBuf[ADC_CHANNEL_5_RAW]=ChnCalibrValues.val_chn_raw[5];
+				usRegInputBuf[ADC_CHANNEL_0_RAW]=ADC_GetRawChannelValue(0);
+				usRegInputBuf[ADC_CHANNEL_1_RAW]=ADC_GetRawChannelValue(1);
+				usRegInputBuf[ADC_CHANNEL_2_RAW]=ADC_GetRawChannelValue(2);
+				usRegInputBuf[ADC_CHANNEL_3_RAW]=ADC_GetRawChannelValue(3);
+				usRegInputBuf[ADC_CHANNEL_4_RAW]=ADC_GetRawChannelValue(4);
+				usRegInputBuf[ADC_CHANNEL_5_RAW]=ADC_GetRawChannelValue(5);
 			
 			
-				Float_To_UINT16_Buf(ChnCalibrValues.val_current[0], &usRegInputBuf[ADC_CHANNEL_0_RESULT]);
-				Float_To_UINT16_Buf(ChnCalibrValues.val_current[1], &usRegInputBuf[ADC_CHANNEL_1_RESULT]);			
-				Float_To_UINT16_Buf(ChnCalibrValues.val_current[2], &usRegInputBuf[ADC_CHANNEL_2_RESULT]);			
-				Float_To_UINT16_Buf(ChnCalibrValues.val_current[3], &usRegInputBuf[ADC_CHANNEL_3_RESULT]);			
-				Float_To_UINT16_Buf(ChnCalibrValues.val_voltage, &usRegInputBuf[ADC_CHANNEL_4_RESULT]);			
-				Float_To_UINT16_Buf(ChnCalibrValues.val_pressure, &usRegInputBuf[ADC_CHANNEL_5_RESULT]);
+				tempADCVal=ADC_GetCalibratedChannelValue(ADC_CHN_CURRENT_1);
+				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_0_RESULT]);
+				tempADCVal=ADC_GetCalibratedChannelValue(ADC_CHN_CURRENT_2);
+				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_1_RESULT]);		
+				tempADCVal=ADC_GetCalibratedChannelValue(ADC_CHN_CURRENT_3);			
+				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_2_RESULT]);
+				tempADCVal=ADC_GetCalibratedChannelValue(ADC_CHN_CURRENT_4);			
+				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_3_RESULT]);	
+				tempADCVal=ADC_GetCalibratedChannelValue(ADC_CHN_VOLTAGE);
+				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_4_RESULT]);		
+				tempADCVal=ADC_GetCalibratedChannelValue(ADC_CHN_PRESSURE);
+				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_5_RESULT]);
 				
-				Float_To_UINT16_Buf(ChnCalibrValues.val_current_conv, &usRegInputBuf[ADC_CHANNEL_CONV]);
+				tempADCVal=ADC_GetCalibratedChannelValue(ADC_CHN_CURRENT_CONV);
+				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_CONV]);
 			
 				timestampTemp=DCMI_ADC_GetLastTimestamp();
 				UINT64_To_UINT16_Buf(timestampTemp,&usRegInputBuf[ADC_TIMESTAMP_CURRENT]);
@@ -154,7 +105,7 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 				usRegInputBuf[FAULT_7_5A_SIG]=HAL_GPIO_ReadPin(FAULT_7_5A_GPIO_Port,FAULT_7_5A_Pin);
 				usRegInputBuf[PYRO_SQUIB_MB_CONNECT_ERROR]=MB_Master_ErrorCode;
 				
-				usRegInputBuf[DEV_SET_OUTPUTS_SEQUENCE_IN_PROGRESS]=discrOutSequenceProgress;
+				usRegInputBuf[DEV_SET_OUTPUTS_SEQUENCE_IN_PROGRESS]=DiscretOutputs_SequenceInProgress();
 				
 
 						
@@ -174,99 +125,19 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 }
 
 
-//------ADC UDP NET SETTINGS REGS----------
-#define SERVER_IP_REG_0													0
-#define SERVER_IP_REG_1													1
-#define SERVER_IP_REG_2													2
-#define SERVER_IP_REG_3													3
-#define SERVER_PORT_REG_0												4
-//------ADC SETTINGS------------------------
-#define ADC_CHANNEL_0_K													5
-#define ADC_CHANNEL_0_B													7
-#define ADC_CHANNEL_1_K													9
-#define ADC_CHANNEL_1_B					 								11
-#define ADC_CHANNEL_2_K													13
-#define ADC_CHANNEL_2_B													15
-#define ADC_CHANNEL_3_K													17
-#define ADC_CHANNEL_3_B													19
-#define ADC_CHANNEL_4_K													21
-#define ADC_CHANNEL_4_B													23
-#define ADC_CHANNEL_5_K													25
-#define ADC_CHANNEL_5_B													27
-#define ADC_SAMPLERATE_FREQ_CORRECTION_FACTOR		30
-#define ADC_STARTED															32
-#define ADC_UDP _PACKET_TRANSFER_ENABLE					33
-#define ADC_TIMESTAMP_RESET											34
-//------ADC SETTINGS------------------------
-#define DEV_SET_OUTPUTS_0												35
-#define DEV_SET_OUTPUTS_1												36
-#define DEV_SET_OUTPUTS_2												37
-#define DEV_SET_OUTPUTS_3												38
-#define DEV_SET_OUTPUTS_ALL											39
-#define DEV_SET_OUTPUTS_SEQUENCE_STATE_1				43
-#define DEV_SET_OUTPUTS_SEQUENCE_STATE_2				47
-#define DEV_SET_OUTPUTS_SEQUENCE_STATE_END			51
-#define DEV_SET_OUTPUTS_SEQUENCE_TIME						55
-#define DEV_SET_OUTPUTS_SEQUENCE_NUM_CYCLES			56
-#define DEV_SET_OUTPUTS_SEQUENCE_START					57
-#define DEV_ENABLE_OUT_1												58
-#define DEV_ENABLE_OUT_7												59
-#define DEV_EN_VCC_250													60
-#define DEV_EN_VCC_150													61
-#define DEV_EN_VCC_75														62
-#define DEV_EN_VCC_7_5													63
-//------PYRO SQUIB SETTINGS-----------------
-#define PYRO_SQUIB_PIR_SET_TIME									64
-#define PYRO_SQUIB_PIR_1_SET_CURRENT						65
-#define PYRO_SQUIB_PIR_2_SET_CURRENT						67
-#define PYRO_SQUIB_PIR_3_SET_CURRENT						69
-#define PYRO_SQUIB_PIR_4_SET_CURRENT						71
-#define PYRO_SQUIB_PIR_SET_MASK									73
-#define PYRO_SQUIB_PIR_START										74
-#define PYRO_SQUIB_PIR_1_CALIBR_CURRENT_K				75
-#define PYRO_SQUIB_PIR_1_CALIBR_CURRENT_B				77
-#define PYRO_SQUIB_PIR_2_CALIBR_CURRENT_K				79
-#define PYRO_SQUIB_PIR_2_CALIBR_CURRENT_B				81
-#define PYRO_SQUIB_PIR_3_CALIBR_CURRENT_K				83
-#define PYRO_SQUIB_PIR_3_CALIBR_CURRENT_B				85
-#define PYRO_SQUIB_PIR_4_CALIBR_CURRENT_K				87
-#define PYRO_SQUIB_PIR_4_CALIBR_CURRENT_B				89
-#define DEV_ENABLE_AIR													91
-//------------------------------------------------
-#define DEV_RESET_CONTROLLER										92
-//------------------------------------------------
-#define DEV_PROC_TIME_HOUR											93
-#define DEV_PROC_TIME_MINUTE										94
-#define DEV_PROC_TIME_SECOND										95
-#define DEV_SOUND_ALARM													96
-//------------------------------------------------
-#define DEV_LOAD_RESISTOR_VALUE_1								97
-#define DEV_LOAD_RESISTOR_VALUE_2								99
-#define DEV_LOAD_RESISTOR_VALUE_3								101
-#define DEV_LOAD_RESISTOR_VALUE_4								103
-#define DEV_LOAD_RESISTOR_VALUE_5								105
-#define DEV_LOAD_RESISTOR_VALUE_6								107
-#define DEV_LOAD_RESISTOR_VALUE_7								109
-#define DEV_LOAD_RESISTOR_VALUE_8								111
-#define DEV_LOAD_RESISTOR_VALUE_9								113
-#define DEV_LOAD_RESISTOR_VALUE_10							115
-#define DEV_LOAD_RESISTOR_VALUE_11							117
-#define DEV_LOAD_RESISTOR_VALUE_12							119
-#define DEV_LOAD_RESISTOR_VALUE_13							121
-#define DEV_LOAD_RESISTOR_VALUE_14							123
 
 
 
 
-extern uint64_t	discrOutTempReg;
-uint16_t baseADCStarted=FALSE;
+
 
 eMBErrorCode
 eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegisterMode eMode )
 {
     eMBErrorCode    eStatus = MB_ENOERR;
     int             iRegIndex;
-
+		static  uint64_t	discrOutTempReg;
+	
     if( ( usAddress >= REG_HOLDING_START ) &&
         ( usAddress + usNRegs <= REG_HOLDING_START + REG_HOLDING_NREGS ) )
     {
@@ -285,7 +156,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 								usRegHoldingBuf[SERVER_IP_REG_2]=configInfo.IPAdress_Server.ip_addr_2;
 								usRegHoldingBuf[SERVER_IP_REG_3]=configInfo.IPAdress_Server.ip_addr_3;
 
-								usRegHoldingBuf[SERVER_PORT_REG_0]=configInfo.IPAdress_Server.port;
+								usRegHoldingBuf[SERVER_PORT_REG]=configInfo.IPAdress_Server.port;
 
 
 								Float_To_UINT16_Buf(configInfo.ConfigADC.calibrChannel[0].k,&usRegHoldingBuf[ADC_CHANNEL_0_K]);
@@ -307,9 +178,12 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 								Float_To_UINT16_Buf(configInfo.ConfigADC.calibrChannel[5].b,&usRegHoldingBuf[ADC_CHANNEL_5_B]);									
 								
 											
-								Float_To_UINT16_Buf(configInfo.ConfigADC.freqCorrectionFactor,&usRegHoldingBuf[ADC_SAMPLERATE_FREQ_CORRECTION_FACTOR]);									
+								Float_To_UINT16_Buf(configInfo.ConfigADC.freqCorrectionFactor,&usRegHoldingBuf[ADC_SAMPLERATE_FREQ_CORRECTION_FACTOR]);				
+					
 								
-								usRegHoldingBuf[ADC_STARTED]=baseADCStarted;
+								usRegHoldingBuf[ADC_STARTED]=DCMI_ADC_Started();
+								
+								discrOutTempReg=DiscretOutputs_Get();
 								usRegHoldingBuf[DEV_SET_OUTPUTS_0] = (uint16_t)((discrOutTempReg)&0xFFFF);
 								usRegHoldingBuf[DEV_SET_OUTPUTS_1] = (uint16_t)((discrOutTempReg>>16)&0xFFFF);
 								usRegHoldingBuf[DEV_SET_OUTPUTS_2] = (uint16_t)((discrOutTempReg>>32)&0xFFFF);
@@ -334,12 +208,14 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 								usRegHoldingBuf[DEV_PROC_TIME_MINUTE]=TimeProc.minute;
 								usRegHoldingBuf[DEV_PROC_TIME_SECOND]=TimeProc.second;
 								
-								UINT64_To_UINT16_Buf(discrOutSequenceParams.state_1, &usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_STATE_1]);
-								UINT64_To_UINT16_Buf(discrOutSequenceParams.state_2, &usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_STATE_2]);
-								UINT64_To_UINT16_Buf(discrOutSequenceParams.state_end, &usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_STATE_END]);
-
-								usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_TIME]=discrOutSequenceParams.time;
-								usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_NUM_CYCLES]=discrOutSequenceParams.num_cycles;
+								stSequenceParams sequenceParams;
+								DiscretOutputs_GetSequenceParams(&sequenceParams);
+								
+								UINT64_To_UINT16_Buf(sequenceParams.state_1, &usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_STATE_1]);
+								UINT64_To_UINT16_Buf(sequenceParams.state_2, &usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_STATE_2]);
+								UINT64_To_UINT16_Buf(sequenceParams.state_end, &usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_STATE_END]);
+								usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_TIME]=sequenceParams.time;
+								usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_NUM_CYCLES]=sequenceParams.num_cycles;
 								usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_START]=0;
 	
 								while( usNRegs > 0 )
@@ -412,11 +288,11 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												}
 												break;
 
-												case SERVER_PORT_REG_0:
+												case SERVER_PORT_REG:
 												{
-														if(configInfo.IPAdress_Server.port!=usRegHoldingBuf[SERVER_PORT_REG_0])
+														if(configInfo.IPAdress_Server.port!=usRegHoldingBuf[SERVER_PORT_REG])
 														{
-															configInfo.IPAdress_Server.port=usRegHoldingBuf[SERVER_PORT_REG_0];
+															configInfo.IPAdress_Server.port=usRegHoldingBuf[SERVER_PORT_REG];
 															settingsNeedWrite=TRUE;
 														}
 												}
@@ -585,31 +461,27 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 														{
 																SPI_ADC_ResetIndex();
 															
-																if(jumpersDevIsMaster==TRUE)
+																if(Jumpers_DevIsMaster()==TRUE)
 																{
 																		DCMI_ADC_Clock_Start();
-																}
-																
-																baseADCStarted=TRUE;
+																}															
 														}
 														else
 														{
-																if(jumpersDevIsMaster==TRUE)
+																if(Jumpers_DevIsMaster()==TRUE)
 																{
 																		DCMI_ADC_Clock_Stop();
 																}
-																
-																baseADCStarted=FALSE;
 														}
-														usRegHoldingBuf[ADC_STARTED]=0;
 												}
 												break;	
 												
 													
 												case DEV_SET_OUTPUTS_0:
 												{		
-														if(!discrOutSequenceProgress)
+														if(!DiscretOutputs_SequenceInProgress())
 														{
+															discrOutTempReg=DiscretOutputs_Get();
 															discrOutTempReg&=(~((uint64_t)0xFFFF));
 															discrOutTempReg|=(uint64_t)usRegHoldingBuf[DEV_SET_OUTPUTS_0];
 															DiscretOutputs_Set(discrOutTempReg);
@@ -619,8 +491,9 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case DEV_SET_OUTPUTS_1:
 												{		
-														if(!discrOutSequenceProgress)
+														if(!DiscretOutputs_SequenceInProgress())
 														{
+															discrOutTempReg=DiscretOutputs_Get();
 															discrOutTempReg&=(~((uint64_t)0xFFFF<<16));
 															discrOutTempReg|=(uint64_t)usRegHoldingBuf[DEV_SET_OUTPUTS_1]<<16;
 															DiscretOutputs_Set(discrOutTempReg);
@@ -630,8 +503,9 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case DEV_SET_OUTPUTS_2:
 												{		
-														if(!discrOutSequenceProgress)
+														if(!DiscretOutputs_SequenceInProgress())
 														{
+															discrOutTempReg=DiscretOutputs_Get();
 															discrOutTempReg&=(~((uint64_t)0xFFFF<<32));
 															discrOutTempReg|=(uint64_t)usRegHoldingBuf[DEV_SET_OUTPUTS_2]<<32;
 															DiscretOutputs_Set(discrOutTempReg);
@@ -641,8 +515,9 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case DEV_SET_OUTPUTS_3:
 												{	
-														if(!discrOutSequenceProgress)
+														if(!DiscretOutputs_SequenceInProgress())
 														{
+															discrOutTempReg=DiscretOutputs_Get();
 															discrOutTempReg&=(~((uint64_t)0xFFFF<<48));
 															discrOutTempReg|=(uint64_t)usRegHoldingBuf[DEV_SET_OUTPUTS_3]<<48;
 															DiscretOutputs_Set(discrOutTempReg);
@@ -652,7 +527,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												
 												case DEV_SET_OUTPUTS_ALL+3:
 												{
-														if(!discrOutSequenceProgress)
+														if(!DiscretOutputs_SequenceInProgress())
 														{
 															UINT16_Buf_To_UINT64(&usRegHoldingBuf[DEV_SET_OUTPUTS_ALL],&discrOutTempReg);
 															DiscretOutputs_Set(discrOutTempReg);	
@@ -930,8 +805,8 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												case DEV_SET_OUTPUTS_SEQUENCE_STATE_1+ (3):
 												{
 														uint64_t tempValue;
-														UINT16_Buf_To_UINT64(&usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_STATE_1], &tempValue);
-														discrOutSequenceParams.state_1=tempValue;
+														UINT16_Buf_To_UINT64(&usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_STATE_1], &tempValue);												
+														DiscretOutputs_SetSequenceState(DISCR_OUT_SEQ_STATE_1,tempValue);
 												}
 												break;
 												
@@ -939,7 +814,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												{
 														uint64_t tempValue;
 														UINT16_Buf_To_UINT64(&usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_STATE_2], &tempValue);
-														discrOutSequenceParams.state_2=tempValue;
+														DiscretOutputs_SetSequenceState(DISCR_OUT_SEQ_STATE_2,tempValue);
 												}
 												break;			
 
@@ -947,25 +822,19 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												{
 														uint64_t tempValue;
 														UINT16_Buf_To_UINT64(&usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_STATE_END], &tempValue);
-														discrOutSequenceParams.state_end=tempValue;
+														DiscretOutputs_SetSequenceState(DISCR_OUT_SEQ_STATE_END,tempValue);
 												}
 												break;													
 												
 												case DEV_SET_OUTPUTS_SEQUENCE_TIME:
-												{
-														if(IS_DISCR_OUT_TIME(usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_TIME]))
-														{
-																discrOutSequenceParams.time=usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_TIME];
-														}
+												{													
+														DiscretOutputs_SetSequenceImpulseTime(usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_TIME]);													
 												}
 												break;	
 
 												case DEV_SET_OUTPUTS_SEQUENCE_NUM_CYCLES:
 												{
-														if(IS_DISCR_OUT_NUM_CYCLES(usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_NUM_CYCLES]))
-														{
-																discrOutSequenceParams.num_cycles=usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_NUM_CYCLES];
-														}		
+														DiscretOutputs_SetSequenceNumCycles(usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_NUM_CYCLES]);
 												}
 												break;
 
@@ -988,20 +857,25 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 									
 								if(settingsNeedWrite)
 								{
-										StartConfigInfoWrite();
+										//StartConfigInfoWrite();
+										if(ConfigInfoWrite()<0)
+										{
+												eStatus=MB_EIO;
+										}
 								}
 								
 								if(TCPtoRTURegWrite.nRegs>0)//Пишем в MBMaster и ждем ответа
 								{
+										eMBMasterReqErrCode    err;
 										if( xSemaphoreTake( xMBRTUMutex, portMAX_DELAY ) == pdTRUE )
 										{
-												MB_Master_ErrorCode=MBMaster_RTU_WriteRegs(&TCPtoRTURegWrite);
+												err=MBMaster_RTU_WriteRegs(&TCPtoRTURegWrite);
 												xSemaphoreGive( xMBRTUMutex );
 										}
 										
-										if(MB_Master_ErrorCode==MB_MRE_NO_ERR)
+										if(err==MB_MRE_NO_ERR)
 										{
-												if((TCPtoRTURegWrite.regAddr==(M_REG_HOLDING_START+REG_PIR_START))&& baseADCStarted)//запрос на запуск пиропатронов прошел успешно
+												if((TCPtoRTURegWrite.regAddr==(M_REG_HOLDING_START+REG_PIR_START))&& DCMI_ADC_Started())//запрос на запуск пиропатронов прошел успешно
 												{
 														//запустим скоростное измерение пиропатронов
 														xSemaphoreGive(xStartReadPyroADCSem);

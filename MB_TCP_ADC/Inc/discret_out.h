@@ -17,10 +17,23 @@ typedef struct
 	uint64_t state_end;
 	uint16_t time; 
 	uint16_t num_cycles;
-}stSetSequenceParams;
+}stSequenceParams;
+
+typedef enum
+{
+		DISCR_OUT_SEQ_STATE_1=0,
+		DISCR_OUT_SEQ_STATE_2=1,
+		DISCR_OUT_SEQ_STATE_END=2,
+}enSequenceState;
 
 void DiscretOutputs_Init(void);
 void DiscretOutputs_Set(uint64_t discrOut);
-void DiscretOutputs_StartSequence(void);
+uint64_t DiscretOutputs_Get(void);
 
+void DiscretOutputs_SetSequenceState(enSequenceState state, uint64_t discrOut);
+uint8_t DiscretOutputs_SetSequenceImpulseTime(uint16_t time);
+uint8_t DiscretOutputs_SetSequenceNumCycles(uint16_t numCycles);
+void DiscretOutputs_GetSequenceParams(stSequenceParams *sequenceParams);
+void DiscretOutputs_StartSequence(void);
+uint8_t DiscretOutputs_SequenceInProgress(void);
 #endif

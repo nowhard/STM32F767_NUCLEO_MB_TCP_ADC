@@ -71,7 +71,7 @@ int ConfigInfoRead (void);
 //****************************************************************************
 // Обновление информации о приборе (в виде структуры) во FLASH из MyInfoVar
 int ConfigInfoWrite(void);
-void StartConfigInfoWrite(void);
+int StartConfigInfoWrite(void);
 
 #endif
 

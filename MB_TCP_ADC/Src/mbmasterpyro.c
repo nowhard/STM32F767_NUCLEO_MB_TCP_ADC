@@ -31,7 +31,7 @@ extern stTCPtoRTURegWrite TCPtoRTURegWrite;
 extern stPacket UDPPacket;
 extern enADCPyroBufState ADCPyroBufState;
 extern uint64_t ADC_Pyro_Timestamp;
-extern uint16_t baseADCStarted;
+
 
 TaskHandle_t RTUTaskHandle;
 TaskHandle_t RTUPollTaskHandle;
@@ -126,7 +126,7 @@ void MBMaster_RTU_Poll(void *pvParameters)
 					vTaskPrioritySet(RTUPollTaskHandle,MB_RTU_POLL_TASK_PRIO);
 					
 			}
-			else
+			else//опрос в стандартном режиме
 			{
 					if( xSemaphoreTake( xMBRTUMutex, portMAX_DELAY ) == pdTRUE )
 					{

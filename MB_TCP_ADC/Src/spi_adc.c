@@ -35,6 +35,18 @@ void SPI_ADC_ResetIndex(void)
 		SPI6_ADC_Buf.index=0;
 }
 
+void SPI_ADC_GetCurrentBufPtr(SPI_HandleTypeDef *hspi,uint16_t *buf)
+{
+	if(hspi->Instance==SPI3)
+	{
+			buf=currentSPI3_ADC_Buf;
+	}
+	else if(hspi->Instance==SPI6)
+	{
+			buf=currentSPI6_ADC_Buf;
+	}
+}
+
 void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
 {
 	if(hspi->Instance==SPI3)

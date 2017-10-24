@@ -13,9 +13,9 @@
 #define SECTION_TYPE_1234	0
 #define SECTION_TYPE_56		1
 
-extern uint8_t jumpersDevAddr;
-extern uint8_t	jumpersDevIsMaster;
-extern uint8_t jumpersDevSectionType;
 void Jumpers_ReadSettings(void);
 
+uint8_t Jumpers_DevIsMaster(void);
+uint8_t Jumpers_GetDevAddr(void);
+uint8_t Jumpers_GetDevSectionType(void);
 #endif
