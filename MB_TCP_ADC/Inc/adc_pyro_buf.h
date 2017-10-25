@@ -16,8 +16,12 @@ typedef struct
 	float buf[ADC_PYRO_CHN_NUM];
 }stADCPyroBuf;
 
-uint16_t ADC_PyroBuf_Copy(void *dst_buf, uint16_t max_size);
-uint16_t ADC_PyroBuf_GetCurrentLength(void);
-void ADC_PyroBuf_Add(float *mb_regs);
+uint16_t 					ADC_PyroBuf_Copy(void *dst_buf, uint16_t max_size);
+uint16_t 					ADC_PyroBuf_GetCurrentLength(void);
+void  						ADC_PyroBuf_SetState(enADCPyroBufState state);
+enADCPyroBufState ADC_PyroBuf_GetState(void);
+void 							ADC_PyroBuf_SetTimestamp(uint64_t timestamp);
+uint64_t					ADC_PyroBuf_GetTimestamp(void);
+void 							ADC_PyroBuf_Add(float *mb_regs);
 
 #endif

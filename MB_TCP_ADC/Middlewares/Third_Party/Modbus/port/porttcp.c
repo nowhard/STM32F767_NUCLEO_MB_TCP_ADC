@@ -38,7 +38,7 @@ static fd_set   allset;
 
 SemaphoreHandle_t xMB_FrameRec_Mutex;
 
-//uint8_t flag_mb_ready=0;
+
 
 /* ----------------------- Static functions ---------------------------------*/
 BOOL            prvMBTCPPortAddressToString( SOCKET xSocket, CHAR * szAddr, USHORT usBufSize );

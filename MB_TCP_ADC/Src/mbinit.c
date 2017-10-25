@@ -13,7 +13,6 @@ stMBContext stTCPContext[MB_TCP_CLIENT_NUM];
 
 void MB_TCP_Task(void *pvParameters);
 
-
 void MB_TCP_Init(void)
 {
 	uint8_t contextCnt=0;

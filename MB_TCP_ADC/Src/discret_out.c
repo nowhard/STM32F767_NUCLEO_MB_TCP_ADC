@@ -21,7 +21,7 @@ typedef enum
 
 static uint8_t 	discrOutSequenceProgress=FALSE;
 static uint64_t	discrOutReg=OUTPUTS_REG_ALL_RELAY_OFF; 
-stSequenceParams	discrOutSequenceParams={OUTPUTS_REG_ALL_RELAY_OFF,OUTPUTS_REG_ALL_RELAY_OFF,OUTPUTS_REG_ALL_RELAY_OFF,10,1};
+static stSequenceParams	discrOutSequenceParams={OUTPUTS_REG_ALL_RELAY_OFF,OUTPUTS_REG_ALL_RELAY_OFF,OUTPUTS_REG_ALL_RELAY_OFF,10,1};
 
 
 extern SPI_HandleTypeDef hspi5;

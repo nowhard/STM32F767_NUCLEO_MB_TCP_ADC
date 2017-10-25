@@ -5,11 +5,11 @@
 <h2>Tool Versions:</h2>
 IDE-Version: µVision V5.17.0.0
 Copyright (C) 2015 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: noW noW, GEO, LIC=HF8WF-62X2I-WJ96K-ZARRL-VTY53-2R3MP
+License Information: noW noW, geo, LIC=NHY9U-SL21I-KTI3H-W80HX-ENB0V-57A1N
  
 Tool Versions:
 Toolchain:       MDK-ARM Professional  Version: 5.17
-Toolchain Path:  C:\Program Files\Keil\ARM\ARMCC\Bin
+Toolchain Path:  D:\Programs\Keil\ARM\ARMCC\Bin
 C Compiler:      Armcc.exe V5.06 update 1 (build 61)
 Assembler:       Armasm.exe V5.06 update 1 (build 61)
 Linker/Locator:  ArmLink.exe V5.06 update 1 (build 61)
@@ -21,80 +21,41 @@ Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V2.0.18.0
 Dialog DLL:      TCM.DLL V1.14.6.0
  
 <h2>Project:</h2>
-E:\PROJECTS\GIT_REPOSITORY\STM32\STM32F767_NUCLEO_MB_TCP_ADC\MB_TCP_ADC\MDK-ARM\MB_TCP_ADC.uvprojx
-Project File Date:  10/25/2017
+D:\PROJECTS\STM32F767_NUCLEO_MB_TCP_ADC\STM32F767_NUCLEO_MB_TCP_ADC\MB_TCP_ADC\MDK-ARM\MB_TCP_ADC.uvprojx
+Project File Date:  10/22/2017
 
 <h2>Output:</h2>
-*** Using Compiler 'V5.06 update 1 (build 61)', folder: 'C:\Program Files\Keil\ARM\ARMCC\Bin'
+*** Using Compiler 'V5.06 update 1 (build 61)', folder: 'D:\Programs\Keil\ARM\ARMCC\Bin'
 Build target 'MB_TCP_ADC'
-compiling mbfunc.c...
-..\Src\mbfunc.c(576): warning:  #188-D: enumerated type mixed with another type
-  														HAL_GPIO_WritePin(
-NABLE_OUT_1_GPIO_Port,
-NABLE_OUT_1_Pin,usRegHoldingBuf[
-EV_ENABLE_OUT_1]);
-..\Src\mbfunc.c(582): warning:  #188-D: enumerated type mixed with another type
-  														HAL_GPIO_WritePin(
-NABLE_OUT_7_GPIO_Port,
-NABLE_OUT_7_Pin,usRegHoldingBuf[
-EV_ENABLE_OUT_7]);
-..\Src\mbfunc.c(588): warning:  #188-D: enumerated type mixed with another type
-  														HAL_GPIO_WritePin(
-N_VCC_250_GPIO_Port,
-N_VCC_250_Pin,usRegHoldingBuf[
-EV_EN_VCC_250]);
-..\Src\mbfunc.c(594): warning:  #188-D: enumerated type mixed with another type
-  														HAL_GPIO_WritePin(
-N_VCC_150_GPIO_Port,
-N_VCC_150_Pin,usRegHoldingBuf[
-EV_EN_VCC_150]);
-..\Src\mbfunc.c(600): warning:  #188-D: enumerated type mixed with another type
-  														HAL_GPIO_WritePin(
-N_VCC_75_GPIO_Port,
-N_VCC_75_Pin,usRegHoldingBuf[
-EV_EN_VCC_75]);
-..\Src\mbfunc.c(606): warning:  #188-D: enumerated type mixed with another type
-  														HAL_GPIO_WritePin(
-N_VCC_7_5_GPIO_Port,
-N_VCC_7_5_Pin,usRegHoldingBuf[
-EV_EN_VCC_7_5]);
-..\Src\mbfunc.c(612): warning:  #188-D: enumerated type mixed with another type
-  														HAL_GPIO_WritePin(
-NABLE_AIR_GPIO_Port,
-NABLE_AIR_Pin,usRegHoldingBuf[
-EV_ENABLE_AIR]);
-..\Src\mbfunc.c(816): warning:  #186-D: pointless comparison of unsigned integer with zero
-  														if(
-S_TIME_HOURS(usRegHoldingBuf[DEV_PROC_TIME_HOUR]))
-..\Src\mbfunc.c(825): warning:  #186-D: pointless comparison of unsigned integer with zero
-  														if(
-S_TIME_MINUTS(usRegHoldingBuf[DEV_PROC_TIME_MINUTE]))
-..\Src\mbfunc.c(834): warning:  #186-D: pointless comparison of unsigned integer with zero
-  														if(
-S_TIME_SECONDS(usRegHoldingBuf[DEV_PROC_TIME_SECOND]))
-..\Src\mbfunc.c: 10 warnings, 0 errors
+compiling mbinit.c...
+compiling porttcp.c...
+..\Middlewares\Third_Party\Modbus\port\porttcp.c(71): warning:  #177-D: variable "timeoutTimeInMiliSeconds" was declared but never referenced
+  			int timeoutTimeInMiliSeconds=100;
+..\Middlewares\Third_Party\Modbus\port\porttcp.c(402): warning:  #1-D: last line of file ends without a newline
+  }
+..\Middlewares\Third_Party\Modbus\port\porttcp.c: 2 warnings, 0 errors
 linking...
-Program Size: Code=95888 RO-data=1808 RW-data=1224 ZI-data=238720  
+Program Size: Code=95928 RO-data=1808 RW-data=1224 ZI-data=238720  
 FromELF: creating hex file...
-"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 10 Warning(s).
+"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 2 Warning(s).
 
 <h2>Software Packages used:</h2>
 
 Package Vendor: ARM
-                http://www.keil.com/pack/ARM.CMSIS.5.0.1.pack
-                ARM::CMSIS:CORE:5.0.1
+                http://www.keil.com/pack/ARM.CMSIS.4.5.0.pack
+                ARM::CMSIS:CORE:4.3.0
                 CMSIS (Cortex Microcontroller Software Interface Standard)
-   * Component: CORE Version: 5.0.1
+   * Component: CORE Version: 4.3.0
 
 <h2>Collection of Component include folders:</h2>
-  E:\PROJECTS\GIT_REPOSITORY\STM32\STM32F767_NUCLEO_MB_TCP_ADC\MB_TCP_ADC\MDK-ARM\RTE
-  C:\Program Files\Keil\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include
-  C:\Program Files\Keil\ARM\PACK\Keil\STM32F7xx_DFP\2.9.0\Drivers\CMSIS\Device\ST\STM32F7xx\Include
+  D:\PROJECTS\STM32F767_NUCLEO_MB_TCP_ADC\STM32F767_NUCLEO_MB_TCP_ADC\MB_TCP_ADC\MDK-ARM\RTE
+  D:\Programs\Keil\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include
+  D:\Programs\Keil\ARM\PACK\Keil\STM32F7xx_DFP\2.8.0\Drivers\CMSIS\Device\ST\STM32F7xx\Include
 
 <h2>Collection of Component Files used:</h2>
 
-   * Component: ARM::CMSIS:CORE:5.0.1
-Build Time Elapsed:  00:00:07
+   * Component: ARM::CMSIS:CORE:4.3.0
+Build Time Elapsed:  00:00:09
 </pre>
 </body>
 </html>

@@ -31,12 +31,8 @@ static uint64_t lastDCMITimestamp=0;
 static uint8_t DCMIADCStarted=FALSE;
 
 SemaphoreHandle_t xAdcBuf_Send_Semaphore=NULL;
-QueueHandle_t xADC_MB_Queue;
 
 extern sConfigInfo configInfo;
-
-
-
 
 void DCMI_DMA_HalfTransferCallback(void);
 void DCMI_DMA_TransferCallback(void);

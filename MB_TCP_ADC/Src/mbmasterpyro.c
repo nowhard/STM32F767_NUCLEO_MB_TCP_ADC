@@ -27,10 +27,6 @@
 xSemaphoreHandle xStartReadPyroADCSem;
 xSemaphoreHandle xMBRTUMutex;
 
-extern stPacket UDPPacket;
-extern enADCPyroBufState ADCPyroBufState;
-extern uint64_t ADC_Pyro_Timestamp;
-
 
 TaskHandle_t RTUTaskHandle;
 TaskHandle_t RTUPollTaskHandle;
@@ -105,13 +101,13 @@ void MBMaster_RTU_Poll(void *pvParameters)
 										ADC_PyroBuf_Add((float*)&usMRegInBuf[0][REG_ADC_0]);//эмулируем 1мс опрос
 										ADC_PyroBuf_Add((float*)&usMRegInBuf[0][REG_ADC_0]);
 									
-										ADC_Pyro_Timestamp=DCMI_ADC_GetCurrentTimestamp();
-										ADCPyroBufState=ADC_PYRO_BUF_FILL_START;
+										ADC_PyroBuf_SetTimestamp(DCMI_ADC_GetCurrentTimestamp());
+										ADC_PyroBuf_SetState(ADC_PYRO_BUF_FILL_START);
 										readErrCnt=0;
 								}
 								else
 								{
-										ADCPyroBufState=ADC_PYRO_BUF_FILL_STOP;
+										ADC_PyroBuf_SetState(ADC_PYRO_BUF_FILL_STOP);
 										readErrCnt++;
 										if(readErrCnt>=READ_ERR_MAX)
 										{
@@ -120,7 +116,7 @@ void MBMaster_RTU_Poll(void *pvParameters)
 								}	
 					}
 					while(usMRegInBuf[0][REG_PIR_STATE]!=PYRO_SQUIB_STOP);
-					ADCPyroBufState=ADC_PYRO_BUF_FILL_STOP;
+					ADC_PyroBuf_SetState(ADC_PYRO_BUF_FILL_STOP);
 					vTaskPrioritySet(RTUTaskHandle,MB_RTU_TASK_PRIO);
 					vTaskPrioritySet(RTUPollTaskHandle,MB_RTU_POLL_TASK_PRIO);
 					

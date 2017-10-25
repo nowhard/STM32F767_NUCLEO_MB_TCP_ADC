@@ -3,8 +3,8 @@
 #include "string.h"
 
 FIFO(ADC_PYRO_FIFO_LEN) ADCPyroFIFO;
-enADCPyroBufState ADCPyroBufState=ADC_PYRO_BUF_FILL_STOP;
-uint64_t ADC_Pyro_Timestamp=0;
+static enADCPyroBufState ADCPyroBufState=ADC_PYRO_BUF_FILL_STOP;
+static uint64_t ADC_Pyro_Timestamp=0;
 
 uint16_t ADC_PyroBuf_Copy(void *dst_buf, uint16_t max_size)
 {
@@ -40,6 +40,26 @@ uint16_t ADC_PyroBuf_Copy(void *dst_buf, uint16_t max_size)
 uint16_t ADC_PyroBuf_GetCurrentLength(void)
 {
 	return FIFO_COUNT(ADCPyroFIFO);
+}
+
+void  ADC_PyroBuf_SetState(enADCPyroBufState state)
+{
+	 ADCPyroBufState=state;
+}
+
+enADCPyroBufState ADC_PyroBuf_GetState(void)
+{
+	return ADCPyroBufState;
+}
+
+void ADC_PyroBuf_SetTimestamp(uint64_t timestamp)
+{
+		ADC_Pyro_Timestamp=timestamp;
+}
+
+uint64_t ADC_PyroBuf_GetTimestamp(void)
+{
+		return ADC_Pyro_Timestamp;
 }
 
 void ADC_PyroBuf_Add(float *mb_regs)

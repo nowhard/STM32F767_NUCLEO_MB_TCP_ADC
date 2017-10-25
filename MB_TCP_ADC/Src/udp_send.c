@@ -22,19 +22,12 @@
 #include "cfg_info.h"
 
 
-
-ip_addr_t DestIPaddr;
 extern ip4_addr_t ipaddr;
 
-
-extern enADCPyroBufState ADCPyroBufState;
-extern uint64_t ADC_Pyro_Timestamp;
-
-
-
-int socket_fd;
-struct sockaddr_in sa, ra;
-stPacket UDPPacket;
+static ip_addr_t DestIPaddr;
+static int socket_fd;
+static struct sockaddr_in sa, ra;
+static stPacket UDPPacket;
 
 #define UDP_SEND_INTERPACKAGE_PERIOD	4// ms
 
@@ -104,11 +97,11 @@ void UDP_SendPyroBuf(void)
 	
 	UDP_DestAddr_Reinit();
 	
-	if((ADCPyroBufState==ADC_PYRO_BUF_FILL_STOP) && ADC_PyroBuf_GetCurrentLength())//передача данных ацп пиропатрона закончена
+	if((ADC_PyroBuf_GetState()==ADC_PYRO_BUF_FILL_STOP) && ADC_PyroBuf_GetCurrentLength())//передача данных ацп пиропатрона закончена
 	{
 		UDPPacket.id=0;
 		UDPPacket.type=UDP_PACKET_TYPE_ADC_PYRO;
-		UDPPacket.timestamp=ADC_Pyro_Timestamp;
+		UDPPacket.timestamp=ADC_PyroBuf_GetTimestamp();
 		while(dataSize=ADC_PyroBuf_Copy((void *)UDPPacket.ADCPyroPacket.data,UDP_PYRO_DATA_SIZE))
 		{
 			UDPPacket.ADCPyroPacket.size=dataSize;

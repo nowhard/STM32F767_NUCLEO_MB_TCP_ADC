@@ -13,12 +13,15 @@
 
 extern SPI_HandleTypeDef hspi3;
 extern SPI_HandleTypeDef hspi6;
-
+extern SemaphoreHandle_t xAdcBuf_Send_Semaphore;
 
 static uint16_t rawADCVal[ADC_CHN_NUM];
-static float calibrADCVal[7];
+static float 		calibrADCVal[7];
+static uint8_t 	udpTransferEnabled=FALSE;
+static float 		ADC_resultBuf[ADC_DCMI_RESULT_BUF_LEN];
+static uint8_t 	samplingState=FALSE;
 
-static uint8_t udpTransferEnabled=FALSE;
+#define ADC_SEM_WAIT_PERIOD				2000
 
 
 #pragma anon_unions
@@ -335,22 +338,16 @@ uint8_t ADC_GetUDPTransferState(void)
 }
 
 
-static uint8_t samplingState=FALSE;
 uint8_t ADC_GetSamplingState(void)
 {
 		return samplingState;
 }
 
-static float ADC_resultBuf[ADC_DCMI_RESULT_BUF_LEN];
-extern SemaphoreHandle_t xAdcBuf_Send_Semaphore;
 
-#define ADC_SEM_WAIT_PERIOD				2000
 void ADC_Converter_Task( void *pvParameters )
 {
 	static uint16_t resultBufLen=0;
-	
 
-	
 	while(1)
 	{
 		if(xSemaphoreTake( xAdcBuf_Send_Semaphore, ADC_SEM_WAIT_PERIOD ))

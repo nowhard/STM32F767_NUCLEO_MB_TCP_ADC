@@ -95,8 +95,7 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 				usRegInputBuf[ADC_SAMPLING_FREQ_STATE]=ADC_GetSamplingState();
 			
 				/*возможно перенести в функцию*/
-				//memcpy((void *)&usRegInputBuf[ADC_PYRO_SQUIB_0],(const void*)&usMRegInBuf[0][0],M_REG_INPUT_NREGS*sizeof(uint16_t));
-				
+
 				/************копирование регистров ведомого*************************/
 				memcpy(&usRegInputBuf[ADC_PYRO_SQUIB_0],&usMRegInBuf[0][REG_PIR_ADC_0],sizeof(float));
 				memcpy(&usRegInputBuf[ADC_PYRO_SQUIB_1],&usMRegInBuf[0][REG_PIR_ADC_1],sizeof(float));
@@ -882,11 +881,14 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 
 												case DEV_SOUND_ALARM:
 												{
-													
+														if(usRegHoldingBuf[DEV_SOUND_ALARM])
+														{
+																
+														}
 												}
 												break;
 												
-												case DEV_LOAD_RESISTOR_VALUE_1:
+												case DEV_LOAD_RESISTOR_VALUE_1+(1):
 												{
 														UINT16_Buf_To_Float(&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_1],&tempCoef);
 														
@@ -898,7 +900,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												}
 												break;
 												
-												case DEV_LOAD_RESISTOR_VALUE_2:
+												case DEV_LOAD_RESISTOR_VALUE_2+(1):
 												{
 														UINT16_Buf_To_Float(&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_2],&tempCoef);
 														
@@ -910,7 +912,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												}
 												break;	
 
-												case DEV_LOAD_RESISTOR_VALUE_3:
+												case DEV_LOAD_RESISTOR_VALUE_3+(1):
 												{
 														UINT16_Buf_To_Float(&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_3],&tempCoef);
 														
@@ -922,7 +924,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												}
 												break;		
 
-												case DEV_LOAD_RESISTOR_VALUE_4:
+												case DEV_LOAD_RESISTOR_VALUE_4+(1):
 												{
 														UINT16_Buf_To_Float(&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_4],&tempCoef);
 														
@@ -934,7 +936,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												}
 												break;		
 
-												case DEV_LOAD_RESISTOR_VALUE_5:
+												case DEV_LOAD_RESISTOR_VALUE_5+(1):
 												{
 														UINT16_Buf_To_Float(&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_5],&tempCoef);
 														
@@ -946,7 +948,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												}
 												break;	
 
-												case DEV_LOAD_RESISTOR_VALUE_6:
+												case DEV_LOAD_RESISTOR_VALUE_6+(1):
 												{
 														UINT16_Buf_To_Float(&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_6],&tempCoef);
 														
@@ -958,7 +960,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												}
 												break;	
 
-												case DEV_LOAD_RESISTOR_VALUE_7:
+												case DEV_LOAD_RESISTOR_VALUE_7+(1):
 												{
 														UINT16_Buf_To_Float(&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_7],&tempCoef);
 														
@@ -970,7 +972,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												}
 												break;	
 
-												case DEV_LOAD_RESISTOR_VALUE_8:
+												case DEV_LOAD_RESISTOR_VALUE_8+(1):
 												{
 														UINT16_Buf_To_Float(&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_8],&tempCoef);
 														
@@ -982,7 +984,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												}
 												break;	
 
-												case DEV_LOAD_RESISTOR_VALUE_9:
+												case DEV_LOAD_RESISTOR_VALUE_9+(1):
 												{
 														UINT16_Buf_To_Float(&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_9],&tempCoef);
 														
@@ -994,7 +996,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												}
 												break;	
 
-												case DEV_LOAD_RESISTOR_VALUE_10:
+												case DEV_LOAD_RESISTOR_VALUE_10+(1):
 												{
 														UINT16_Buf_To_Float(&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_10],&tempCoef);
 														
@@ -1006,7 +1008,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												}
 												break;	
 
-												case DEV_LOAD_RESISTOR_VALUE_11:
+												case DEV_LOAD_RESISTOR_VALUE_11+(1):
 												{
 														UINT16_Buf_To_Float(&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_11],&tempCoef);
 														
@@ -1018,7 +1020,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												}
 												break;	
 
-												case DEV_LOAD_RESISTOR_VALUE_12:
+												case DEV_LOAD_RESISTOR_VALUE_12+(1):
 												{
 														UINT16_Buf_To_Float(&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_12],&tempCoef);
 														
@@ -1030,7 +1032,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												}
 												break;	
 
-												case DEV_LOAD_RESISTOR_VALUE_13:
+												case DEV_LOAD_RESISTOR_VALUE_13+(1):
 												{
 														UINT16_Buf_To_Float(&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_13],&tempCoef);
 														
@@ -1042,7 +1044,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												}
 												break;	
 
-												case DEV_LOAD_RESISTOR_VALUE_14:
+												case DEV_LOAD_RESISTOR_VALUE_14+(1):
 												{
 														UINT16_Buf_To_Float(&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_14],&tempCoef);
 														
