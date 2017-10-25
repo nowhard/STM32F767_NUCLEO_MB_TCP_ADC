@@ -39,17 +39,11 @@ uint16_t 				usMRegTempBuf[M_REG_HOLDING_NREGS];
 /*---------------------------------------------------------------------------*/
 
 
-stTCPtoRTURegWrite 						TCPtoRTURegWrite;
-
-
-
-
+static stTCPtoRTURegWrite 						TCPtoRTURegWrite;
 
 /* ----------------------- Time of process ---------------------------------*/
 
-
 static stTimeProc TimeProc={0,0,0};
-
 
 /*--------------------------------------------------------------------------*/
 
@@ -76,14 +70,19 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 			
 				tempADCVal=ADC_GetCalibratedChannelValue(ADC_CHN_CURRENT_1);
 				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_0_RESULT]);
+			
 				tempADCVal=ADC_GetCalibratedChannelValue(ADC_CHN_CURRENT_2);
-				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_1_RESULT]);		
+				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_1_RESULT]);	
+			
 				tempADCVal=ADC_GetCalibratedChannelValue(ADC_CHN_CURRENT_3);			
 				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_2_RESULT]);
+			
 				tempADCVal=ADC_GetCalibratedChannelValue(ADC_CHN_CURRENT_4);			
-				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_3_RESULT]);	
+				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_3_RESULT]);
+				
 				tempADCVal=ADC_GetCalibratedChannelValue(ADC_CHN_VOLTAGE);
-				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_4_RESULT]);		
+				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_4_RESULT]);
+				
 				tempADCVal=ADC_GetCalibratedChannelValue(ADC_CHN_PRESSURE);
 				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_5_RESULT]);
 				
@@ -92,9 +91,27 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 			
 				timestampTemp=DCMI_ADC_GetLastTimestamp();
 				UINT64_To_UINT16_Buf(timestampTemp,&usRegInputBuf[ADC_TIMESTAMP_CURRENT]);
+				
+				usRegInputBuf[ADC_SAMPLING_FREQ_STATE]=ADC_GetSamplingState();
 			
-			
-				memcpy((void *)&usRegInputBuf[ADC_PYRO_SQUIB_0],(const void*)&usMRegInBuf[0][0],M_REG_INPUT_NREGS*sizeof(uint16_t));
+				/*возможно перенести в функцию*/
+				//memcpy((void *)&usRegInputBuf[ADC_PYRO_SQUIB_0],(const void*)&usMRegInBuf[0][0],M_REG_INPUT_NREGS*sizeof(uint16_t));
+				
+				/************копирование регистров ведомого*************************/
+				memcpy(&usRegInputBuf[ADC_PYRO_SQUIB_0],&usMRegInBuf[0][REG_PIR_ADC_0],sizeof(float));
+				memcpy(&usRegInputBuf[ADC_PYRO_SQUIB_1],&usMRegInBuf[0][REG_PIR_ADC_1],sizeof(float));
+				memcpy(&usRegInputBuf[ADC_PYRO_SQUIB_2],&usMRegInBuf[0][REG_PIR_ADC_2],sizeof(float));
+				memcpy(&usRegInputBuf[ADC_PYRO_SQUIB_3],&usMRegInBuf[0][REG_PIR_ADC_3],sizeof(float));
+				memcpy(&usRegInputBuf[ADC_PYRO_SQUIB_4],&usMRegInBuf[0][REG_PIR_ADC_4],sizeof(float));
+				memcpy(&usRegInputBuf[ADC_PYRO_SQUIB_5],&usMRegInBuf[0][REG_PIR_ADC_5],sizeof(float));
+				memcpy(&usRegInputBuf[ADC_PYRO_SQUIB_6],&usMRegInBuf[0][REG_PIR_ADC_6],sizeof(float));
+				memcpy(&usRegInputBuf[ADC_PYRO_SQUIB_7],&usMRegInBuf[0][REG_PIR_ADC_7],sizeof(float));
+				
+				usRegInputBuf[PYRO_SQUIB_PIR_STATE]=usMRegInBuf[0][REG_PIR_STATE];
+				usRegInputBuf[PYRO_SQUIB_PIR_ERROR]=usMRegInBuf[0][REG_PIR_ERROR];
+				usRegInputBuf[PYRO_SQUIB_PIR_IN_LINE]=usMRegInBuf[0][REG_PIR_IN_LINE];
+				/*******************************************************************/
+				
 				
 				usRegInputBuf[FAULT_OUT_1_SIG]=HAL_GPIO_ReadPin(FAULT_OUT_1_GPIO_Port,FAULT_OUT_1_Pin);
 				usRegInputBuf[FAULT_OUT_7_SIG]=HAL_GPIO_ReadPin(FAULT_OUT_7_GPIO_Port,FAULT_OUT_7_Pin);
@@ -103,7 +120,7 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 				usRegInputBuf[FAULT_150A_SIG]=HAL_GPIO_ReadPin(FAULT_150A_GPIO_Port,FAULT_150A_Pin);
 				usRegInputBuf[FAULT_75A_SIG]=HAL_GPIO_ReadPin(FAULT_75A_GPIO_Port,FAULT_75A_Pin);
 				usRegInputBuf[FAULT_7_5A_SIG]=HAL_GPIO_ReadPin(FAULT_7_5A_GPIO_Port,FAULT_7_5A_Pin);
-				usRegInputBuf[PYRO_SQUIB_MB_CONNECT_ERROR]=MB_Master_ErrorCode;
+				usRegInputBuf[PYRO_SQUIB_MB_CONNECT_ERROR]=MBMaster_RTU_GetErrorCode();
 				
 				usRegInputBuf[DEV_SET_OUTPUTS_SEQUENCE_IN_PROGRESS]=DiscretOutputs_SequenceInProgress();
 				
@@ -123,12 +140,6 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
     }
     return eStatus;
 }
-
-
-
-
-
-
 
 
 eMBErrorCode
@@ -183,6 +194,8 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 								
 								usRegHoldingBuf[ADC_STARTED]=DCMI_ADC_Started();
 								
+								usRegHoldingBuf[ADC_UDP_PACKET_TRANSFER_ENABLE]=ADC_GetUDPTransferState();
+								
 								discrOutTempReg=DiscretOutputs_Get();
 								usRegHoldingBuf[DEV_SET_OUTPUTS_0] = (uint16_t)((discrOutTempReg)&0xFFFF);
 								usRegHoldingBuf[DEV_SET_OUTPUTS_1] = (uint16_t)((discrOutTempReg>>16)&0xFFFF);
@@ -217,7 +230,17 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 								usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_TIME]=sequenceParams.time;
 								usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_NUM_CYCLES]=sequenceParams.num_cycles;
 								usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_START]=0;
-	
+								
+								
+								//читаем сохранненые значения резисторов
+								uint8_t loadResCnt=0;
+								
+								for(loadResCnt=0;loadResCnt<LOAD_RESISTORS_NUM;loadResCnt++)
+								{
+										Float_To_UINT16_Buf(configInfo.resistors[loadResCnt],&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_1+loadResCnt*(sizeof(float)/sizeof(uint16_t))]);
+								}
+								
+
 								while( usNRegs > 0 )
 								{
 										*pucRegBuffer++ = ( UCHAR ) ( usRegHoldingBuf[iRegIndex] >> 8 );
@@ -476,6 +499,18 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 												}
 												break;	
 												
+												case ADC_UDP_PACKET_TRANSFER_ENABLE:
+												{
+														if(usRegHoldingBuf[ADC_UDP_PACKET_TRANSFER_ENABLE])
+														{
+																ADC_SetUDPTransferEnabled(TRUE);
+														}
+														else
+														{
+																ADC_SetUDPTransferEnabled(FALSE);
+														}
+												}												
+												break;
 													
 												case DEV_SET_OUTPUTS_0:
 												{		
@@ -843,7 +878,181 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 														DiscretOutputs_StartSequence();
 														usRegHoldingBuf[DEV_SET_OUTPUTS_SEQUENCE_START]=0;
 												}
-												break;													
+												break;	
+
+												case DEV_SOUND_ALARM:
+												{
+													
+												}
+												break;
+												
+												case DEV_LOAD_RESISTOR_VALUE_1:
+												{
+														UINT16_Buf_To_Float(&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_1],&tempCoef);
+														
+														if(FloatCheckEquality(configInfo.resistors[0], tempCoef, FLOAT_EQ_EPSILON)==FALSE)
+														{
+																configInfo.resistors[0]=tempCoef;
+																settingsNeedWrite=TRUE;		
+														}
+												}
+												break;
+												
+												case DEV_LOAD_RESISTOR_VALUE_2:
+												{
+														UINT16_Buf_To_Float(&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_2],&tempCoef);
+														
+														if(FloatCheckEquality(configInfo.resistors[1], tempCoef, FLOAT_EQ_EPSILON)==FALSE)
+														{
+																configInfo.resistors[1]=tempCoef;
+																settingsNeedWrite=TRUE;		
+														}
+												}
+												break;	
+
+												case DEV_LOAD_RESISTOR_VALUE_3:
+												{
+														UINT16_Buf_To_Float(&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_3],&tempCoef);
+														
+														if(FloatCheckEquality(configInfo.resistors[2], tempCoef, FLOAT_EQ_EPSILON)==FALSE)
+														{
+																configInfo.resistors[2]=tempCoef;
+																settingsNeedWrite=TRUE;		
+														}
+												}
+												break;		
+
+												case DEV_LOAD_RESISTOR_VALUE_4:
+												{
+														UINT16_Buf_To_Float(&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_4],&tempCoef);
+														
+														if(FloatCheckEquality(configInfo.resistors[3], tempCoef, FLOAT_EQ_EPSILON)==FALSE)
+														{
+																configInfo.resistors[3]=tempCoef;
+																settingsNeedWrite=TRUE;		
+														}
+												}
+												break;		
+
+												case DEV_LOAD_RESISTOR_VALUE_5:
+												{
+														UINT16_Buf_To_Float(&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_5],&tempCoef);
+														
+														if(FloatCheckEquality(configInfo.resistors[4], tempCoef, FLOAT_EQ_EPSILON)==FALSE)
+														{
+																configInfo.resistors[4]=tempCoef;
+																settingsNeedWrite=TRUE;		
+														}
+												}
+												break;	
+
+												case DEV_LOAD_RESISTOR_VALUE_6:
+												{
+														UINT16_Buf_To_Float(&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_6],&tempCoef);
+														
+														if(FloatCheckEquality(configInfo.resistors[5], tempCoef, FLOAT_EQ_EPSILON)==FALSE)
+														{
+																configInfo.resistors[5]=tempCoef;
+																settingsNeedWrite=TRUE;		
+														}
+												}
+												break;	
+
+												case DEV_LOAD_RESISTOR_VALUE_7:
+												{
+														UINT16_Buf_To_Float(&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_7],&tempCoef);
+														
+														if(FloatCheckEquality(configInfo.resistors[6], tempCoef, FLOAT_EQ_EPSILON)==FALSE)
+														{
+																configInfo.resistors[6]=tempCoef;
+																settingsNeedWrite=TRUE;		
+														}
+												}
+												break;	
+
+												case DEV_LOAD_RESISTOR_VALUE_8:
+												{
+														UINT16_Buf_To_Float(&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_8],&tempCoef);
+														
+														if(FloatCheckEquality(configInfo.resistors[7], tempCoef, FLOAT_EQ_EPSILON)==FALSE)
+														{
+																configInfo.resistors[7]=tempCoef;
+																settingsNeedWrite=TRUE;		
+														}
+												}
+												break;	
+
+												case DEV_LOAD_RESISTOR_VALUE_9:
+												{
+														UINT16_Buf_To_Float(&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_9],&tempCoef);
+														
+														if(FloatCheckEquality(configInfo.resistors[8], tempCoef, FLOAT_EQ_EPSILON)==FALSE)
+														{
+																configInfo.resistors[8]=tempCoef;
+																settingsNeedWrite=TRUE;		
+														}
+												}
+												break;	
+
+												case DEV_LOAD_RESISTOR_VALUE_10:
+												{
+														UINT16_Buf_To_Float(&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_10],&tempCoef);
+														
+														if(FloatCheckEquality(configInfo.resistors[9], tempCoef, FLOAT_EQ_EPSILON)==FALSE)
+														{
+																configInfo.resistors[9]=tempCoef;
+																settingsNeedWrite=TRUE;		
+														}
+												}
+												break;	
+
+												case DEV_LOAD_RESISTOR_VALUE_11:
+												{
+														UINT16_Buf_To_Float(&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_11],&tempCoef);
+														
+														if(FloatCheckEquality(configInfo.resistors[10], tempCoef, FLOAT_EQ_EPSILON)==FALSE)
+														{
+																configInfo.resistors[10]=tempCoef;
+																settingsNeedWrite=TRUE;		
+														}
+												}
+												break;	
+
+												case DEV_LOAD_RESISTOR_VALUE_12:
+												{
+														UINT16_Buf_To_Float(&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_12],&tempCoef);
+														
+														if(FloatCheckEquality(configInfo.resistors[11], tempCoef, FLOAT_EQ_EPSILON)==FALSE)
+														{
+																configInfo.resistors[11]=tempCoef;
+																settingsNeedWrite=TRUE;		
+														}
+												}
+												break;	
+
+												case DEV_LOAD_RESISTOR_VALUE_13:
+												{
+														UINT16_Buf_To_Float(&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_13],&tempCoef);
+														
+														if(FloatCheckEquality(configInfo.resistors[12], tempCoef, FLOAT_EQ_EPSILON)==FALSE)
+														{
+																configInfo.resistors[12]=tempCoef;
+																settingsNeedWrite=TRUE;		
+														}
+												}
+												break;	
+
+												case DEV_LOAD_RESISTOR_VALUE_14:
+												{
+														UINT16_Buf_To_Float(&usRegHoldingBuf[DEV_LOAD_RESISTOR_VALUE_14],&tempCoef);
+														
+														if(FloatCheckEquality(configInfo.resistors[13], tempCoef, FLOAT_EQ_EPSILON)==FALSE)
+														{
+																configInfo.resistors[13]=tempCoef;
+																settingsNeedWrite=TRUE;		
+														}
+												}
+												break;												
 												
 												default:
 												{

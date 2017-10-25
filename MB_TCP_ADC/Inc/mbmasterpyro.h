@@ -45,5 +45,5 @@ typedef struct
 
 void MBMaster_RTU_Init(void);
 eMBMasterReqErrCode MBMaster_RTU_WriteRegs(stTCPtoRTURegWrite *regs);
-
+eMBMasterReqErrCode MBMaster_RTU_GetErrorCode(void);
 #endif

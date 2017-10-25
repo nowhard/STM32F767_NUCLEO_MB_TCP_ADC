@@ -173,6 +173,7 @@ int main(void)
 	Jumpers_ReadSettings();
 	DiscretOutputs_Init();
 	DCMI_ADC_Init();
+	ADC_DataConverter_Init();
  
   /* USER CODE END 2 */
 

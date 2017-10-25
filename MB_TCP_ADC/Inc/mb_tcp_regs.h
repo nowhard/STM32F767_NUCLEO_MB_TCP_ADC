@@ -91,7 +91,7 @@ typedef struct
 #define ADC_CHANNEL_5_B													27
 #define ADC_SAMPLERATE_FREQ_CORRECTION_FACTOR		30
 #define ADC_STARTED															32
-#define ADC_UDP _PACKET_TRANSFER_ENABLE					33
+#define ADC_UDP_PACKET_TRANSFER_ENABLE					33
 #define ADC_TIMESTAMP_RESET											34
 //------ADC SETTINGS------------------------
 #define DEV_SET_OUTPUTS_0												35

@@ -5,26 +5,21 @@
 #include "cfg_info.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "semphr.h"
+#include "udp_send.h"
 
 
 
 
-//typedef struct
-//{
-//	uint16_t raw_adc[6];
-//	float current[4];
-//	float current_convolution;
-//	
-//	float voltage;
-//	float pressure;
-//}stChnCalibrValues;
+extern SPI_HandleTypeDef hspi3;
+extern SPI_HandleTypeDef hspi6;
 
 
 static uint16_t rawADCVal[ADC_CHN_NUM];
 static float calibrADCVal[7];
 
-extern uint16_t *currentSPI3_ADC_Buf;
-extern uint16_t *currentSPI6_ADC_Buf;
+static uint8_t udpTransferEnabled=FALSE;
+
 
 #pragma anon_unions
 union bytefield{
@@ -63,12 +58,21 @@ union wordfield{
 	uint_fast16_t val;
 };
 
-//stChnCalibrValues ChnCalibrValues;
+
 
 float ADC_CurrentChannelsConvolution(void);
 float ADC_GetParallelCurrentSensorsValue(void);
 float ADC_GetCalibrateValue(uint8_t channel, uint16_t value);
+void ADC_DataConverter_Init(void);
 
+#define ADC_CONVERT_TASK_STACK_SIZE	1024
+#define ADC_CONVERT_TASK_PRIO				4
+void ADC_Converter_Task( void *pvParameters );
+
+void ADC_DataConverter_Init(void)
+{
+  xTaskCreate( ADC_Converter_Task, "ADC Converter Task", ADC_CONVERT_TASK_STACK_SIZE, NULL, ADC_CONVERT_TASK_PRIO, NULL );
+}
 
 
 inline float ADC_CurrentChannelsConvolution(void)//свертка токовых каналов
@@ -127,13 +131,17 @@ void ADC_ConvertDCMIAndAssembleUDPBuf(float *resultBuf, uint16_t *resultBufLen)
 {
 	uint16_t cycleCount;
 	uint8_t *dcmiBuf;
-	uint16_t *spiBuf_1=currentSPI6_ADC_Buf;
-	uint16_t *spiBuf_2=currentSPI3_ADC_Buf;
+	
+	uint16_t *spiBuf_1;
+	uint16_t *spiBuf_2;
+	
 	const uint16_t dcmiHalfBufLen=(ADC_DCMI_BUF_LEN>>1);
 	union bytefield byte;
 	union wordfield out1, out2, out3, out4, out5, out6, out7, out8;
 	
-	DCMI_ADC_GetCurrentBufPtr(dcmiBuf);
+	SPI_ADC_GetCurrentBufPtr(&hspi3,&spiBuf_2);
+	SPI_ADC_GetCurrentBufPtr(&hspi6,&spiBuf_1);
+	DCMI_ADC_GetCurrentBufPtr(&dcmiBuf);
 	
 	
 	for(cycleCount=0;cycleCount<(dcmiHalfBufLen/ADC_DCMI_NUM_BITS);cycleCount++)
@@ -306,4 +314,58 @@ uint16_t ADC_GetRawChannelValue(uint8_t channel)
 float    ADC_GetCalibratedChannelValue(enADCCalibrChannels channel)
 {
 		return calibrADCVal[channel];
+}
+
+
+void ADC_SetUDPTransferEnabled(uint8_t state)
+{
+		if(state)
+		{
+				udpTransferEnabled=TRUE;
+		}
+		else
+		{
+				udpTransferEnabled=FALSE;
+		}
+}
+
+uint8_t ADC_GetUDPTransferState(void)
+{
+		return udpTransferEnabled;
+}
+
+
+static uint8_t samplingState=FALSE;
+uint8_t ADC_GetSamplingState(void)
+{
+		return samplingState;
+}
+
+static float ADC_resultBuf[ADC_DCMI_RESULT_BUF_LEN];
+extern SemaphoreHandle_t xAdcBuf_Send_Semaphore;
+
+#define ADC_SEM_WAIT_PERIOD				2000
+void ADC_Converter_Task( void *pvParameters )
+{
+	static uint16_t resultBufLen=0;
+	
+
+	
+	while(1)
+	{
+		if(xSemaphoreTake( xAdcBuf_Send_Semaphore, ADC_SEM_WAIT_PERIOD ))
+		{
+				samplingState=TRUE;
+				ADC_ConvertDCMIAndAssembleUDPBuf(ADC_resultBuf, &resultBufLen);
+				if(udpTransferEnabled)
+				{
+					UDP_SendBaseBuf(ADC_resultBuf,resultBufLen);
+					UDP_SendPyroBuf();
+				}
+		}
+		else
+		{
+				samplingState=FALSE;
+		}
+	}
 }

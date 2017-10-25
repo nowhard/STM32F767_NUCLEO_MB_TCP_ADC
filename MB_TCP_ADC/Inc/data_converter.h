@@ -25,9 +25,11 @@ typedef enum
 #define CHANNEL_1_CURR_TRESHOLD		75.0
 #define CHANNEL_0_CURR_TRESHOLD		7.5
 
-
-void ADC_ConvertDCMIAndAssembleUDPBuf(float *resultBuf, uint16_t *resultBufLen);
-uint16_t ADC_GetRawChannelValue(uint8_t channel);
-float    ADC_GetCalibratedChannelValue(enADCCalibrChannels channel);
-
+void 			ADC_DataConverter_Init(void);
+void 			ADC_ConvertDCMIAndAssembleUDPBuf(float *resultBuf, uint16_t *resultBufLen);
+uint16_t 	ADC_GetRawChannelValue(uint8_t channel);
+float    	ADC_GetCalibratedChannelValue(enADCCalibrChannels channel);
+void 			ADC_SetUDPTransferEnabled(uint8_t state);
+uint8_t 	ADC_GetUDPTransferState(void);
+uint8_t 	ADC_GetSamplingState(void);
 #endif

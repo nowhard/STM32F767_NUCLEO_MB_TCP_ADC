@@ -22,16 +22,61 @@ Dialog DLL:      TCM.DLL V1.14.6.0
  
 <h2>Project:</h2>
 E:\PROJECTS\GIT_REPOSITORY\STM32\STM32F767_NUCLEO_MB_TCP_ADC\MB_TCP_ADC\MDK-ARM\MB_TCP_ADC.uvprojx
-Project File Date:  10/23/2017
+Project File Date:  10/25/2017
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 1 (build 61)', folder: 'C:\Program Files\Keil\ARM\ARMCC\Bin'
 Build target 'MB_TCP_ADC'
-compiling stm32f7xx_hal_dcmi.c...
+compiling mbfunc.c...
+..\Src\mbfunc.c(576): warning:  #188-D: enumerated type mixed with another type
+  														HAL_GPIO_WritePin(
+NABLE_OUT_1_GPIO_Port,
+NABLE_OUT_1_Pin,usRegHoldingBuf[
+EV_ENABLE_OUT_1]);
+..\Src\mbfunc.c(582): warning:  #188-D: enumerated type mixed with another type
+  														HAL_GPIO_WritePin(
+NABLE_OUT_7_GPIO_Port,
+NABLE_OUT_7_Pin,usRegHoldingBuf[
+EV_ENABLE_OUT_7]);
+..\Src\mbfunc.c(588): warning:  #188-D: enumerated type mixed with another type
+  														HAL_GPIO_WritePin(
+N_VCC_250_GPIO_Port,
+N_VCC_250_Pin,usRegHoldingBuf[
+EV_EN_VCC_250]);
+..\Src\mbfunc.c(594): warning:  #188-D: enumerated type mixed with another type
+  														HAL_GPIO_WritePin(
+N_VCC_150_GPIO_Port,
+N_VCC_150_Pin,usRegHoldingBuf[
+EV_EN_VCC_150]);
+..\Src\mbfunc.c(600): warning:  #188-D: enumerated type mixed with another type
+  														HAL_GPIO_WritePin(
+N_VCC_75_GPIO_Port,
+N_VCC_75_Pin,usRegHoldingBuf[
+EV_EN_VCC_75]);
+..\Src\mbfunc.c(606): warning:  #188-D: enumerated type mixed with another type
+  														HAL_GPIO_WritePin(
+N_VCC_7_5_GPIO_Port,
+N_VCC_7_5_Pin,usRegHoldingBuf[
+EV_EN_VCC_7_5]);
+..\Src\mbfunc.c(612): warning:  #188-D: enumerated type mixed with another type
+  														HAL_GPIO_WritePin(
+NABLE_AIR_GPIO_Port,
+NABLE_AIR_Pin,usRegHoldingBuf[
+EV_ENABLE_AIR]);
+..\Src\mbfunc.c(816): warning:  #186-D: pointless comparison of unsigned integer with zero
+  														if(
+S_TIME_HOURS(usRegHoldingBuf[DEV_PROC_TIME_HOUR]))
+..\Src\mbfunc.c(825): warning:  #186-D: pointless comparison of unsigned integer with zero
+  														if(
+S_TIME_MINUTS(usRegHoldingBuf[DEV_PROC_TIME_MINUTE]))
+..\Src\mbfunc.c(834): warning:  #186-D: pointless comparison of unsigned integer with zero
+  														if(
+S_TIME_SECONDS(usRegHoldingBuf[DEV_PROC_TIME_SECOND]))
+..\Src\mbfunc.c: 10 warnings, 0 errors
 linking...
-Program Size: Code=94484 RO-data=1752 RW-data=1096 ZI-data=238608  
+Program Size: Code=95888 RO-data=1808 RW-data=1224 ZI-data=238720  
 FromELF: creating hex file...
-"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 0 Warning(s).
+"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 10 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -49,7 +94,7 @@ Package Vendor: ARM
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.0.1
-Build Time Elapsed:  00:00:05
+Build Time Elapsed:  00:00:07
 </pre>
 </body>
 </html>

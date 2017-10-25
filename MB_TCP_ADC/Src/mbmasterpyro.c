@@ -27,7 +27,6 @@
 xSemaphoreHandle xStartReadPyroADCSem;
 xSemaphoreHandle xMBRTUMutex;
 
-extern stTCPtoRTURegWrite TCPtoRTURegWrite;
 extern stPacket UDPPacket;
 extern enADCPyroBufState ADCPyroBufState;
 extern uint64_t ADC_Pyro_Timestamp;
@@ -72,7 +71,7 @@ enum
 };
 
 
-eMBMasterReqErrCode    MB_Master_ErrorCode = MB_MRE_NO_ERR;
+static eMBMasterReqErrCode    MB_Master_ErrorCode = MB_MRE_NO_ERR;
 
 extern USHORT   usMRegInBuf[MB_MASTER_TOTAL_SLAVE_NUM][M_REG_INPUT_NREGS];
 
@@ -154,3 +153,8 @@ eMBMasterReqErrCode MBMaster_RTU_WriteRegs(stTCPtoRTURegWrite *regs)
 	return err;
 }
 
+
+eMBMasterReqErrCode MBMaster_RTU_GetErrorCode(void)
+{
+		return MB_Master_ErrorCode;
+}
