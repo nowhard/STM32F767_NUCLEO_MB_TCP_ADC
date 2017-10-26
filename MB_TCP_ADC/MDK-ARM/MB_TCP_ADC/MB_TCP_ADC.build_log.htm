@@ -27,29 +27,89 @@ Project File Date:  10/26/2017
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 1 (build 61)', folder: 'C:\Program Files\Keil\ARM\ARMCC\Bin'
 Build target 'MB_TCP_ADC'
-compiling adc_dcmi.c...
-..\Src\adc_dcmi.c(43): warning:  #513-D: a value of type "volatile uint8_t *" cannot be assigned to an entity of type "uint8_t *"
-  	ADC_DCMI_buf_ptr=&DCMIAdcRxBuff[0];
-..\Src\adc_dcmi.c(62): warning:  #167-D: argument of type "void (*)(void)" is incompatible with parameter of type "void (*)(DMA_HandleTypeDef *)"
-  	HAL_DMA_RegisterCallback(&hdma_dcmi,HAL_DMA_XFER_HALFCPLT_CB_ID,DCMI_DMA_HalfTransferCallback);
-..\Src\adc_dcmi.c(63): warning:  #167-D: argument of type "void (*)(void)" is incompatible with parameter of type "void (*)(DMA_HandleTypeDef *)"
-  	HAL_DMA_RegisterCallback(&hdma_dcmi,HAL_DMA_XFER_CPLT_CB_ID,DCMI_DMA_TransferCallback);
-..\Src\adc_dcmi.c(78): warning:  #177-D: variable "sClockSourceConfig" was declared but never referenced
-  	TIM_ClockConfigTypeDef sClockSourceConfig;
-..\Src\adc_dcmi.c(79): warning:  #177-D: variable "sMasterConfig" was declared but never referenced
-    TIM_MasterConfigTypeDef sMasterConfig;
-..\Src\adc_dcmi.c(80): warning:  #177-D: variable "sConfigOC" was declared but never referenced
-    TIM_OC_InitTypeDef sConfigOC;
-..\Src\adc_dcmi.c(187): warning:  #513-D: a value of type "volatile uint8_t *" cannot be assigned to an entity of type "uint8_t *"
-  		ADC_DCMI_buf_ptr=&DCMIAdcRxBuff[0];
-..\Src\adc_dcmi.c(202): warning:  #513-D: a value of type "volatile uint8_t *" cannot be assigned to an entity of type "uint8_t *"
-  	  ADC_DCMI_buf_ptr=&DCMIAdcRxBuff[
-DC_DCMI_BUF_LEN>>1];
-..\Src\adc_dcmi.c: 8 warnings, 0 errors
+compiling mb_master_user.c...
+compiling mbfunc.c...
+..\Src\mbfunc.c(574): warning:  #188-D: enumerated type mixed with another type
+  														HAL_GPIO_WritePin(
+NABLE_OUT_1_GPIO_Port,
+NABLE_OUT_1_Pin,usRegHoldingBuf[
+EV_ENABLE_OUT_1]);
+..\Src\mbfunc.c(580): warning:  #188-D: enumerated type mixed with another type
+  														HAL_GPIO_WritePin(
+NABLE_OUT_7_GPIO_Port,
+NABLE_OUT_7_Pin,usRegHoldingBuf[
+EV_ENABLE_OUT_7]);
+..\Src\mbfunc.c(586): warning:  #188-D: enumerated type mixed with another type
+  														HAL_GPIO_WritePin(
+N_VCC_250_GPIO_Port,
+N_VCC_250_Pin,usRegHoldingBuf[
+EV_EN_VCC_250]);
+..\Src\mbfunc.c(592): warning:  #188-D: enumerated type mixed with another type
+  														HAL_GPIO_WritePin(
+N_VCC_150_GPIO_Port,
+N_VCC_150_Pin,usRegHoldingBuf[
+EV_EN_VCC_150]);
+..\Src\mbfunc.c(598): warning:  #188-D: enumerated type mixed with another type
+  														HAL_GPIO_WritePin(
+N_VCC_75_GPIO_Port,
+N_VCC_75_Pin,usRegHoldingBuf[
+EV_EN_VCC_75]);
+..\Src\mbfunc.c(604): warning:  #188-D: enumerated type mixed with another type
+  														HAL_GPIO_WritePin(
+N_VCC_7_5_GPIO_Port,
+N_VCC_7_5_Pin,usRegHoldingBuf[
+EV_EN_VCC_7_5]);
+..\Src\mbfunc.c(610): warning:  #188-D: enumerated type mixed with another type
+  														HAL_GPIO_WritePin(
+NABLE_AIR_GPIO_Port,
+NABLE_AIR_Pin,usRegHoldingBuf[
+EV_ENABLE_AIR]);
+..\Src\mbfunc.c(814): warning:  #186-D: pointless comparison of unsigned integer with zero
+  														if(
+S_TIME_HOURS(usRegHoldingBuf[DEV_PROC_TIME_HOUR]))
+..\Src\mbfunc.c(823): warning:  #186-D: pointless comparison of unsigned integer with zero
+  														if(
+S_TIME_MINUTS(usRegHoldingBuf[DEV_PROC_TIME_MINUTE]))
+..\Src\mbfunc.c(832): warning:  #186-D: pointless comparison of unsigned integer with zero
+  														if(
+S_TIME_SECONDS(usRegHoldingBuf[DEV_PROC_TIME_SECOND]))
+..\Src\mbfunc.c: 10 warnings, 0 errors
+compiling mbmasterpyro.c...
+compiling mb.c...
+..\Middlewares\Third_Party\Modbus\mb.c(196): warning:  #513-D: a value of type "void (*)(stMBContext *)" cannot be assigned to an entity of type "void (*)(void)"
+          pvMBFrameCloseCur = 
+B_PORT_HAS_CLOSE ? vMBTCPPortClose : 
+ULL;
+..\Middlewares\Third_Party\Modbus\mb.c: 1 warning, 0 errors
+compiling mbfunccoils.c...
+compiling mbtcp.c...
+compiling mbfuncholding.c...
+compiling mbfuncdisc.c...
+compiling mbfuncinput.c...
+compiling mb_m.c...
+compiling mbfuncother.c...
+compiling mbrtu_m.c...
+..\Middlewares\Third_Party\Modbus\rtu\mbrtu_m.c(208): warning:  #940-D: missing return statement at end of non-void function "xMBMasterRTUTransmitDone"
+  }
+..\Middlewares\Third_Party\Modbus\rtu\mbrtu_m.c: 1 warning, 0 errors
+compiling portevent_m.c...
+compiling porttimer_m.c...
+..\Middlewares\Third_Party\Modbus\port\porttimer_m.c(37): warning:  #177-D: variable "usT35TimeOut50us" was declared but never referenced
+  static USHORT usT35TimeOut50us;
+..\Middlewares\Third_Party\Modbus\port\porttimer_m.c(39): warning:  #177-D: function "prvvTIMERExpiredISR" was declared but never referenced
+  static void prvvTIMERExpiredISR(void);
+..\Middlewares\Third_Party\Modbus\port\porttimer_m.c(40): warning:  #177-D: function "timer_timeout_ind" was declared but never referenced
+  static void timer_timeout_ind(void* parameter);
+..\Middlewares\Third_Party\Modbus\port\porttimer_m.c: 3 warnings, 0 errors
+compiling portserial_m.c...
+compiling mbfuncholding_m.c...
+compiling mbfuncdisc_m.c...
+compiling mbfunccoils_m.c...
+compiling mbfuncinput_m.c...
 linking...
-Program Size: Code=95896 RO-data=1804 RW-data=1216 ZI-data=238712  
+Program Size: Code=95900 RO-data=1804 RW-data=1216 ZI-data=238712  
 FromELF: creating hex file...
-"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 8 Warning(s).
+"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 15 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -67,7 +127,7 @@ Package Vendor: ARM
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.0.1
-Build Time Elapsed:  00:00:07
+Build Time Elapsed:  00:01:17
 </pre>
 </body>
 </html>
