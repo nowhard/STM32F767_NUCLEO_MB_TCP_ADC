@@ -37,6 +37,7 @@ LR_IROM3 0x08004000 0x00004000  {    ; load region size_region
 
 #define LOAD_RESISTORS_NUM		14
 
+
 typedef struct
 {
 	uint8_t ip_addr_0;
@@ -50,8 +51,6 @@ typedef struct
 
 typedef struct
 {
-	uint8_t channelMask;
-	enADCSamplerate sampleRate;
 	float freqCorrectionFactor;
 	stCalibrChannel calibrChannel[ADC_CHN_NUM];
 } sConfigADC;

@@ -85,7 +85,6 @@ void DCMI_ADC_SetSamplerate(enADCSamplerate sampleRate)
 		case ADC_SAMPLERATE_1KHz:
 		{
 				htim2.Init.Prescaler = 10-1;
-				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_1KHz;
 				period=(uint16_t)((108000000/10000)-1);
 		}
 		break;
@@ -93,7 +92,6 @@ void DCMI_ADC_SetSamplerate(enADCSamplerate sampleRate)
 		case ADC_SAMPLERATE_10KHz:
 		{
 				htim2.Init.Prescaler = 0;
-				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_10KHz;
 				period=(uint16_t)((108000000/10000)-1);
 		}
 		break;
@@ -101,7 +99,6 @@ void DCMI_ADC_SetSamplerate(enADCSamplerate sampleRate)
 		case ADC_SAMPLERATE_20KHz:
 		{
 			htim2.Init.Prescaler = 0;
-			configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_20KHz;
 			period=(uint16_t)((108000000/20000)-1);
 		}
 		break;
@@ -109,7 +106,6 @@ void DCMI_ADC_SetSamplerate(enADCSamplerate sampleRate)
 		case ADC_SAMPLERATE_50KHz:
 		{
 				htim2.Init.Prescaler = 0;
-				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_50KHz;
 				period=(uint16_t)((108000000/50000)-1);
 		}
 		break;
@@ -117,7 +113,6 @@ void DCMI_ADC_SetSamplerate(enADCSamplerate sampleRate)
 		case ADC_SAMPLERATE_100KHz:
 		{
 				htim2.Init.Prescaler = 0;
-				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_100KHz;
 				period=(uint16_t)((108000000/100000)-1);
 		}
 		break;		
@@ -125,7 +120,6 @@ void DCMI_ADC_SetSamplerate(enADCSamplerate sampleRate)
 		default:
 		{
 				htim2.Init.Prescaler = 10-1;
-				configInfo.ConfigADC.sampleRate=ADC_SAMPLERATE_1KHz;
 				period=(uint16_t)((108000000/10000)-1);
 		}
 	}
@@ -139,7 +133,7 @@ void DCMI_ADC_SetSamplerate(enADCSamplerate sampleRate)
 
 inline uint32_t DCMI_ADC_GetSamplerate(void)
 {
-		return configInfo.ConfigADC.sampleRate;
+		return ADC_SAMPLERATE_1KHz;
 }
 
 inline uint64_t DCMI_ADC_GetLastTimestamp(void)
