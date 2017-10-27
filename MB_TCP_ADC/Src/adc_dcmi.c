@@ -13,6 +13,7 @@
 #include "spi_adc.h"
 #include "utilities.h"
 #include "data_converter.h"
+#include "jumpers.h"
 
 
 extern DCMI_HandleTypeDef hdcmi;
@@ -70,7 +71,10 @@ void DCMI_ADC_Init(void)
 	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_2);
 	HAL_TIM_Base_Start_IT(&htim9);
 	
-	DCMI_ADC_Clock_Start();	
+	if(Jumpers_DevIsMaster())
+	{
+		DCMI_ADC_Clock_Start();	
+	}
 }
 
 void DCMI_ADC_SetSamplerate(enADCSamplerate sampleRate)
