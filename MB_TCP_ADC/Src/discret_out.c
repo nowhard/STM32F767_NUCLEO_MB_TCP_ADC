@@ -99,19 +99,19 @@ void DiscretOutputs_SetSequenceState(enSequenceState state, uint64_t discrOut)
 		{
 			case DISCR_OUT_SEQ_STATE_1:
 			{
-					discrOutSequenceParams.state_1=state;
+					discrOutSequenceParams.state_1=discrOut;
 			}
 			break;
 			
 			case DISCR_OUT_SEQ_STATE_2:
 			{
-					discrOutSequenceParams.state_2=state;
+					discrOutSequenceParams.state_2=discrOut;
 			}
 			break;
 			
 			case DISCR_OUT_SEQ_STATE_END:
 			{
-					discrOutSequenceParams.state_end=state;
+					discrOutSequenceParams.state_end=discrOut;
 			}
 			break;
 
