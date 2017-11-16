@@ -146,7 +146,7 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 {
     eMBErrorCode    eStatus = MB_ENOERR;
     int             iRegIndex;
-		static  uint64_t	discrOutTempReg;
+		static  uint64_t	discrOutTempReg;//убрать static?
 	
     if( ( usAddress >= REG_HOLDING_START ) &&
         ( usAddress + usNRegs <= REG_HOLDING_START + REG_HOLDING_NREGS ) )
