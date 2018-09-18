@@ -319,6 +319,60 @@ float    ADC_GetCalibratedChannelValue(enADCCalibrChannels channel)
 		return calibrADCVal[channel];
 }
 
+float    ADC_GetCalibratedChannelInstantValue(enADCCalibrChannels channel)
+{
+		switch(channel)
+		{
+			case ADC_CHN_CURRENT_1:
+			{
+					return calibrADCVal[channel];
+			}
+			break;
+			
+			case ADC_CHN_CURRENT_2:
+			{
+					return calibrADCVal[channel];
+			}
+			break;
+
+			case ADC_CHN_CURRENT_3:
+			{
+					return calibrADCVal[channel];
+			}
+			break;
+
+			case ADC_CHN_CURRENT_4:
+			{
+					return calibrADCVal[channel];
+			}
+			break;			
+			
+			case ADC_CHN_CURRENT_CONV:
+			{
+					return calibrADCVal[channel];
+			}
+			break;	
+			
+			case ADC_CHN_VOLTAGE:
+			{
+					return ADC_GetCalibrateValue(4,SPI_ADC_GetCurrentValue(&hspi3));
+			}
+			break;	
+
+			case ADC_CHN_PRESSURE:
+			{
+					return ADC_GetCalibrateValue(5,SPI_ADC_GetCurrentValue(&hspi6));
+			}
+			break;				
+
+			default:
+			{
+					return 0;
+			}
+			break;			
+		}
+}
+
 
 void ADC_SetUDPTransferEnabled(uint8_t state)
 {

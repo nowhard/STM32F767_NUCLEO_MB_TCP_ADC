@@ -68,25 +68,25 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 				usRegInputBuf[ADC_CHANNEL_5_RAW]=ADC_GetRawChannelValue(5);
 			
 			
-				tempADCVal=ADC_GetCalibratedChannelValue(ADC_CHN_CURRENT_1);
+				tempADCVal=ADC_GetCalibratedChannelInstantValue(ADC_CHN_CURRENT_1);
 				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_0_RESULT]);
 			
-				tempADCVal=ADC_GetCalibratedChannelValue(ADC_CHN_CURRENT_2);
+				tempADCVal=ADC_GetCalibratedChannelInstantValue(ADC_CHN_CURRENT_2);
 				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_1_RESULT]);	
 			
-				tempADCVal=ADC_GetCalibratedChannelValue(ADC_CHN_CURRENT_3);			
+				tempADCVal=ADC_GetCalibratedChannelInstantValue(ADC_CHN_CURRENT_3);			
 				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_2_RESULT]);
 			
-				tempADCVal=ADC_GetCalibratedChannelValue(ADC_CHN_CURRENT_4);			
+				tempADCVal=ADC_GetCalibratedChannelInstantValue(ADC_CHN_CURRENT_4);			
 				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_3_RESULT]);
 				
-				tempADCVal=ADC_GetCalibratedChannelValue(ADC_CHN_VOLTAGE);
+				tempADCVal=ADC_GetCalibratedChannelInstantValue(ADC_CHN_VOLTAGE);
 				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_4_RESULT]);
 				
-				tempADCVal=ADC_GetCalibratedChannelValue(ADC_CHN_PRESSURE);
+				tempADCVal=ADC_GetCalibratedChannelInstantValue(ADC_CHN_PRESSURE);
 				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_5_RESULT]);
 				
-				tempADCVal=ADC_GetCalibratedChannelValue(ADC_CHN_CURRENT_CONV);
+				tempADCVal=ADC_GetCalibratedChannelInstantValue(ADC_CHN_CURRENT_CONV);
 				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_CONV]);
 			
 				timestampTemp=DCMI_ADC_GetLastTimestamp();

@@ -29,6 +29,7 @@ void 			ADC_DataConverter_Init(void);
 void 			ADC_ConvertDCMIAndAssembleUDPBuf(float *resultBuf, uint16_t *resultBufLen);
 uint16_t 	ADC_GetRawChannelValue(uint8_t channel);
 float    	ADC_GetCalibratedChannelValue(enADCCalibrChannels channel);
+float     ADC_GetCalibratedChannelInstantValue(enADCCalibrChannels channel);
 void 			ADC_SetUDPTransferEnabled(uint8_t state);
 uint8_t 	ADC_GetUDPTransferState(void);
 uint8_t 	ADC_GetSamplingState(void);
