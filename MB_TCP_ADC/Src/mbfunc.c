@@ -54,6 +54,7 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
     int             iRegIndex;
 		uint64_t				timestampTemp=0;
 		float						tempADCVal=0;
+		float						tempDCMI_ADCVal[5];
 
     if( ( usAddress >= REG_INPUT_START )
         && ( usAddress + usNRegs <= REG_INPUT_START + REG_INPUT_NREGS ) )
@@ -67,18 +68,12 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 				usRegInputBuf[ADC_CHANNEL_4_RAW]=ADC_GetRawChannelValue(4);
 				usRegInputBuf[ADC_CHANNEL_5_RAW]=ADC_GetRawChannelValue(5);
 			
+				ADC_GetDCMICalibratedValue(tempDCMI_ADCVal);
 			
-				tempADCVal=ADC_GetCalibratedChannelInstantValue(ADC_CHN_CURRENT_1);
-				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_0_RESULT]);
-			
-				tempADCVal=ADC_GetCalibratedChannelInstantValue(ADC_CHN_CURRENT_2);
-				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_1_RESULT]);	
-			
-				tempADCVal=ADC_GetCalibratedChannelInstantValue(ADC_CHN_CURRENT_3);			
-				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_2_RESULT]);
-			
-				tempADCVal=ADC_GetCalibratedChannelInstantValue(ADC_CHN_CURRENT_4);			
-				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_3_RESULT]);
+				Float_To_UINT16_Buf(tempDCMI_ADCVal[ADC_CHN_CURRENT_1], &usRegInputBuf[ADC_CHANNEL_0_RESULT]);
+				Float_To_UINT16_Buf(tempDCMI_ADCVal[ADC_CHN_CURRENT_2], &usRegInputBuf[ADC_CHANNEL_1_RESULT]);	
+				Float_To_UINT16_Buf(tempDCMI_ADCVal[ADC_CHN_CURRENT_3], &usRegInputBuf[ADC_CHANNEL_2_RESULT]);	
+				Float_To_UINT16_Buf(tempDCMI_ADCVal[ADC_CHN_CURRENT_4], &usRegInputBuf[ADC_CHANNEL_3_RESULT]);
 				
 				tempADCVal=ADC_GetCalibratedChannelInstantValue(ADC_CHN_VOLTAGE);
 				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_4_RESULT]);
@@ -86,8 +81,7 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 				tempADCVal=ADC_GetCalibratedChannelInstantValue(ADC_CHN_PRESSURE);
 				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_5_RESULT]);
 				
-				tempADCVal=ADC_GetCalibratedChannelInstantValue(ADC_CHN_CURRENT_CONV);
-				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_CONV]);
+				Float_To_UINT16_Buf(tempDCMI_ADCVal[ADC_CHN_CURRENT_CONV], &usRegInputBuf[ADC_CHANNEL_CONV]);
 			
 				timestampTemp=DCMI_ADC_GetLastTimestamp();
 				UINT64_To_UINT16_Buf(timestampTemp,&usRegInputBuf[ADC_TIMESTAMP_CURRENT]);
