@@ -7,7 +7,7 @@
 #include "task.h"
 #include "semphr.h"
 #include "udp_send.h"
-
+#include "adc_dcmi.h"
 
 
 
@@ -24,47 +24,11 @@ static uint8_t 	samplingState=FALSE;
 #define ADC_SEM_WAIT_PERIOD				2000
 
 
-#pragma anon_unions
-union bytefield{
-	struct{
-	uint_fast8_t b0:1;
-	uint_fast8_t b1:1;
-	uint_fast8_t b2:1;
-	uint_fast8_t b3:1;
-	uint_fast8_t b4:1;
-	uint_fast8_t b5:1;
-	uint_fast8_t b6:1;
-	uint_fast8_t b7:1;
-	};
-	uint_fast8_t val;
-};
-
-union wordfield{
-	struct{
-		uint_fast16_t b15:1;
-		uint_fast16_t b14:1;
-		uint_fast16_t b13:1;
-		uint_fast16_t b12:1;
-		uint_fast16_t b11:1;
-		uint_fast16_t b10:1;
-		uint_fast16_t b9:1;
-		uint_fast16_t b8:1;
-		uint_fast16_t b7:1;
-		uint_fast16_t b6:1;
-		uint_fast16_t b5:1;
-		uint_fast16_t b4:1;
-		uint_fast16_t b3:1;
-		uint_fast16_t b2:1;
-		uint_fast16_t b1:1;
-		uint_fast16_t b0:1;
-	};
-	uint_fast16_t val;
-};
 
 
 
-float ADC_CurrentChannelsConvolution(void);
-float ADC_GetParallelCurrentSensorsValue(void);
+float ADC_CurrentChannelsConvolution(float *calibrVal);
+float ADC_GetParallelCurrentSensorsValue(float *calibrVal);
 float ADC_GetCalibrateValue(uint8_t channel, uint16_t value);
 void ADC_DataConverter_Init(void);
 
@@ -78,46 +42,46 @@ void ADC_DataConverter_Init(void)
 }
 
 
-inline float ADC_CurrentChannelsConvolution(void)//свертка токовых каналов
+inline float ADC_CurrentChannelsConvolution(float *calibrVal)//свертка токовых каналов
 {
-	 if(calibrADCVal[ADC_CHN_CURRENT_1]>=CHANNEL_0_CURR_TRESHOLD)
+	 if(calibrVal[ADC_CHN_CURRENT_1]>=CHANNEL_0_CURR_TRESHOLD)
 	 {
-				if(calibrADCVal[ADC_CHN_CURRENT_2]>=CHANNEL_1_CURR_TRESHOLD)
+				if(calibrVal[ADC_CHN_CURRENT_2]>=CHANNEL_1_CURR_TRESHOLD)
 				{
-						return calibrADCVal[ADC_CHN_CURRENT_3];
+						return calibrVal[ADC_CHN_CURRENT_3];
 				}	
 				else
 				{
-						return calibrADCVal[ADC_CHN_CURRENT_2];
+						return calibrVal[ADC_CHN_CURRENT_2];
 				}
 		}	
 		else
 		{
-				return calibrADCVal[ADC_CHN_CURRENT_1];
+				return calibrVal[ADC_CHN_CURRENT_1];
 		}
 }
 
-inline float ADC_GetParallelCurrentSensorsValue(void)
+inline float ADC_GetParallelCurrentSensorsValue(float *calibrVal)
 {
 		float current_1=0.0;
 		float current_2=0.0;
 	
-	 if(calibrADCVal[ADC_CHN_CURRENT_1]>=CHANNEL_0_CURR_TRESHOLD)//shunt 1
+	 if(calibrVal[ADC_CHN_CURRENT_1]>=CHANNEL_0_CURR_TRESHOLD)//shunt 1
 	 {
-			current_1=calibrADCVal[ADC_CHN_CURRENT_2];
+			current_1=calibrVal[ADC_CHN_CURRENT_2];
 	 }
 	 else
 	 {
-			current_1=calibrADCVal[ADC_CHN_CURRENT_1];
+			current_1=calibrVal[ADC_CHN_CURRENT_1];
 	 }
 	 
-	 if(calibrADCVal[ADC_CHN_CURRENT_3]>=CHANNEL_0_CURR_TRESHOLD)//shunt 2
+	 if(calibrVal[ADC_CHN_CURRENT_3]>=CHANNEL_0_CURR_TRESHOLD)//shunt 2
 	 {
-			current_2=calibrADCVal[ADC_CHN_CURRENT_4];
+			current_2=calibrVal[ADC_CHN_CURRENT_4];
 	 }
 	 else
 	 {
-			current_2=calibrADCVal[ADC_CHN_CURRENT_3];
+			current_2=calibrVal[ADC_CHN_CURRENT_3];
 	 }
 	
 		return (current_1+current_2);
@@ -139,8 +103,8 @@ void ADC_ConvertDCMIAndAssembleUDPBuf(float *resultBuf, uint16_t *resultBufLen)
 	uint16_t *spiBuf_2;
 	
 	const uint16_t dcmiHalfBufLen=(ADC_DCMI_BUF_LEN>>1);
-	union bytefield byte;
-	union wordfield out1, out2, out3, out4, out5, out6, out7, out8;
+	bytefield byte;
+	wordfield out1, out2, out3, out4, out5, out6, out7, out8;
 	
 	SPI_ADC_GetCurrentBufPtr(&hspi3,&spiBuf_2);
 	SPI_ADC_GetCurrentBufPtr(&hspi6,&spiBuf_1);
@@ -276,7 +240,7 @@ void ADC_ConvertDCMIAndAssembleUDPBuf(float *resultBuf, uint16_t *resultBufLen)
 					calibrADCVal[ADC_CHN_CURRENT_2]=ADC_GetCalibrateValue(1,(out2.val&0xFFFF));
 					calibrADCVal[ADC_CHN_CURRENT_3]=ADC_GetCalibrateValue(2,(out3.val&0xFFFF));
 					calibrADCVal[ADC_CHN_CURRENT_4]=0.0;//ADC_GetCalibrateValue(3,(out4.val&0xFFFF));
-					calibrADCVal[ADC_CHN_CURRENT_CONV]=ADC_CurrentChannelsConvolution();
+					calibrADCVal[ADC_CHN_CURRENT_CONV]=ADC_CurrentChannelsConvolution(calibrADCVal);
 			}
 			else if(sectionType==SECTION_TYPE_56)
 			{
@@ -284,7 +248,7 @@ void ADC_ConvertDCMIAndAssembleUDPBuf(float *resultBuf, uint16_t *resultBufLen)
 					calibrADCVal[ADC_CHN_CURRENT_2]=ADC_GetCalibrateValue(1,(out2.val&0xFFFF))/2;
 					calibrADCVal[ADC_CHN_CURRENT_3]=ADC_GetCalibrateValue(2,(out3.val&0xFFFF))/2;
 					calibrADCVal[ADC_CHN_CURRENT_4]=ADC_GetCalibrateValue(3,(out4.val&0xFFFF))/2;
-					calibrADCVal[ADC_CHN_CURRENT_CONV]=ADC_GetParallelCurrentSensorsValue();
+					calibrADCVal[ADC_CHN_CURRENT_CONV]=ADC_GetParallelCurrentSensorsValue(calibrADCVal);
 			}
 			calibrADCVal[ADC_CHN_VOLTAGE]	 = ADC_GetCalibrateValue(4,(spiBuf_1[cycleCount/SPI_ADC_FREQ_DIV]&0xFFFF));
 			calibrADCVal[ADC_CHN_PRESSURE] = ADC_GetCalibrateValue(5,(spiBuf_2[cycleCount/SPI_ADC_FREQ_DIV]&0xFFFF));
@@ -317,6 +281,87 @@ uint16_t ADC_GetRawChannelValue(uint8_t channel)
 float    ADC_GetCalibratedChannelValue(enADCCalibrChannels channel)
 {
 		return calibrADCVal[channel];
+}
+
+void ADC_GetDCMICalibratedValue(float *val)
+{
+		uint8_t *dcmiBuf;
+		uint16_t dcmiADCVal[4];
+		uint8_t sectionType;
+		dcmiBuf = DCMI_ADC_GetLastSample();
+		DCMI_ADC_ConvertSample(dcmiBuf, dcmiADCVal);
+		sectionType = Jumpers_GetDevSectionType();
+
+		if(sectionType==SECTION_TYPE_1234)
+		{
+				val[ADC_CHN_CURRENT_1] = ADC_GetCalibrateValue(0,dcmiADCVal[ADC_CHN_CURRENT_1]);
+				val[ADC_CHN_CURRENT_2] = ADC_GetCalibrateValue(1,dcmiADCVal[ADC_CHN_CURRENT_2]);
+				val[ADC_CHN_CURRENT_3] = ADC_GetCalibrateValue(2,dcmiADCVal[ADC_CHN_CURRENT_3]);
+				val[ADC_CHN_CURRENT_4] = 0.0;
+				val[ADC_CHN_CURRENT_CONV]=ADC_CurrentChannelsConvolution(val);
+		}
+		else if(sectionType==SECTION_TYPE_56)
+		{
+				calibrADCVal[ADC_CHN_CURRENT_1] = ADC_GetCalibrateValue(0,dcmiADCVal[ADC_CHN_CURRENT_1])/2;
+				calibrADCVal[ADC_CHN_CURRENT_2] = ADC_GetCalibrateValue(1,dcmiADCVal[ADC_CHN_CURRENT_2])/2;
+				calibrADCVal[ADC_CHN_CURRENT_3] = ADC_GetCalibrateValue(2,dcmiADCVal[ADC_CHN_CURRENT_3])/2;
+				calibrADCVal[ADC_CHN_CURRENT_4] = ADC_GetCalibrateValue(3,dcmiADCVal[ADC_CHN_CURRENT_4])/2;
+				calibrADCVal[ADC_CHN_CURRENT_CONV] = ADC_GetParallelCurrentSensorsValue(val);
+		}			
+}
+
+float    ADC_GetCalibratedChannelInstantValue(enADCCalibrChannels channel)
+{
+		switch(channel)
+		{
+			case ADC_CHN_CURRENT_1:
+			{
+					return calibrADCVal[channel];
+			}
+			break;
+			
+			case ADC_CHN_CURRENT_2:
+			{
+					return calibrADCVal[channel];
+			}
+			break;
+
+			case ADC_CHN_CURRENT_3:
+			{
+					return calibrADCVal[channel];
+			}
+			break;
+
+			case ADC_CHN_CURRENT_4:
+			{
+					return calibrADCVal[channel];
+			}
+			break;			
+			
+			case ADC_CHN_CURRENT_CONV:
+			{
+					return calibrADCVal[channel];
+			}
+			break;	
+			
+			case ADC_CHN_VOLTAGE:
+			{
+					return ADC_GetCalibrateValue(4,SPI_ADC_GetCurrentValue(&hspi3));
+			}
+			break;	
+
+			case ADC_CHN_PRESSURE:
+			{
+					return ADC_GetCalibrateValue(5,SPI_ADC_GetCurrentValue(&hspi6));
+			}
+			break;				
+
+			default:
+			{
+					return 0;
+			}
+			break;			
+		}
 }
 
 

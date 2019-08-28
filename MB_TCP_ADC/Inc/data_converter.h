@@ -20,15 +20,17 @@ typedef enum
 	ADC_CHN_PRESSURE=6,
 }enADCCalibrChannels;
 
-#define CHANNEL_3_CURR_TRESHOLD		250.0
-#define CHANNEL_2_CURR_TRESHOLD		150.0
-#define CHANNEL_1_CURR_TRESHOLD		75.0
-#define CHANNEL_0_CURR_TRESHOLD		7.5
+#define CHANNEL_3_CURR_TRESHOLD		1000.0
+#define CHANNEL_2_CURR_TRESHOLD		400.0
+#define CHANNEL_1_CURR_TRESHOLD		200.0
+#define CHANNEL_0_CURR_TRESHOLD		100.0
 
 void 			ADC_DataConverter_Init(void);
 void 			ADC_ConvertDCMIAndAssembleUDPBuf(float *resultBuf, uint16_t *resultBufLen);
 uint16_t 	ADC_GetRawChannelValue(uint8_t channel);
 float    	ADC_GetCalibratedChannelValue(enADCCalibrChannels channel);
+void 			ADC_GetDCMICalibratedValue(float *val);
+float     ADC_GetCalibratedChannelInstantValue(enADCCalibrChannels channel);
 void 			ADC_SetUDPTransferEnabled(uint8_t state);
 uint8_t 	ADC_GetUDPTransferState(void);
 uint8_t 	ADC_GetSamplingState(void);

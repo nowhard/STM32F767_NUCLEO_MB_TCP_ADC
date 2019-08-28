@@ -171,6 +171,141 @@ void DCMI_ADC_Clock_Start(void)
 		DCMIADCStarted=TRUE;
 }
 
+void DCMI_ADC_ConvertSample(uint8_t *inputBuf ,uint16_t *outputBuf)
+{
+		bytefield byte;
+		wordfield out1, out2, out3, out4, out5, out6, out7, out8;
+	
+			byte.val=inputBuf[0];
+			out1.b0=byte.b0;
+			out2.b0=byte.b1;
+			out3.b0=byte.b2;
+			out4.b0=byte.b3;
+
+
+			byte.val=inputBuf[1];
+			out1.b1=byte.b0;
+			out2.b1=byte.b1;
+			out3.b1=byte.b2;
+			out4.b1=byte.b3;
+
+			
+			byte.val=inputBuf[2];
+			out1.b2=byte.b0;
+			out2.b2=byte.b1;
+			out3.b2=byte.b2;
+			out4.b2=byte.b3;
+
+
+			byte.val=inputBuf[3];
+			out1.b3=byte.b0;
+			out2.b3=byte.b1;
+			out3.b3=byte.b2;
+			out4.b3=byte.b3;
+
+
+			byte.val=inputBuf[4];
+			out1.b4=byte.b0;
+			out2.b4=byte.b1;
+			out3.b4=byte.b2;
+			out4.b4=byte.b3;
+
+
+			byte.val=inputBuf[5];
+			out1.b5=byte.b0;
+			out2.b5=byte.b1;
+			out3.b5=byte.b2;
+			out4.b5=byte.b3;
+
+
+			byte.val=inputBuf[6];
+			out1.b6=byte.b0;
+			out2.b6=byte.b1;
+			out3.b6=byte.b2;
+			out4.b6=byte.b3;
+
+
+			byte.val=inputBuf[7];
+			out1.b7=byte.b0;
+			out2.b7=byte.b1;
+			out3.b7=byte.b2;
+			out4.b7=byte.b3;
+
+
+			byte.val=inputBuf[8];
+			out1.b8=byte.b0;
+			out2.b8=byte.b1;
+			out3.b8=byte.b2;
+			out4.b8=byte.b3;
+
+
+			byte.val=inputBuf[9];
+			out1.b9=byte.b0;
+			out2.b9=byte.b1;
+			out3.b9=byte.b2;
+			out4.b9=byte.b3;
+
+
+			byte.val=inputBuf[10];
+			out1.b10=byte.b0;
+			out2.b10=byte.b1;
+			out3.b10=byte.b2;
+			out4.b10=byte.b3;
+
+
+			byte.val=inputBuf[11];
+			out1.b11=byte.b0;
+			out2.b11=byte.b1;
+			out3.b11=byte.b2;
+			out4.b11=byte.b3;
+
+
+			byte.val=inputBuf[12];
+			out1.b12=byte.b0;
+			out2.b12=byte.b1;
+			out3.b12=byte.b2;
+			out4.b12=byte.b3;
+
+
+			byte.val=inputBuf[13];
+			out1.b13=byte.b0;
+			out2.b13=byte.b1;
+			out3.b13=byte.b2;
+			out4.b13=byte.b3;
+
+
+			byte.val=inputBuf[14];
+			out1.b14=byte.b0;
+			out2.b14=byte.b1;
+			out3.b14=byte.b2;
+			out4.b14=byte.b3;
+
+
+			byte.val=inputBuf[15];
+			out1.b15=byte.b0;
+			out2.b15=byte.b1;
+			out3.b15=byte.b2;
+			out4.b15=byte.b3;
+			
+			
+			outputBuf[0]=out1.val;
+			outputBuf[1]=out2.val;
+			outputBuf[2]=out3.val;
+			outputBuf[3]=out4.val;
+}
+
+uint8_t *DCMI_ADC_GetLastSample(void)
+{
+		int32_t 	bufIndex=0;
+		bufIndex=((sizeof(DCMIAdcRxBuff)-hdma_dcmi.Instance->NDTR)/ADC_DCMI_NUM_BITS)*ADC_DCMI_NUM_BITS;
+		bufIndex -= ADC_DCMI_NUM_BITS;
+		if(bufIndex < 0)
+		{
+				bufIndex = sizeof(DCMIAdcRxBuff) - ADC_DCMI_NUM_BITS;
+		}
+		return &DCMIAdcRxBuff[bufIndex];
+}
+
 void DCMI_ADC_Clock_Stop(void)
 {
 		HAL_TIM_PWM_Stop(&htim2,TIM_CHANNEL_1);
