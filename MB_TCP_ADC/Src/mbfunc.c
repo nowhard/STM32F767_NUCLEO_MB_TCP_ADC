@@ -61,12 +61,12 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
     {
         iRegIndex = ( int )( usAddress - usRegInputStart );
 			
-				usRegInputBuf[ADC_CHANNEL_0_RAW]=ADC_GetRawChannelValue(0);
-				usRegInputBuf[ADC_CHANNEL_1_RAW]=ADC_GetRawChannelValue(1);
-				usRegInputBuf[ADC_CHANNEL_2_RAW]=ADC_GetRawChannelValue(2);
-				usRegInputBuf[ADC_CHANNEL_3_RAW]=ADC_GetRawChannelValue(3);
-				usRegInputBuf[ADC_CHANNEL_4_RAW]=ADC_GetRawChannelValue(4);
-				usRegInputBuf[ADC_CHANNEL_5_RAW]=ADC_GetRawChannelValue(5);
+				usRegInputBuf[ADC_CHANNEL_0_RAW]=ADC_GetRawChannelValue(ADC_CHN_CURRENT_1);
+				usRegInputBuf[ADC_CHANNEL_1_RAW]=ADC_GetRawChannelValue(ADC_CHN_CURRENT_2);
+				usRegInputBuf[ADC_CHANNEL_2_RAW]=ADC_GetRawChannelValue(ADC_CHN_CURRENT_3);
+				usRegInputBuf[ADC_CHANNEL_3_RAW]=ADC_GetRawChannelValue(ADC_CHN_CURRENT_4);
+				usRegInputBuf[ADC_CHANNEL_4_RAW]=ADC_GetRawChannelValue(ADC_CHN_VOLTAGE);
+				usRegInputBuf[ADC_CHANNEL_5_RAW]=ADC_GetRawChannelValue(ADC_CHN_PRESSURE);
 			
 				ADC_GetDCMICalibratedValue(tempDCMI_ADCVal);
 			

@@ -265,16 +265,44 @@ void ADC_ConvertDCMIAndAssembleUDPBuf(float *resultBuf, uint16_t *resultBufLen)
 	*resultBufLen=cycleCount*ADC_UDP_CHN_NUM;	
 }
 
+//uint16_t ADC_GetRawChannelValue(uint8_t channel)
+//{
+//		if(channel<ADC_CHN_NUM)
+//		{
+//				return rawADCVal[channel];
+//		}
+//		else
+//		{
+//				return 0;
+//		}
+//}
+
 uint16_t ADC_GetRawChannelValue(uint8_t channel)
 {
-		if(channel<ADC_CHN_NUM)
-		{
-				return rawADCVal[channel];
-		}
-		else
+		uint16_t adcVal = 0;
+		if(channel > ADC_CHN_PRESSURE)
 		{
 				return 0;
 		}
+		
+		if((channel >= ADC_CHN_CURRENT_1) && (channel <= ADC_CHN_CURRENT_4))
+		{
+				uint8_t *dcmiBuf;
+				uint16_t dcmiADCVal[4];
+				dcmiBuf = DCMI_ADC_GetLastSample();
+				DCMI_ADC_ConvertSample(dcmiBuf, dcmiADCVal);
+				adcVal = dcmiADCVal[channel];
+		}
+		else if(channel == ADC_CHN_VOLTAGE)
+		{
+				adcVal = SPI_ADC_GetCurrentValue(&hspi6);
+		}
+		else if(channel == ADC_CHN_PRESSURE)
+		{
+				adcVal = SPI_ADC_GetCurrentValue(&hspi3);
+		}
+		
+		return adcVal;
 }
 
 
@@ -346,13 +374,13 @@ float    ADC_GetCalibratedChannelInstantValue(enADCCalibrChannels channel)
 			
 			case ADC_CHN_VOLTAGE:
 			{
-					return ADC_GetCalibrateValue(4,SPI_ADC_GetCurrentValue(&hspi3));
+					return ADC_GetCalibrateValue(4,SPI_ADC_GetCurrentValue(&hspi6));
 			}
 			break;	
 
 			case ADC_CHN_PRESSURE:
 			{
-					return ADC_GetCalibrateValue(5,SPI_ADC_GetCurrentValue(&hspi6));
+					return ADC_GetCalibrateValue(5,SPI_ADC_GetCurrentValue(&hspi3));
 			}
 			break;				
 
