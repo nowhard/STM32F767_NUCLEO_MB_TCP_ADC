@@ -47,13 +47,27 @@ void SPI_ADC_GetCurrentBufPtr(SPI_HandleTypeDef *hspi,uint16_t **buf)
 
 uint16_t SPI_ADC_GetCurrentValue(SPI_HandleTypeDef *hspi)
 {
+	int32_t index;
+	
+
+	
 	if(hspi->Instance==SPI3)
 	{
-			return SPI3_ADC_Buf.buf[SPI3_ADC_Buf.index];
+			index = SPI3_ADC_Buf.index - 1;
+			if(index < 0)
+			{
+					index = SPI_ADC_BUF_LEN - 1;
+			}		
+			return SPI3_ADC_Buf.buf[index];
 	}
 	else if(hspi->Instance==SPI6)
 	{
-			return SPI6_ADC_Buf.buf[SPI6_ADC_Buf.index];
+			index = SPI6_ADC_Buf.index - 1;
+			if(index < 0)
+			{
+					index = SPI_ADC_BUF_LEN - 1;
+			}		
+			return SPI6_ADC_Buf.buf[index];
 	}
 }
 

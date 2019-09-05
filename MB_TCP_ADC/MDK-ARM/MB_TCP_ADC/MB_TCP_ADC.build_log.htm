@@ -27,54 +27,14 @@ Project File Date:  09/05/2019
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 5 (build 528)', folder: 'C:\Program Files\Keil\ARM\ARMCC\Bin'
 Build target 'MB_TCP_ADC'
-compiling data_converter.c...
-..\Src\data_converter.c(47): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-  	 if(calibrVal[ADC_CHN_CURRENT_1]>=
-HANNEL_0_CURR_TRESHOLD)
-..\Src\data_converter.c(49): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-  				if(calibrVal[ADC_CHN_CURRENT_2]>=
-HANNEL_1_CURR_TRESHOLD)
-..\Src\data_converter.c(69): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-  	 if(calibrVal[ADC_CHN_CURRENT_1]>=
-HANNEL_0_CURR_TRESHOLD)//shunt 1
-..\Src\data_converter.c(78): warning:  #1035-D: single-precision operand implicitly converted to double-precision
-  	 if(calibrVal[ADC_CHN_CURRENT_3]>=
-HANNEL_0_CURR_TRESHOLD)//shunt 2
-..\Src\data_converter.c(107): warning:  #177-D: variable "out5"  was declared but never referenced
-  	wordfield out1, out2, out3, out4, out5, out6, out7, out8;
-..\Src\data_converter.c(107): warning:  #177-D: variable "out6"  was declared but never referenced
-  	wordfield out1, out2, out3, out4, out5, out6, out7, out8;
-..\Src\data_converter.c(107): warning:  #177-D: variable "out7"  was declared but never referenced
-  	wordfield out1, out2, out3, out4, out5, out6, out7, out8;
-..\Src\data_converter.c(107): warning:  #177-D: variable "out8"  was declared but never referenced
-  	wordfield out1, out2, out3, out4, out5, out6, out7, out8;
-..\Src\data_converter.c(288): warning:  #186-D: pointless comparison of unsigned integer with zero
-  		if((channel >= ADC_CHN_CURRENT_1) && (channel <= ADC_CHN_CURRENT_4))
-..\Src\data_converter.c(349): warning:  #111-D: statement is unreachable
-  			break;
-..\Src\data_converter.c(355): warning:  #111-D: statement is unreachable
-  			break;
-..\Src\data_converter.c(361): warning:  #111-D: statement is unreachable
-  			break;
-..\Src\data_converter.c(367): warning:  #111-D: statement is unreachable
-  			break;			
-..\Src\data_converter.c(373): warning:  #111-D: statement is unreachable
-  			break;	
-..\Src\data_converter.c(379): warning:  #111-D: statement is unreachable
-  			break;	
-..\Src\data_converter.c(385): warning:  #111-D: statement is unreachable
-  			break;				
-..\Src\data_converter.c(391): warning:  #111-D: statement is unreachable
-  			break;			
-..\Src\data_converter.c(441): warning:  #1-D: last line of file ends without a newline
+compiling spi_adc.c...
+..\Src\spi_adc.c(72): warning:  #940-D: missing return statement at end of non-void function "SPI_ADC_GetCurrentValue" 
   }
-..\Src\data_converter.c(18): warning:  #550-D: variable "rawADCVal"  was set but never used
-  static uint16_t rawADCVal[ADC_CHN_NUM];
-..\Src\data_converter.c: 19 warnings, 0 errors
+..\Src\spi_adc.c: 1 warning, 0 errors
 linking...
-Program Size: Code=97228 RO-data=1804 RW-data=1216 ZI-data=238712  
+Program Size: Code=97248 RO-data=1804 RW-data=1216 ZI-data=238712  
 FromELF: creating hex file...
-"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 19 Warning(s).
+"MB_TCP_ADC\MB_TCP_ADC.axf" - 0 Error(s), 1 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -97,7 +57,7 @@ Package Vendor: Keil
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.2.0
-Build Time Elapsed:  00:00:03
+Build Time Elapsed:  00:00:12
 </pre>
 </body>
 </html>
