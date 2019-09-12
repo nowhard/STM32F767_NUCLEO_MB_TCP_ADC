@@ -36,26 +36,12 @@ void SPI_ADC_ResetIndex(void)
 void SPI_ADC_GetCurrentBufPtr(SPI_HandleTypeDef *hspi,uint16_t **buf)
 {
 	if(hspi->Instance==SPI3)
-	{	
-			if(currentSPI3_ADC_Buf == &SPI3_ADC_Buf.buf[0])
-			{
-					*buf = &SPI3_ADC_Buf.buf[SPI_ADC_BUF_LEN>>1];
-			}
-			else
-			{
-					*buf = &SPI3_ADC_Buf.buf[0];
-			}
+	{
+			*buf=currentSPI3_ADC_Buf;
 	}
 	else if(hspi->Instance==SPI6)
 	{
-			if(currentSPI6_ADC_Buf == &SPI6_ADC_Buf.buf[0])
-			{
-					*buf = &SPI6_ADC_Buf.buf[SPI_ADC_BUF_LEN>>1];
-			}
-			else
-			{
-					*buf = &SPI6_ADC_Buf.buf[0];
-			}
+			*buf=currentSPI6_ADC_Buf;
 	}
 }
 
