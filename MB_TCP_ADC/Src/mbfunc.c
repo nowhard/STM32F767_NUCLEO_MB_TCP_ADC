@@ -91,7 +91,7 @@ eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 				tempADCVal=ADC_GetCalibratedChannelInstantValue(ADC_CHN_CURRENT_CONV);
 				Float_To_UINT16_Buf(tempADCVal, &usRegInputBuf[ADC_CHANNEL_CONV]);
 			
-				timestampTemp=DCMI_ADC_GetLastTimestamp();
+				timestampTemp=DCMI_ADC_GetCurrentTimestamp();//DCMI_ADC_GetLastTimestamp();
 				UINT64_To_UINT16_Buf(timestampTemp,&usRegInputBuf[ADC_TIMESTAMP_CURRENT]);
 				
 				usRegInputBuf[ADC_SAMPLING_FREQ_STATE]=ADC_GetSamplingState();
@@ -474,6 +474,8 @@ eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegi
 														if(FloatCheckEquality(configInfo.ConfigADC.freqCorrectionFactor, tempCoef, FLOAT_EQ_EPSILON)==FALSE)
 														{
 																configInfo.ConfigADC.freqCorrectionFactor=tempCoef;
+																
+																DCMI_ADC_SetSamplerate(ADC_SAMPLERATE_1KHz);
 																settingsNeedWrite=TRUE;
 														}															
 												}
